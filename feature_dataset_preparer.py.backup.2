@@ -9,8 +9,6 @@ from ml_models import (
     run_catboost_model,
     run_svm_model,
     finalize_experiments,
-    set_total_experiments,
-    OUTPUT_DIR,
 )
 from feature_table import (
     CKP_SOURCE,
@@ -102,7 +100,7 @@ def remove_leaky_features(df, threshold=0.1):
 
 
 def analyze_platform_leakage(df: pd.DataFrame):
-    """Enhanced platform leakage analysis with better visualization and fixed warnings"""
+    """Enhanced platform leakage analysis with better visualization"""
     import matplotlib.pyplot as plt
     import seaborn as sns
     from sklearn.ensemble import RandomForestClassifier
@@ -136,54 +134,46 @@ def analyze_platform_leakage(df: pd.DataFrame):
         X_clean, y_encoded, stratify=y_encoded, test_size=0.3, random_state=42
     )
 
-    clf = RandomForestClassifier(n_estimators=100, random_state=42, n_jobs=1)
+    clf = RandomForestClassifier(n_estimators=100, random_state=42)
     clf.fit(X_train, y_train)
 
     acc = clf.score(X_test, y_test)
-    print(f"Platform Prediction Accuracy: {acc:.4f}")
+    print(f"⚠️ Platform Prediction Accuracy: {acc:.4f}")
     
     if acc > 0.8:
-        print("HIGH LEAKAGE RISK - Platform can be predicted with high accuracy!")
+        print("🚨 HIGH LEAKAGE RISK - Platform can be predicted with high accuracy!")
     elif acc > 0.6:
-        print("MODERATE LEAKAGE RISK - Some platform-specific patterns detected")
+        print("⚠️ MODERATE LEAKAGE RISK - Some platform-specific patterns detected")
     else:
-        print("LOW LEAKAGE RISK - Platform prediction is difficult")
+        print("✅ LOW LEAKAGE RISK - Platform prediction is difficult")
 
     # Top features
     importances = clf.feature_importances_
     indices = importances.argsort()[-15:][::-1]
     top_features = [(X_clean.columns[i], importances[i]) for i in indices]
     
-    print("\nTop 15 platform-leaking features:")
+    print("\n🧬 Top 15 platform-leaking features:")
     for name, score in top_features:
-        risk_level = "HIGH" if score > 0.1 else "MODERATE" if score > 0.05 else "LOW"
-        print(f"  {risk_level:8} {name:35} -> {score:.4f}")
+        risk_level = "🚨" if score > 0.1 else "⚠️" if score > 0.05 else "✅"
+        print(f"  {risk_level} {name:35} → {score:.4f}")
 
-    # Enhanced visualization with fixed warnings
+    # Enhanced visualization
     plt.figure(figsize=(12, 8))
-    
-    # Create data for plotting
-    feature_names = [name[:30] + '...' if len(name) > 30 else name for name, _ in top_features]
-    feature_scores = [score for _, score in top_features]
-    
-    # Create colors based on risk level
     colors = ['red' if score > 0.1 else 'orange' if score > 0.05 else 'green' 
-              for score in feature_scores]
+              for _, score in top_features]
     
-    # Use matplotlib instead of seaborn to avoid palette warning
-    bars = plt.barh(range(len(feature_names)), feature_scores, color=colors)
-    plt.yticks(range(len(feature_names)), feature_names)
-    
-    # Add risk level text to title without emojis to avoid font warnings
-    plt.title("Top Platform-Leaking Features\nRed: High Risk | Orange: Moderate Risk | Green: Low Risk")
+    sns.barplot(
+        x=[score for _, score in top_features],
+        y=[name[:30] + '...' if len(name) > 30 else name for name, _ in top_features],
+        palette=colors
+    )
+    plt.title("Top Platform-Leaking Features\n🚨Red: High Risk | 🟠Orange: Moderate Risk | 🟢Green: Low Risk")
     plt.xlabel("Feature Importance")
-    plt.gca().invert_yaxis()  # Highest importance at top
     plt.tight_layout()
     
-    # Save plot to output directory
-    plt.savefig(OUTPUT_DIR / "platform_leakage_analysis.png", dpi=300, bbox_inches='tight')
+    # Save plot
+    plt.savefig("platform_leakage_analysis.png", dpi=300, bbox_inches='tight')
     plt.show()
-    plt.close()
     
     return acc, top_features
 
@@ -247,7 +237,7 @@ def setup_experiments():
 
 def run_experiments(df: pd.DataFrame):
     """Enhanced experiment runner with comprehensive tracking"""
-    print("\n🚀 Starting comprehensive User Identification ML experiments...")
+    print("\n🚀 Starting comprehensive ML experiments...")
     
     # Validate dataset
     print("🔍 Validating dataset...")
@@ -287,11 +277,6 @@ def run_experiments(df: pd.DataFrame):
         ([3], 1, "T_vs_F"),
         ([3], 2, "T_vs_I"),
     ]
-    
-    # Calculate total experiments: each experiment runs 4 models (RF, XGB, CatBoost, SVM)
-    total_model_runs = len(experiments) * 4
-    set_total_experiments(total_model_runs)
-    print(f"📊 Total model runs planned: {total_model_runs}")
     
     with open(os.path.join(os.getcwd(), "classifier_config.json"), "r") as f:
         config = json.load(f)
@@ -344,7 +329,27 @@ def run_experiments(df: pd.DataFrame):
             ax2.set_xlabel("User ID")
             ax2.set_ylabel("Sample Count")
             
- in scalers_to_test:
+            plt.tight_layout()
+            plt.savefig(f"class_distribution_{experiment_name}.png", dpi=300, bbox_inches='tight')
+            plt.show()
+            plt.close()
+
+        # Run all models with different scalers
+        scalers_to_test = [ScalarType.STANDARD, ScalarType.MIN_MAX]
+        
+        print(f"\n🤖 Running Random Forest models...")
+        for scaler in scalers_to_test:
+            print(f"  📊 Testing with {scaler.name} scaler...")
+            try:
+                run_random_forest_model(
+                    X_train, X_test, y_train, y_test, 
+                    scalar_obj=scaler, experiment_name=f"{experiment_name}_{scaler.name}"
+                )
+            except Exception as e:
+                print(f"❌ Random Forest failed with {scaler.name}: {e}")
+        
+        print(f"\n🚀 Running XGBoost models...")
+        for scaler in scalers_to_test:
             print(f"  📊 Testing with {scaler.name} scaler...")
             try:
                 run_xgboost_model(
@@ -421,3 +426,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    
