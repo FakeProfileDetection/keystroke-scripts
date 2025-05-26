@@ -223,7 +223,7 @@ def run_random_forest_model(
             "max_depth": [10, 20, 30, None],
             "min_samples_split": [2, 10, 20],
             "min_samples_leaf": [1, 2, 4],
-            "max_features": ["auto", "sqrt", "log2"],
+            "max_features": ["sqrt", "log2"],
             "bootstrap": [True, False],
         }
 
