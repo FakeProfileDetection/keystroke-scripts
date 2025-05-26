@@ -279,9 +279,9 @@ def run_random_forest_model(
     # recognition_rate = bob.measure.recognition_rate(rr_scores, rank=1)
     # print(f"Recognition Rate at rank 1: {recognition_rate:.2f}")
 
-    f1 = f1_score(y_test, y_pred_rf_decoded, average="weighted")
-    precision = precision_score(y_test, y_pred_rf_decoded, average="weighted")
-    recall = recall_score(y_test, y_pred_rf_decoded, average="weighted")
+    f1 = f1_score(y_test, y_pred_rf_decoded, average="weighted", zero_division=0)
+    precision = precision_score(y_test, y_pred_rf_decoded, average="weighted", zero_division=0)
+    recall = recall_score(y_test, y_pred_rf_decoded, average="weighted", zero_division=0)
     print(f"F1 Score: {f1}")
     print(f"Precision: {precision}")
     print(f"Recall: {recall}")
@@ -377,7 +377,7 @@ def run_catboost_model(
     y_pred = best_catboost_model.predict(X_test_scaled)
     y_pred_proba = best_catboost_model.predict_proba(X_test_scaled)
 
-    classification_rep = classification_report(y_test_encoded, y_pred)
+    classification_rep = classification_report(y_test_encoded, y_pred, zero_division=0)
     print(f"Classification Report:\n{classification_rep}")
 
     # Top-k accuracy
@@ -471,7 +471,7 @@ def run_svm_model(X_train, X_test, y_train, y_test, max_k=5):
 
     y_pred_proba_svm = best_svm.predict_proba(X_test_scaled)
 
-    classification_rep = classification_report(y_test, y_pred_svm_decoded)
+    classification_rep = classification_report(y_test, y_pred_svm_decoded,zero_division=0)
     print(f"Classification Report:\n{classification_rep}")
 
     for k in range(1, max_k + 1):
@@ -489,9 +489,9 @@ def run_svm_model(X_train, X_test, y_train, y_test, max_k=5):
 
     analyze_top_k_distribution(y_test_encoded, y_pred_proba_svm, label_encoder)
 
-    f1 = f1_score(y_test, y_pred_svm_decoded, average="weighted")
-    precision = precision_score(y_test, y_pred_svm_decoded, average="weighted")
-    recall = recall_score(y_test, y_pred_svm_decoded, average="weighted")
+    f1 = f1_score(y_test, y_pred_svm_decoded, average="weighted", zero_division=0)
+    precision = precision_score(y_test, y_pred_svm_decoded, average="weighted", zero_division=0)
+    recall = recall_score(y_test, y_pred_svm_decoded, average="weighted", zero_division=0)
 
     print(f"F1 Score: {f1}")
     print(f"Precision: {precision}")
