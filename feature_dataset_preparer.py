@@ -344,28 +344,50 @@ def run_experiments(df: pd.DataFrame):
             ax2.set_xlabel("User ID")
             ax2.set_ylabel("Sample Count")
             
- in scalers_to_test:
-            print(f"  📊 Testing with {scaler.name} scaler...")
+            plt.tight_layout()
+            plt.savefig(OUTPUT_DIR / f"class_distribution_{experiment_name}.png", dpi=300, bbox_inches='tight')
+            plt.show()
+            plt.close()
+
+        # Run all models WITHOUT scaling (data is pre-normalized)
+        # Commented out scaling options as requested - data is pre-normalized elsewhere
+        # scalers_to_test = [ScalarType.STANDARD, ScalarType.MIN_MAX]
+        scalers_to_test = [ScalarType.NONE]  # No additional scaling
+        
+        print(f"\n🤖 Running Random Forest models...")
+        for scaler in scalers_to_test:
+            print(f"  📊 Running without additional scaling (data pre-normalized)...")
+            try:
+                run_random_forest_model(
+                    X_train, X_test, y_train, y_test, 
+                    scalar_obj=scaler, experiment_name=f"{experiment_name}_no_scaling"
+                )
+            except Exception as e:
+                print(f"❌ Random Forest failed: {e}")
+        
+        print(f"\n🚀 Running XGBoost models...")
+        for scaler in scalers_to_test:
+            print(f"  📊 Running without additional scaling (data pre-normalized)...")
             try:
                 run_xgboost_model(
                     X_train, X_test, y_train, y_test, 
-                    scalar_obj=scaler, experiment_name=f"{experiment_name}_{scaler.name}"
+                    scalar_obj=scaler, experiment_name=f"{experiment_name}_no_scaling"
                 )
             except Exception as e:
-                print(f"❌ XGBoost failed with {scaler.name}: {e}")
+                print(f"❌ XGBoost failed: {e}")
         
         print(f"\n🐱 Running CatBoost models...")
         for scaler in scalers_to_test:
-            print(f"  📊 Testing with {scaler.name} scaler...")
+            print(f"  📊 Running without additional scaling (data pre-normalized)...")
             try:
                 run_catboost_model(
                     X_train, X_test, y_train, y_test, 
-                    scalar_obj=scaler, experiment_name=f"{experiment_name}_{scaler.name}"
+                    scalar_obj=scaler, experiment_name=f"{experiment_name}_no_scaling"
                 )
             except Exception as e:
-                print(f"❌ CatBoost failed with {scaler.name}: {e}")
+                print(f"❌ CatBoost failed: {e}")
         
-        # Run SVM (only with StandardScaler as it works best)
+        # Run SVM (no scaling needed as data is pre-normalized)
         print(f"\n⚙️ Running SVM model...")
         try:
             run_svm_model(
@@ -385,7 +407,7 @@ def run_experiments(df: pd.DataFrame):
 
 def main():
     """Main execution function"""
-    print("🚀 Starting ML Pipeline...")
+    print("🚀 Starting User Identification ML Pipeline...")
     print("=" * 60)
     
     # Option 1: Setup experiments from scratch (uncomment if needed)
@@ -415,7 +437,7 @@ def main():
     # Run all experiments
     run_experiments(final_df)
     
-    print("\n🎊 Pipeline completed successfully!")
+    print("\n🎊 User Identification Pipeline completed successfully!")
     print("Check the experiment_results_* folder for all outputs.")
 
 
