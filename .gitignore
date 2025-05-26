@@ -1,0 +1,8 @@
+__pycache__
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.svg
+*.webp
+*.mp4

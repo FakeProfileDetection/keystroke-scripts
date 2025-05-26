@@ -1,0 +1,1956 @@
+FI vs. T
+Index(['Key.backspaceKey.backspace_median', 'Key.backspaceKey.backspace_mean',
+       'Key.backspaceKey.backspace_stdev', 'Key.backspaceKey.backspace_q1',
+       'Key.backspaceKey.backspace_q3', 'eKey.space_median', 'eKey.space_mean',
+       'eKey.space_stdev', 'eKey.space_q1', 'eKey.space_q3',
+       'Key.spacet_median', 'Key.spacet_mean', 'Key.spacet_stdev',
+       'Key.spacet_q1', 'Key.spacet_q3', 'tKey.space_median',
+       'tKey.space_mean', 'tKey.space_stdev', 'tKey.space_q1', 'tKey.space_q3',
+       'sKey.space_median', 'sKey.space_mean', 'sKey.space_stdev',
+       'sKey.space_q1', 'sKey.space_q3', 'Key.spacea_median',
+       'Key.spacea_mean', 'Key.spacea_stdev', 'Key.spacea_q1', 'Key.spacea_q3',
+       'th_median', 'th_mean', 'th_stdev', 'th_q1', 'th_q3',
+       'nKey.space_median', 'nKey.space_mean', 'nKey.space_stdev',
+       'nKey.space_q1', 'nKey.space_q3', 'Key.spacei_median',
+       'Key.spacei_mean', 'Key.spacei_stdev', 'Key.spacei_q1', 'Key.spacei_q3',
+       'Key.spaces_median', 'Key.spaces_mean', 'Key.spaces_stdev',
+       'Key.spaces_q1', 'Key.spaces_q3'],
+      dtype='object')
+144
+Random Forest: FI vs. T results:
+With StandardScaler
+Minimum samples per class in training set: 4
+Minimum samples per class in test set: 2
+Fitting 2 folds for each of 648 candidates, totalling 1296 fits
+Random Forest Accuracy: 0.8472222222222222
+Random Forest Top-1 Accuracy: 0.8472222222222222
+Random Forest Top-2 Accuracy: 0.8888888888888888
+Random Forest Top-3 Accuracy: 0.9166666666666666
+Random Forest Top-4 Accuracy: 0.9583333333333334
+Random Forest Top-5 Accuracy: 0.9583333333333334
+F1 Score: 0.8296296296296297
+Precision: 0.8611111111111112
+Recall: 0.8472222222222222
+With MinMaxScaler
+Minimum samples per class in training set: 4
+Minimum samples per class in test set: 2
+Fitting 2 folds for each of 648 candidates, totalling 1296 fits
+Random Forest Accuracy: 0.8472222222222222
+Random Forest Top-1 Accuracy: 0.8472222222222222
+Random Forest Top-2 Accuracy: 0.8888888888888888
+Random Forest Top-3 Accuracy: 0.9166666666666666
+Random Forest Top-4 Accuracy: 0.9583333333333334
+Random Forest Top-5 Accuracy: 0.9583333333333334
+F1 Score: 0.8296296296296297
+Precision: 0.8611111111111112
+Recall: 0.8472222222222222
+XGBoost: FI vs. T results
+With StandardScaler
+Minimum samples per class in training set: 4
+Fitting 2 folds for each of 216 candidates, totalling 432 fits
+XGBoost Accuracy: 0.4444444444444444
+Classification Report:
+              precision    recall  f1-score   support
+
+        1001       0.50      0.50      0.50         2
+        1002       0.00      0.00      0.00         2
+        1003       0.00      0.00      0.00         2
+        1004       1.00      0.50      0.67         2
+        1005       0.33      0.50      0.40         2
+        1006       0.00      0.00      0.00         2
+        1007       0.00      0.00      0.00         2
+        1008       0.25      0.50      0.33         2
+        1009       0.00      0.00      0.00         2
+        1012       1.00      0.50      0.67         2
+        1013       0.33      0.50      0.40         2
+        1029       0.29      1.00      0.44         2
+        1036       0.00      0.00      0.00         2
+        1037       0.67      1.00      0.80         2
+        1039       0.50      0.50      0.50         2
+        1041       0.00      0.00      0.00         2
+        1042       0.50      1.00      0.67         2
+        1043       0.00      0.00      0.00         2
+        1044       0.50      0.50      0.50         2
+        1045       0.00      0.00      0.00         2
+        1046       0.00      0.00      0.00         2
+        1047       0.20      0.50      0.29         2
+        1048       0.00      0.00      0.00         2
+        1049       0.33      0.50      0.40         2
+        1050       0.00      0.00      0.00         2
+        1051       0.33      0.50      0.40         2
+        1052       0.00      0.00      0.00         2
+        1053       0.40      1.00      0.57         2
+        1054       0.67      1.00      0.80         2
+        1055       0.67      1.00      0.80         2
+        1056       1.00      1.00      1.00         2
+        1057       1.00      1.00      1.00         2
+        1058       0.67      1.00      0.80         2
+        1062       0.50      1.00      0.67         2
+        1063       0.50      0.50      0.50         2
+        1064       0.00      0.00      0.00         2
+
+    accuracy                           0.44        72
+   macro avg       0.34      0.44      0.36        72
+weighted avg       0.34      0.44      0.36        72
+
+⚠️ Labels not predicted at all: {1064, 1002, 1003, 1036, 1006, 1041, 1009, 1045, 1046, 1048, 1050}
+XGBoost Top-1 Accuracy: 0.4444444444444444
+XGBoost Top-2 Accuracy: 0.625
+XGBoost Top-3 Accuracy: 0.7361111111111112
+XGBoost Top-4 Accuracy: 0.7916666666666666
+XGBoost Top-5 Accuracy: 0.8472222222222222
+Recognition Rate at rank 1: 0.44
+F1 Score: 0.3639329805996473
+Precision: 0.33710317460317457
+Recall: 0.4444444444444444
+With MinMaxScaler
+Minimum samples per class in training set: 4
+Fitting 2 folds for each of 216 candidates, totalling 432 fits
+XGBoost Accuracy: 0.4444444444444444
+Classification Report:
+              precision    recall  f1-score   support
+
+        1001       0.50      0.50      0.50         2
+        1002       0.00      0.00      0.00         2
+        1003       0.00      0.00      0.00         2
+        1004       1.00      0.50      0.67         2
+        1005       0.33      0.50      0.40         2
+        1006       0.00      0.00      0.00         2
+        1007       0.00      0.00      0.00         2
+        1008       0.25      0.50      0.33         2
+        1009       0.00      0.00      0.00         2
+        1012       1.00      0.50      0.67         2
+        1013       0.33      0.50      0.40         2
+        1029       0.29      1.00      0.44         2
+        1036       0.00      0.00      0.00         2
+        1037       0.67      1.00      0.80         2
+        1039       0.50      0.50      0.50         2
+        1041       0.00      0.00      0.00         2
+        1042       0.50      1.00      0.67         2
+        1043       0.00      0.00      0.00         2
+        1044       0.50      0.50      0.50         2
+        1045       0.00      0.00      0.00         2
+        1046       0.00      0.00      0.00         2
+        1047       0.20      0.50      0.29         2
+        1048       0.00      0.00      0.00         2
+        1049       0.33      0.50      0.40         2
+        1050       0.00      0.00      0.00         2
+        1051       0.33      0.50      0.40         2
+        1052       0.00      0.00      0.00         2
+        1053       0.40      1.00      0.57         2
+        1054       0.67      1.00      0.80         2
+        1055       0.67      1.00      0.80         2
+        1056       1.00      1.00      1.00         2
+        1057       1.00      1.00      1.00         2
+        1058       0.67      1.00      0.80         2
+        1062       0.50      1.00      0.67         2
+        1063       0.50      0.50      0.50         2
+        1064       0.00      0.00      0.00         2
+
+    accuracy                           0.44        72
+   macro avg       0.34      0.44      0.36        72
+weighted avg       0.34      0.44      0.36        72
+
+⚠️ Labels not predicted at all: {1064, 1002, 1003, 1036, 1006, 1041, 1009, 1045, 1046, 1048, 1050}
+XGBoost Top-1 Accuracy: 0.4444444444444444
+XGBoost Top-2 Accuracy: 0.625
+XGBoost Top-3 Accuracy: 0.7361111111111112
+XGBoost Top-4 Accuracy: 0.7916666666666666
+XGBoost Top-5 Accuracy: 0.8472222222222222
+Recognition Rate at rank 1: 0.44
+F1 Score: 0.3639329805996473
+Precision: 0.33710317460317457
+Recall: 0.4444444444444444
+FT vs. I
+Index(['Key.backspaceKey.backspace_median', 'Key.backspaceKey.backspace_mean',
+       'Key.backspaceKey.backspace_stdev', 'Key.backspaceKey.backspace_q1',
+       'Key.backspaceKey.backspace_q3', 'eKey.space_median', 'eKey.space_mean',
+       'eKey.space_stdev', 'eKey.space_q1', 'eKey.space_q3',
+       'Key.spacet_median', 'Key.spacet_mean', 'Key.spacet_stdev',
+       'Key.spacet_q1', 'Key.spacet_q3', 'tKey.space_median',
+       'tKey.space_mean', 'tKey.space_stdev', 'tKey.space_q1', 'tKey.space_q3',
+       'sKey.space_median', 'sKey.space_mean', 'sKey.space_stdev',
+       'sKey.space_q1', 'sKey.space_q3', 'Key.spacea_median',
+       'Key.spacea_mean', 'Key.spacea_stdev', 'Key.spacea_q1', 'Key.spacea_q3',
+       'th_median', 'th_mean', 'th_stdev', 'th_q1', 'th_q3',
+       'nKey.space_median', 'nKey.space_mean', 'nKey.space_stdev',
+       'nKey.space_q1', 'nKey.space_q3', 'Key.spacei_median',
+       'Key.spacei_mean', 'Key.spacei_stdev', 'Key.spacei_q1', 'Key.spacei_q3',
+       'Key.spaces_median', 'Key.spaces_mean', 'Key.spaces_stdev',
+       'Key.spaces_q1', 'Key.spaces_q3'],
+      dtype='object')
+144
+Random Forest: FT vs. I results:
+With StandardScaler
+Minimum samples per class in training set: 4
+Minimum samples per class in test set: 2
+Fitting 2 folds for each of 648 candidates, totalling 1296 fits
+Random Forest Accuracy: 0.8055555555555556
+Random Forest Top-1 Accuracy: 0.8055555555555556
+Random Forest Top-2 Accuracy: 0.9166666666666666
+Random Forest Top-3 Accuracy: 0.9166666666666666
+Random Forest Top-4 Accuracy: 0.9722222222222222
+Random Forest Top-5 Accuracy: 1.0
+F1 Score: 0.7944444444444444
+Precision: 0.8472222222222222
+Recall: 0.8055555555555556
+With MinMaxScaler
+Minimum samples per class in training set: 4
+Minimum samples per class in test set: 2
+Fitting 2 folds for each of 648 candidates, totalling 1296 fits
+Random Forest Accuracy: 0.8055555555555556
+Random Forest Top-1 Accuracy: 0.8055555555555556
+Random Forest Top-2 Accuracy: 0.9166666666666666
+Random Forest Top-3 Accuracy: 0.9166666666666666
+Random Forest Top-4 Accuracy: 0.9722222222222222
+Random Forest Top-5 Accuracy: 1.0
+F1 Score: 0.7944444444444444
+Precision: 0.8472222222222222
+Recall: 0.8055555555555556
+XGBoost: FT vs. I results
+With StandardScaler
+Minimum samples per class in training set: 4
+Fitting 2 folds for each of 216 candidates, totalling 432 fits
+XGBoost Accuracy: 0.4722222222222222
+Classification Report:
+              precision    recall  f1-score   support
+
+        1001       1.00      1.00      1.00         2
+        1002       0.33      0.50      0.40         2
+        1003       0.40      1.00      0.57         2
+        1004       0.00      0.00      0.00         2
+        1005       0.29      1.00      0.44         2
+        1006       0.50      0.50      0.50         2
+        1007       1.00      0.50      0.67         2
+        1008       1.00      0.50      0.67         2
+        1009       0.00      0.00      0.00         2
+        1012       1.00      0.50      0.67         2
+        1013       0.00      0.00      0.00         2
+        1029       0.00      0.00      0.00         2
+        1036       0.00      0.00      0.00         2
+        1037       0.25      0.50      0.33         2
+        1039       0.50      0.50      0.50         2
+        1041       0.50      0.50      0.50         2
+        1042       0.33      0.50      0.40         2
+        1043       1.00      0.50      0.67         2
+        1044       0.25      0.50      0.33         2
+        1045       1.00      1.00      1.00         2
+        1046       0.50      1.00      0.67         2
+        1047       1.00      0.50      0.67         2
+        1048       0.00      0.00      0.00         2
+        1049       0.50      0.50      0.50         2
+        1050       1.00      0.50      0.67         2
+        1051       1.00      0.50      0.67         2
+        1052       0.00      0.00      0.00         2
+        1053       0.00      0.00      0.00         2
+        1054       0.00      0.00      0.00         2
+        1055       0.50      1.00      0.67         2
+        1056       1.00      0.50      0.67         2
+        1057       0.67      1.00      0.80         2
+        1058       1.00      1.00      1.00         2
+        1062       0.00      0.00      0.00         2
+        1063       0.50      0.50      0.50         2
+        1064       1.00      0.50      0.67         2
+
+    accuracy                           0.47        72
+   macro avg       0.50      0.47      0.45        72
+weighted avg       0.50      0.47      0.45        72
+
+⚠️ Labels not predicted at all: {1036, 1004, 1009, 1013, 1054}
+XGBoost Top-1 Accuracy: 0.4722222222222222
+XGBoost Top-2 Accuracy: 0.6666666666666666
+XGBoost Top-3 Accuracy: 0.8472222222222222
+XGBoost Top-4 Accuracy: 0.8888888888888888
+XGBoost Top-5 Accuracy: 0.9027777777777778
+Recognition Rate at rank 1: 0.47
+F1 Score: 0.44766313932980606
+Precision: 0.5005291005291005
+Recall: 0.4722222222222222
+With MinMaxScaler
+Minimum samples per class in training set: 4
+Fitting 2 folds for each of 216 candidates, totalling 432 fits
+XGBoost Accuracy: 0.4722222222222222
+Classification Report:
+              precision    recall  f1-score   support
+
+        1001       1.00      1.00      1.00         2
+        1002       0.33      0.50      0.40         2
+        1003       0.40      1.00      0.57         2
+        1004       0.00      0.00      0.00         2
+        1005       0.29      1.00      0.44         2
+        1006       0.50      0.50      0.50         2
+        1007       1.00      0.50      0.67         2
+        1008       1.00      0.50      0.67         2
+        1009       0.00      0.00      0.00         2
+        1012       1.00      0.50      0.67         2
+        1013       0.00      0.00      0.00         2
+        1029       0.00      0.00      0.00         2
+        1036       0.00      0.00      0.00         2
+        1037       0.25      0.50      0.33         2
+        1039       0.50      0.50      0.50         2
+        1041       0.50      0.50      0.50         2
+        1042       0.33      0.50      0.40         2
+        1043       1.00      0.50      0.67         2
+        1044       0.25      0.50      0.33         2
+        1045       1.00      1.00      1.00         2
+        1046       0.50      1.00      0.67         2
+        1047       1.00      0.50      0.67         2
+        1048       0.00      0.00      0.00         2
+        1049       0.50      0.50      0.50         2
+        1050       1.00      0.50      0.67         2
+        1051       1.00      0.50      0.67         2
+        1052       0.00      0.00      0.00         2
+        1053       0.00      0.00      0.00         2
+        1054       0.00      0.00      0.00         2
+        1055       0.50      1.00      0.67         2
+        1056       1.00      0.50      0.67         2
+        1057       0.67      1.00      0.80         2
+        1058       1.00      1.00      1.00         2
+        1062       0.00      0.00      0.00         2
+        1063       0.50      0.50      0.50         2
+        1064       1.00      0.50      0.67         2
+
+    accuracy                           0.47        72
+   macro avg       0.50      0.47      0.45        72
+weighted avg       0.50      0.47      0.45        72
+
+⚠️ Labels not predicted at all: {1036, 1004, 1009, 1013, 1054}
+XGBoost Top-1 Accuracy: 0.4722222222222222
+XGBoost Top-2 Accuracy: 0.6666666666666666
+XGBoost Top-3 Accuracy: 0.8472222222222222
+XGBoost Top-4 Accuracy: 0.8888888888888888
+XGBoost Top-5 Accuracy: 0.9027777777777778
+Recognition Rate at rank 1: 0.47
+F1 Score: 0.44766313932980606
+Precision: 0.5005291005291005
+Recall: 0.4722222222222222
+IF vs. T
+Index(['Key.backspaceKey.backspace_median', 'Key.backspaceKey.backspace_mean',
+       'Key.backspaceKey.backspace_stdev', 'Key.backspaceKey.backspace_q1',
+       'Key.backspaceKey.backspace_q3', 'eKey.space_median', 'eKey.space_mean',
+       'eKey.space_stdev', 'eKey.space_q1', 'eKey.space_q3',
+       'Key.spacet_median', 'Key.spacet_mean', 'Key.spacet_stdev',
+       'Key.spacet_q1', 'Key.spacet_q3', 'tKey.space_median',
+       'tKey.space_mean', 'tKey.space_stdev', 'tKey.space_q1', 'tKey.space_q3',
+       'sKey.space_median', 'sKey.space_mean', 'sKey.space_stdev',
+       'sKey.space_q1', 'sKey.space_q3', 'Key.spacea_median',
+       'Key.spacea_mean', 'Key.spacea_stdev', 'Key.spacea_q1', 'Key.spacea_q3',
+       'th_median', 'th_mean', 'th_stdev', 'th_q1', 'th_q3',
+       'nKey.space_median', 'nKey.space_mean', 'nKey.space_stdev',
+       'nKey.space_q1', 'nKey.space_q3', 'Key.spacei_median',
+       'Key.spacei_mean', 'Key.spacei_stdev', 'Key.spacei_q1', 'Key.spacei_q3',
+       'Key.spaces_median', 'Key.spaces_mean', 'Key.spaces_stdev',
+       'Key.spaces_q1', 'Key.spaces_q3'],
+      dtype='object')
+144
+Random Forest: IF vs. T results:
+With StandardScaler
+Minimum samples per class in training set: 4
+Minimum samples per class in test set: 2
+Fitting 2 folds for each of 648 candidates, totalling 1296 fits
+Random Forest Accuracy: 0.8472222222222222
+Random Forest Top-1 Accuracy: 0.8472222222222222
+Random Forest Top-2 Accuracy: 0.8888888888888888
+Random Forest Top-3 Accuracy: 0.9166666666666666
+Random Forest Top-4 Accuracy: 0.9583333333333334
+Random Forest Top-5 Accuracy: 0.9583333333333334
+F1 Score: 0.8296296296296297
+Precision: 0.8611111111111112
+Recall: 0.8472222222222222
+With MinMaxScaler
+Minimum samples per class in training set: 4
+Minimum samples per class in test set: 2
+Fitting 2 folds for each of 648 candidates, totalling 1296 fits
+Random Forest Accuracy: 0.8472222222222222
+Random Forest Top-1 Accuracy: 0.8472222222222222
+Random Forest Top-2 Accuracy: 0.8888888888888888
+Random Forest Top-3 Accuracy: 0.9166666666666666
+Random Forest Top-4 Accuracy: 0.9583333333333334
+Random Forest Top-5 Accuracy: 0.9583333333333334
+F1 Score: 0.8296296296296297
+Precision: 0.8611111111111112
+Recall: 0.8472222222222222
+XGBoost: IF vs. T results
+With StandardScaler
+Minimum samples per class in training set: 4
+Fitting 2 folds for each of 216 candidates, totalling 432 fits
+XGBoost Accuracy: 0.4444444444444444
+Classification Report:
+              precision    recall  f1-score   support
+
+        1001       0.50      0.50      0.50         2
+        1002       0.00      0.00      0.00         2
+        1003       0.00      0.00      0.00         2
+        1004       1.00      0.50      0.67         2
+        1005       0.33      0.50      0.40         2
+        1006       0.00      0.00      0.00         2
+        1007       0.00      0.00      0.00         2
+        1008       0.25      0.50      0.33         2
+        1009       0.00      0.00      0.00         2
+        1012       1.00      0.50      0.67         2
+        1013       0.33      0.50      0.40         2
+        1029       0.29      1.00      0.44         2
+        1036       0.00      0.00      0.00         2
+        1037       0.67      1.00      0.80         2
+        1039       0.50      0.50      0.50         2
+        1041       0.00      0.00      0.00         2
+        1042       0.50      1.00      0.67         2
+        1043       0.00      0.00      0.00         2
+        1044       0.50      0.50      0.50         2
+        1045       0.00      0.00      0.00         2
+        1046       0.00      0.00      0.00         2
+        1047       0.20      0.50      0.29         2
+        1048       0.00      0.00      0.00         2
+        1049       0.33      0.50      0.40         2
+        1050       0.00      0.00      0.00         2
+        1051       0.33      0.50      0.40         2
+        1052       0.00      0.00      0.00         2
+        1053       0.40      1.00      0.57         2
+        1054       0.67      1.00      0.80         2
+        1055       0.67      1.00      0.80         2
+        1056       1.00      1.00      1.00         2
+        1057       1.00      1.00      1.00         2
+        1058       0.67      1.00      0.80         2
+        1062       0.50      1.00      0.67         2
+        1063       0.50      0.50      0.50         2
+        1064       0.00      0.00      0.00         2
+
+    accuracy                           0.44        72
+   macro avg       0.34      0.44      0.36        72
+weighted avg       0.34      0.44      0.36        72
+
+⚠️ Labels not predicted at all: {1064, 1002, 1003, 1036, 1006, 1041, 1009, 1045, 1046, 1048, 1050}
+XGBoost Top-1 Accuracy: 0.4444444444444444
+XGBoost Top-2 Accuracy: 0.625
+XGBoost Top-3 Accuracy: 0.7361111111111112
+XGBoost Top-4 Accuracy: 0.7916666666666666
+XGBoost Top-5 Accuracy: 0.8472222222222222
+Recognition Rate at rank 1: 0.44
+F1 Score: 0.3639329805996473
+Precision: 0.33710317460317457
+Recall: 0.4444444444444444
+With MinMaxScaler
+Minimum samples per class in training set: 4
+Fitting 2 folds for each of 216 candidates, totalling 432 fits
+XGBoost Accuracy: 0.4444444444444444
+Classification Report:
+              precision    recall  f1-score   support
+
+        1001       0.50      0.50      0.50         2
+        1002       0.00      0.00      0.00         2
+        1003       0.00      0.00      0.00         2
+        1004       1.00      0.50      0.67         2
+        1005       0.33      0.50      0.40         2
+        1006       0.00      0.00      0.00         2
+        1007       0.00      0.00      0.00         2
+        1008       0.25      0.50      0.33         2
+        1009       0.00      0.00      0.00         2
+        1012       1.00      0.50      0.67         2
+        1013       0.33      0.50      0.40         2
+        1029       0.29      1.00      0.44         2
+        1036       0.00      0.00      0.00         2
+        1037       0.67      1.00      0.80         2
+        1039       0.50      0.50      0.50         2
+        1041       0.00      0.00      0.00         2
+        1042       0.50      1.00      0.67         2
+        1043       0.00      0.00      0.00         2
+        1044       0.50      0.50      0.50         2
+        1045       0.00      0.00      0.00         2
+        1046       0.00      0.00      0.00         2
+        1047       0.20      0.50      0.29         2
+        1048       0.00      0.00      0.00         2
+        1049       0.33      0.50      0.40         2
+        1050       0.00      0.00      0.00         2
+        1051       0.33      0.50      0.40         2
+        1052       0.00      0.00      0.00         2
+        1053       0.40      1.00      0.57         2
+        1054       0.67      1.00      0.80         2
+        1055       0.67      1.00      0.80         2
+        1056       1.00      1.00      1.00         2
+        1057       1.00      1.00      1.00         2
+        1058       0.67      1.00      0.80         2
+        1062       0.50      1.00      0.67         2
+        1063       0.50      0.50      0.50         2
+        1064       0.00      0.00      0.00         2
+
+    accuracy                           0.44        72
+   macro avg       0.34      0.44      0.36        72
+weighted avg       0.34      0.44      0.36        72
+
+⚠️ Labels not predicted at all: {1064, 1002, 1003, 1036, 1006, 1041, 1009, 1045, 1046, 1048, 1050}
+XGBoost Top-1 Accuracy: 0.4444444444444444
+XGBoost Top-2 Accuracy: 0.625
+XGBoost Top-3 Accuracy: 0.7361111111111112
+XGBoost Top-4 Accuracy: 0.7916666666666666
+XGBoost Top-5 Accuracy: 0.8472222222222222
+Recognition Rate at rank 1: 0.44
+F1 Score: 0.3639329805996473
+Precision: 0.33710317460317457
+Recall: 0.4444444444444444
+IT vs. F
+Index(['Key.backspaceKey.backspace_median', 'Key.backspaceKey.backspace_mean',
+       'Key.backspaceKey.backspace_stdev', 'Key.backspaceKey.backspace_q1',
+       'Key.backspaceKey.backspace_q3', 'eKey.space_median', 'eKey.space_mean',
+       'eKey.space_stdev', 'eKey.space_q1', 'eKey.space_q3',
+       'Key.spacet_median', 'Key.spacet_mean', 'Key.spacet_stdev',
+       'Key.spacet_q1', 'Key.spacet_q3', 'tKey.space_median',
+       'tKey.space_mean', 'tKey.space_stdev', 'tKey.space_q1', 'tKey.space_q3',
+       'sKey.space_median', 'sKey.space_mean', 'sKey.space_stdev',
+       'sKey.space_q1', 'sKey.space_q3', 'Key.spacea_median',
+       'Key.spacea_mean', 'Key.spacea_stdev', 'Key.spacea_q1', 'Key.spacea_q3',
+       'th_median', 'th_mean', 'th_stdev', 'th_q1', 'th_q3',
+       'nKey.space_median', 'nKey.space_mean', 'nKey.space_stdev',
+       'nKey.space_q1', 'nKey.space_q3', 'Key.spacei_median',
+       'Key.spacei_mean', 'Key.spacei_stdev', 'Key.spacei_q1', 'Key.spacei_q3',
+       'Key.spaces_median', 'Key.spaces_mean', 'Key.spaces_stdev',
+       'Key.spaces_q1', 'Key.spaces_q3'],
+      dtype='object')
+144
+Random Forest: IT vs. F results:
+With StandardScaler
+Minimum samples per class in training set: 4
+Minimum samples per class in test set: 2
+Fitting 2 folds for each of 648 candidates, totalling 1296 fits
+Random Forest Accuracy: 0.8611111111111112
+Random Forest Top-1 Accuracy: 0.8472222222222222
+Random Forest Top-2 Accuracy: 0.9166666666666666
+Random Forest Top-3 Accuracy: 0.9305555555555556
+Random Forest Top-4 Accuracy: 0.9444444444444444
+Random Forest Top-5 Accuracy: 0.9444444444444444
+F1 Score: 0.8537037037037036
+Precision: 0.875
+Recall: 0.8611111111111112
+With MinMaxScaler
+Minimum samples per class in training set: 4
+Minimum samples per class in test set: 2
+Fitting 2 folds for each of 648 candidates, totalling 1296 fits
+Random Forest Accuracy: 0.8611111111111112
+Random Forest Top-1 Accuracy: 0.8472222222222222
+Random Forest Top-2 Accuracy: 0.9166666666666666
+Random Forest Top-3 Accuracy: 0.9305555555555556
+Random Forest Top-4 Accuracy: 0.9444444444444444
+Random Forest Top-5 Accuracy: 0.9444444444444444
+F1 Score: 0.8537037037037036
+Precision: 0.875
+Recall: 0.8611111111111112
+XGBoost: IT vs. F results
+With StandardScaler
+Minimum samples per class in training set: 4
+Fitting 2 folds for each of 216 candidates, totalling 432 fits
+XGBoost Accuracy: 0.5416666666666666
+Classification Report:
+              precision    recall  f1-score   support
+
+        1001       1.00      0.50      0.67         2
+        1002       0.00      0.00      0.00         2
+        1003       0.00      0.00      0.00         2
+        1004       0.67      1.00      0.80         2
+        1005       0.50      0.50      0.50         2
+        1006       0.50      0.50      0.50         2
+        1007       1.00      0.50      0.67         2
+        1008       0.50      0.50      0.50         2
+        1009       0.33      1.00      0.50         2
+        1012       0.00      0.00      0.00         2
+        1013       1.00      1.00      1.00         2
+        1029       0.00      0.00      0.00         2
+        1036       1.00      0.50      0.67         2
+        1037       1.00      0.50      0.67         2
+        1039       1.00      0.50      0.67         2
+        1041       1.00      0.50      0.67         2
+        1042       0.50      1.00      0.67         2
+        1043       0.33      0.50      0.40         2
+        1044       1.00      1.00      1.00         2
+        1045       0.50      1.00      0.67         2
+        1046       1.00      1.00      1.00         2
+        1047       0.00      0.00      0.00         2
+        1048       0.33      0.50      0.40         2
+        1049       0.25      0.50      0.33         2
+        1050       0.33      0.50      0.40         2
+        1051       0.67      1.00      0.80         2
+        1052       0.00      0.00      0.00         2
+        1053       0.00      0.00      0.00         2
+        1054       0.67      1.00      0.80         2
+        1055       0.00      0.00      0.00         2
+        1056       1.00      1.00      1.00         2
+        1057       0.50      1.00      0.67         2
+        1058       1.00      0.50      0.67         2
+        1062       1.00      0.50      0.67         2
+        1063       1.00      0.50      0.67         2
+        1064       0.50      0.50      0.50         2
+
+    accuracy                           0.54        72
+   macro avg       0.56      0.54      0.51        72
+weighted avg       0.56      0.54      0.51        72
+
+⚠️ Labels not predicted at all: {1002, 1055, 1012, 1047}
+XGBoost Top-1 Accuracy: 0.5416666666666666
+XGBoost Top-2 Accuracy: 0.7361111111111112
+XGBoost Top-3 Accuracy: 0.7638888888888888
+XGBoost Top-4 Accuracy: 0.8055555555555556
+XGBoost Top-5 Accuracy: 0.8472222222222222
+Recognition Rate at rank 1: 0.54
+F1 Score: 0.5120370370370372
+Precision: 0.5578703703703703
+Recall: 0.5416666666666666
+With MinMaxScaler
+Minimum samples per class in training set: 4
+Fitting 2 folds for each of 216 candidates, totalling 432 fits
+XGBoost Accuracy: 0.5416666666666666
+Classification Report:
+              precision    recall  f1-score   support
+
+        1001       1.00      0.50      0.67         2
+        1002       0.00      0.00      0.00         2
+        1003       0.00      0.00      0.00         2
+        1004       0.67      1.00      0.80         2
+        1005       0.50      0.50      0.50         2
+        1006       0.50      0.50      0.50         2
+        1007       1.00      0.50      0.67         2
+        1008       0.50      0.50      0.50         2
+        1009       0.33      1.00      0.50         2
+        1012       0.00      0.00      0.00         2
+        1013       1.00      1.00      1.00         2
+        1029       0.00      0.00      0.00         2
+        1036       1.00      0.50      0.67         2
+        1037       1.00      0.50      0.67         2
+        1039       1.00      0.50      0.67         2
+        1041       1.00      0.50      0.67         2
+        1042       0.50      1.00      0.67         2
+        1043       0.33      0.50      0.40         2
+        1044       1.00      1.00      1.00         2
+        1045       0.50      1.00      0.67         2
+        1046       1.00      1.00      1.00         2
+        1047       0.00      0.00      0.00         2
+        1048       0.33      0.50      0.40         2
+        1049       0.25      0.50      0.33         2
+        1050       0.33      0.50      0.40         2
+        1051       0.67      1.00      0.80         2
+        1052       0.00      0.00      0.00         2
+        1053       0.00      0.00      0.00         2
+        1054       0.67      1.00      0.80         2
+        1055       0.00      0.00      0.00         2
+        1056       1.00      1.00      1.00         2
+        1057       0.50      1.00      0.67         2
+        1058       1.00      0.50      0.67         2
+        1062       1.00      0.50      0.67         2
+        1063       1.00      0.50      0.67         2
+        1064       0.50      0.50      0.50         2
+
+    accuracy                           0.54        72
+   macro avg       0.56      0.54      0.51        72
+weighted avg       0.56      0.54      0.51        72
+
+⚠️ Labels not predicted at all: {1002, 1055, 1012, 1047}
+XGBoost Top-1 Accuracy: 0.5416666666666666
+XGBoost Top-2 Accuracy: 0.7361111111111112
+XGBoost Top-3 Accuracy: 0.7638888888888888
+XGBoost Top-4 Accuracy: 0.8055555555555556
+XGBoost Top-5 Accuracy: 0.8472222222222222
+Recognition Rate at rank 1: 0.54
+F1 Score: 0.5120370370370372
+Precision: 0.5578703703703703
+Recall: 0.5416666666666666
+TF vs. I
+Index(['Key.backspaceKey.backspace_median', 'Key.backspaceKey.backspace_mean',
+       'Key.backspaceKey.backspace_stdev', 'Key.backspaceKey.backspace_q1',
+       'Key.backspaceKey.backspace_q3', 'eKey.space_median', 'eKey.space_mean',
+       'eKey.space_stdev', 'eKey.space_q1', 'eKey.space_q3',
+       'Key.spacet_median', 'Key.spacet_mean', 'Key.spacet_stdev',
+       'Key.spacet_q1', 'Key.spacet_q3', 'tKey.space_median',
+       'tKey.space_mean', 'tKey.space_stdev', 'tKey.space_q1', 'tKey.space_q3',
+       'sKey.space_median', 'sKey.space_mean', 'sKey.space_stdev',
+       'sKey.space_q1', 'sKey.space_q3', 'Key.spacea_median',
+       'Key.spacea_mean', 'Key.spacea_stdev', 'Key.spacea_q1', 'Key.spacea_q3',
+       'th_median', 'th_mean', 'th_stdev', 'th_q1', 'th_q3',
+       'nKey.space_median', 'nKey.space_mean', 'nKey.space_stdev',
+       'nKey.space_q1', 'nKey.space_q3', 'Key.spacei_median',
+       'Key.spacei_mean', 'Key.spacei_stdev', 'Key.spacei_q1', 'Key.spacei_q3',
+       'Key.spaces_median', 'Key.spaces_mean', 'Key.spaces_stdev',
+       'Key.spaces_q1', 'Key.spaces_q3'],
+      dtype='object')
+144
+Random Forest: TF vs. I results:
+With StandardScaler
+Minimum samples per class in training set: 4
+Minimum samples per class in test set: 2
+Fitting 2 folds for each of 648 candidates, totalling 1296 fits
+Random Forest Accuracy: 0.8055555555555556
+Random Forest Top-1 Accuracy: 0.8055555555555556
+Random Forest Top-2 Accuracy: 0.9166666666666666
+Random Forest Top-3 Accuracy: 0.9166666666666666
+Random Forest Top-4 Accuracy: 0.9722222222222222
+Random Forest Top-5 Accuracy: 1.0
+F1 Score: 0.7944444444444444
+Precision: 0.8472222222222222
+Recall: 0.8055555555555556
+With MinMaxScaler
+Minimum samples per class in training set: 4
+Minimum samples per class in test set: 2
+Fitting 2 folds for each of 648 candidates, totalling 1296 fits
+Random Forest Accuracy: 0.8055555555555556
+Random Forest Top-1 Accuracy: 0.8055555555555556
+Random Forest Top-2 Accuracy: 0.9166666666666666
+Random Forest Top-3 Accuracy: 0.9166666666666666
+Random Forest Top-4 Accuracy: 0.9722222222222222
+Random Forest Top-5 Accuracy: 1.0
+F1 Score: 0.7944444444444444
+Precision: 0.8472222222222222
+Recall: 0.8055555555555556
+XGBoost: TF vs. I results
+With StandardScaler
+Minimum samples per class in training set: 4
+Fitting 2 folds for each of 216 candidates, totalling 432 fits
+XGBoost Accuracy: 0.4722222222222222
+Classification Report:
+              precision    recall  f1-score   support
+
+        1001       1.00      1.00      1.00         2
+        1002       0.33      0.50      0.40         2
+        1003       0.40      1.00      0.57         2
+        1004       0.00      0.00      0.00         2
+        1005       0.29      1.00      0.44         2
+        1006       0.50      0.50      0.50         2
+        1007       1.00      0.50      0.67         2
+        1008       1.00      0.50      0.67         2
+        1009       0.00      0.00      0.00         2
+        1012       1.00      0.50      0.67         2
+        1013       0.00      0.00      0.00         2
+        1029       0.00      0.00      0.00         2
+        1036       0.00      0.00      0.00         2
+        1037       0.25      0.50      0.33         2
+        1039       0.50      0.50      0.50         2
+        1041       0.50      0.50      0.50         2
+        1042       0.33      0.50      0.40         2
+        1043       1.00      0.50      0.67         2
+        1044       0.25      0.50      0.33         2
+        1045       1.00      1.00      1.00         2
+        1046       0.50      1.00      0.67         2
+        1047       1.00      0.50      0.67         2
+        1048       0.00      0.00      0.00         2
+        1049       0.50      0.50      0.50         2
+        1050       1.00      0.50      0.67         2
+        1051       1.00      0.50      0.67         2
+        1052       0.00      0.00      0.00         2
+        1053       0.00      0.00      0.00         2
+        1054       0.00      0.00      0.00         2
+        1055       0.50      1.00      0.67         2
+        1056       1.00      0.50      0.67         2
+        1057       0.67      1.00      0.80         2
+        1058       1.00      1.00      1.00         2
+        1062       0.00      0.00      0.00         2
+        1063       0.50      0.50      0.50         2
+        1064       1.00      0.50      0.67         2
+
+    accuracy                           0.47        72
+   macro avg       0.50      0.47      0.45        72
+weighted avg       0.50      0.47      0.45        72
+
+⚠️ Labels not predicted at all: {1036, 1004, 1009, 1013, 1054}
+XGBoost Top-1 Accuracy: 0.4722222222222222
+XGBoost Top-2 Accuracy: 0.6666666666666666
+XGBoost Top-3 Accuracy: 0.8472222222222222
+XGBoost Top-4 Accuracy: 0.8888888888888888
+XGBoost Top-5 Accuracy: 0.9027777777777778
+Recognition Rate at rank 1: 0.47
+F1 Score: 0.44766313932980606
+Precision: 0.5005291005291005
+Recall: 0.4722222222222222
+With MinMaxScaler
+Minimum samples per class in training set: 4
+Fitting 2 folds for each of 216 candidates, totalling 432 fits
+XGBoost Accuracy: 0.4722222222222222
+Classification Report:
+              precision    recall  f1-score   support
+
+        1001       1.00      1.00      1.00         2
+        1002       0.33      0.50      0.40         2
+        1003       0.40      1.00      0.57         2
+        1004       0.00      0.00      0.00         2
+        1005       0.29      1.00      0.44         2
+        1006       0.50      0.50      0.50         2
+        1007       1.00      0.50      0.67         2
+        1008       1.00      0.50      0.67         2
+        1009       0.00      0.00      0.00         2
+        1012       1.00      0.50      0.67         2
+        1013       0.00      0.00      0.00         2
+        1029       0.00      0.00      0.00         2
+        1036       0.00      0.00      0.00         2
+        1037       0.25      0.50      0.33         2
+        1039       0.50      0.50      0.50         2
+        1041       0.50      0.50      0.50         2
+        1042       0.33      0.50      0.40         2
+        1043       1.00      0.50      0.67         2
+        1044       0.25      0.50      0.33         2
+        1045       1.00      1.00      1.00         2
+        1046       0.50      1.00      0.67         2
+        1047       1.00      0.50      0.67         2
+        1048       0.00      0.00      0.00         2
+        1049       0.50      0.50      0.50         2
+        1050       1.00      0.50      0.67         2
+        1051       1.00      0.50      0.67         2
+        1052       0.00      0.00      0.00         2
+        1053       0.00      0.00      0.00         2
+        1054       0.00      0.00      0.00         2
+        1055       0.50      1.00      0.67         2
+        1056       1.00      0.50      0.67         2
+        1057       0.67      1.00      0.80         2
+        1058       1.00      1.00      1.00         2
+        1062       0.00      0.00      0.00         2
+        1063       0.50      0.50      0.50         2
+        1064       1.00      0.50      0.67         2
+
+    accuracy                           0.47        72
+   macro avg       0.50      0.47      0.45        72
+weighted avg       0.50      0.47      0.45        72
+
+⚠️ Labels not predicted at all: {1036, 1004, 1009, 1013, 1054}
+XGBoost Top-1 Accuracy: 0.4722222222222222
+XGBoost Top-2 Accuracy: 0.6666666666666666
+XGBoost Top-3 Accuracy: 0.8472222222222222
+XGBoost Top-4 Accuracy: 0.8888888888888888
+XGBoost Top-5 Accuracy: 0.9027777777777778
+Recognition Rate at rank 1: 0.47
+F1 Score: 0.44766313932980606
+Precision: 0.5005291005291005
+Recall: 0.4722222222222222
+TI vs. F
+Index(['Key.backspaceKey.backspace_median', 'Key.backspaceKey.backspace_mean',
+       'Key.backspaceKey.backspace_stdev', 'Key.backspaceKey.backspace_q1',
+       'Key.backspaceKey.backspace_q3', 'eKey.space_median', 'eKey.space_mean',
+       'eKey.space_stdev', 'eKey.space_q1', 'eKey.space_q3',
+       'Key.spacet_median', 'Key.spacet_mean', 'Key.spacet_stdev',
+       'Key.spacet_q1', 'Key.spacet_q3', 'tKey.space_median',
+       'tKey.space_mean', 'tKey.space_stdev', 'tKey.space_q1', 'tKey.space_q3',
+       'sKey.space_median', 'sKey.space_mean', 'sKey.space_stdev',
+       'sKey.space_q1', 'sKey.space_q3', 'Key.spacea_median',
+       'Key.spacea_mean', 'Key.spacea_stdev', 'Key.spacea_q1', 'Key.spacea_q3',
+       'th_median', 'th_mean', 'th_stdev', 'th_q1', 'th_q3',
+       'nKey.space_median', 'nKey.space_mean', 'nKey.space_stdev',
+       'nKey.space_q1', 'nKey.space_q3', 'Key.spacei_median',
+       'Key.spacei_mean', 'Key.spacei_stdev', 'Key.spacei_q1', 'Key.spacei_q3',
+       'Key.spaces_median', 'Key.spaces_mean', 'Key.spaces_stdev',
+       'Key.spaces_q1', 'Key.spaces_q3'],
+      dtype='object')
+144
+Random Forest: TI vs. F results:
+With StandardScaler
+Minimum samples per class in training set: 4
+Minimum samples per class in test set: 2
+Fitting 2 folds for each of 648 candidates, totalling 1296 fits
+Random Forest Accuracy: 0.8611111111111112
+Random Forest Top-1 Accuracy: 0.8472222222222222
+Random Forest Top-2 Accuracy: 0.9166666666666666
+Random Forest Top-3 Accuracy: 0.9305555555555556
+Random Forest Top-4 Accuracy: 0.9444444444444444
+Random Forest Top-5 Accuracy: 0.9444444444444444
+F1 Score: 0.8537037037037036
+Precision: 0.875
+Recall: 0.8611111111111112
+With MinMaxScaler
+Minimum samples per class in training set: 4
+Minimum samples per class in test set: 2
+Fitting 2 folds for each of 648 candidates, totalling 1296 fits
+Random Forest Accuracy: 0.8611111111111112
+Random Forest Top-1 Accuracy: 0.8472222222222222
+Random Forest Top-2 Accuracy: 0.9166666666666666
+Random Forest Top-3 Accuracy: 0.9305555555555556
+Random Forest Top-4 Accuracy: 0.9444444444444444
+Random Forest Top-5 Accuracy: 0.9444444444444444
+F1 Score: 0.8537037037037036
+Precision: 0.875
+Recall: 0.8611111111111112
+XGBoost: TI vs. F results
+With StandardScaler
+Minimum samples per class in training set: 4
+Fitting 2 folds for each of 216 candidates, totalling 432 fits
+XGBoost Accuracy: 0.5416666666666666
+Classification Report:
+              precision    recall  f1-score   support
+
+        1001       1.00      0.50      0.67         2
+        1002       0.00      0.00      0.00         2
+        1003       0.00      0.00      0.00         2
+        1004       0.67      1.00      0.80         2
+        1005       0.50      0.50      0.50         2
+        1006       0.50      0.50      0.50         2
+        1007       1.00      0.50      0.67         2
+        1008       0.50      0.50      0.50         2
+        1009       0.33      1.00      0.50         2
+        1012       0.00      0.00      0.00         2
+        1013       1.00      1.00      1.00         2
+        1029       0.00      0.00      0.00         2
+        1036       1.00      0.50      0.67         2
+        1037       1.00      0.50      0.67         2
+        1039       1.00      0.50      0.67         2
+        1041       1.00      0.50      0.67         2
+        1042       0.50      1.00      0.67         2
+        1043       0.33      0.50      0.40         2
+        1044       1.00      1.00      1.00         2
+        1045       0.50      1.00      0.67         2
+        1046       1.00      1.00      1.00         2
+        1047       0.00      0.00      0.00         2
+        1048       0.33      0.50      0.40         2
+        1049       0.25      0.50      0.33         2
+        1050       0.33      0.50      0.40         2
+        1051       0.67      1.00      0.80         2
+        1052       0.00      0.00      0.00         2
+        1053       0.00      0.00      0.00         2
+        1054       0.67      1.00      0.80         2
+        1055       0.00      0.00      0.00         2
+        1056       1.00      1.00      1.00         2
+        1057       0.50      1.00      0.67         2
+        1058       1.00      0.50      0.67         2
+        1062       1.00      0.50      0.67         2
+        1063       1.00      0.50      0.67         2
+        1064       0.50      0.50      0.50         2
+
+    accuracy                           0.54        72
+   macro avg       0.56      0.54      0.51        72
+weighted avg       0.56      0.54      0.51        72
+
+⚠️ Labels not predicted at all: {1002, 1055, 1012, 1047}
+XGBoost Top-1 Accuracy: 0.5416666666666666
+XGBoost Top-2 Accuracy: 0.7361111111111112
+XGBoost Top-3 Accuracy: 0.7638888888888888
+XGBoost Top-4 Accuracy: 0.8055555555555556
+XGBoost Top-5 Accuracy: 0.8472222222222222
+Recognition Rate at rank 1: 0.54
+F1 Score: 0.5120370370370372
+Precision: 0.5578703703703703
+Recall: 0.5416666666666666
+With MinMaxScaler
+Minimum samples per class in training set: 4
+Fitting 2 folds for each of 216 candidates, totalling 432 fits
+XGBoost Accuracy: 0.5416666666666666
+Classification Report:
+              precision    recall  f1-score   support
+
+        1001       1.00      0.50      0.67         2
+        1002       0.00      0.00      0.00         2
+        1003       0.00      0.00      0.00         2
+        1004       0.67      1.00      0.80         2
+        1005       0.50      0.50      0.50         2
+        1006       0.50      0.50      0.50         2
+        1007       1.00      0.50      0.67         2
+        1008       0.50      0.50      0.50         2
+        1009       0.33      1.00      0.50         2
+        1012       0.00      0.00      0.00         2
+        1013       1.00      1.00      1.00         2
+        1029       0.00      0.00      0.00         2
+        1036       1.00      0.50      0.67         2
+        1037       1.00      0.50      0.67         2
+        1039       1.00      0.50      0.67         2
+        1041       1.00      0.50      0.67         2
+        1042       0.50      1.00      0.67         2
+        1043       0.33      0.50      0.40         2
+        1044       1.00      1.00      1.00         2
+        1045       0.50      1.00      0.67         2
+        1046       1.00      1.00      1.00         2
+        1047       0.00      0.00      0.00         2
+        1048       0.33      0.50      0.40         2
+        1049       0.25      0.50      0.33         2
+        1050       0.33      0.50      0.40         2
+        1051       0.67      1.00      0.80         2
+        1052       0.00      0.00      0.00         2
+        1053       0.00      0.00      0.00         2
+        1054       0.67      1.00      0.80         2
+        1055       0.00      0.00      0.00         2
+        1056       1.00      1.00      1.00         2
+        1057       0.50      1.00      0.67         2
+        1058       1.00      0.50      0.67         2
+        1062       1.00      0.50      0.67         2
+        1063       1.00      0.50      0.67         2
+        1064       0.50      0.50      0.50         2
+
+    accuracy                           0.54        72
+   macro avg       0.56      0.54      0.51        72
+weighted avg       0.56      0.54      0.51        72
+
+⚠️ Labels not predicted at all: {1002, 1055, 1012, 1047}
+XGBoost Top-1 Accuracy: 0.5416666666666666
+XGBoost Top-2 Accuracy: 0.7361111111111112
+XGBoost Top-3 Accuracy: 0.7638888888888888
+XGBoost Top-4 Accuracy: 0.8055555555555556
+XGBoost Top-5 Accuracy: 0.8472222222222222
+Recognition Rate at rank 1: 0.54
+F1 Score: 0.5120370370370372
+Precision: 0.5578703703703703
+Recall: 0.5416666666666666
+F vs. I
+Index(['Key.backspaceKey.backspace_median', 'Key.backspaceKey.backspace_mean',
+       'Key.backspaceKey.backspace_stdev', 'Key.backspaceKey.backspace_q1',
+       'Key.backspaceKey.backspace_q3', 'eKey.space_median', 'eKey.space_mean',
+       'eKey.space_stdev', 'eKey.space_q1', 'eKey.space_q3',
+       'Key.spacet_median', 'Key.spacet_mean', 'Key.spacet_stdev',
+       'Key.spacet_q1', 'Key.spacet_q3', 'tKey.space_median',
+       'tKey.space_mean', 'tKey.space_stdev', 'tKey.space_q1', 'tKey.space_q3',
+       'sKey.space_median', 'sKey.space_mean', 'sKey.space_stdev',
+       'sKey.space_q1', 'sKey.space_q3', 'Key.spacea_median',
+       'Key.spacea_mean', 'Key.spacea_stdev', 'Key.spacea_q1', 'Key.spacea_q3',
+       'th_median', 'th_mean', 'th_stdev', 'th_q1', 'th_q3',
+       'nKey.space_median', 'nKey.space_mean', 'nKey.space_stdev',
+       'nKey.space_q1', 'nKey.space_q3', 'Key.spacei_median',
+       'Key.spacei_mean', 'Key.spacei_stdev', 'Key.spacei_q1', 'Key.spacei_q3',
+       'Key.spaces_median', 'Key.spaces_mean', 'Key.spaces_stdev',
+       'Key.spaces_q1', 'Key.spaces_q3'],
+      dtype='object')
+72
+Random Forest: F vs. I results:
+With StandardScaler
+Minimum samples per class in training set: 2
+Minimum samples per class in test set: 2
+Fitting 2 folds for each of 648 candidates, totalling 1296 fits
+Random Forest Accuracy: 0.6805555555555556
+Random Forest Top-1 Accuracy: 0.6805555555555556
+Random Forest Top-2 Accuracy: 0.75
+Random Forest Top-3 Accuracy: 0.8333333333333334
+Random Forest Top-4 Accuracy: 0.8611111111111112
+Random Forest Top-5 Accuracy: 0.9027777777777778
+F1 Score: 0.6555555555555556
+Precision: 0.6851851851851852
+Recall: 0.6805555555555556
+With MinMaxScaler
+Minimum samples per class in training set: 2
+Minimum samples per class in test set: 2
+Fitting 2 folds for each of 648 candidates, totalling 1296 fits
+Random Forest Accuracy: 0.6805555555555556
+Random Forest Top-1 Accuracy: 0.6805555555555556
+Random Forest Top-2 Accuracy: 0.75
+Random Forest Top-3 Accuracy: 0.8333333333333334
+Random Forest Top-4 Accuracy: 0.8611111111111112
+Random Forest Top-5 Accuracy: 0.9027777777777778
+F1 Score: 0.6555555555555556
+Precision: 0.6851851851851852
+Recall: 0.6805555555555556
+XGBoost: F vs. I results
+With StandardScaler
+Minimum samples per class in training set: 2
+Fitting 2 folds for each of 216 candidates, totalling 432 fits
+XGBoost Accuracy: 0.4583333333333333
+Classification Report:
+              precision    recall  f1-score   support
+
+        1001       0.00      0.00      0.00         2
+        1002       0.50      1.00      0.67         2
+        1003       0.33      0.50      0.40         2
+        1004       0.00      0.00      0.00         2
+        1005       0.22      1.00      0.36         2
+        1006       0.00      0.00      0.00         2
+        1007       1.00      0.50      0.67         2
+        1008       0.00      0.00      0.00         2
+        1009       0.00      0.00      0.00         2
+        1012       1.00      0.50      0.67         2
+        1013       1.00      1.00      1.00         2
+        1029       0.00      0.00      0.00         2
+        1036       0.50      0.50      0.50         2
+        1037       0.67      1.00      0.80         2
+        1039       0.50      0.50      0.50         2
+        1041       0.50      0.50      0.50         2
+        1042       1.00      0.50      0.67         2
+        1043       0.33      0.50      0.40         2
+        1044       1.00      0.50      0.67         2
+        1045       0.67      1.00      0.80         2
+        1046       1.00      0.50      0.67         2
+        1047       0.00      0.00      0.00         2
+        1048       0.00      0.00      0.00         2
+        1049       0.25      0.50      0.33         2
+        1050       0.50      0.50      0.50         2
+        1051       1.00      0.50      0.67         2
+        1052       0.00      0.00      0.00         2
+        1053       0.00      0.00      0.00         2
+        1054       0.00      0.00      0.00         2
+        1055       0.50      1.00      0.67         2
+        1056       1.00      0.50      0.67         2
+        1057       1.00      1.00      1.00         2
+        1058       0.50      0.50      0.50         2
+        1062       0.50      0.50      0.50         2
+        1063       1.00      0.50      0.67         2
+        1064       1.00      1.00      1.00         2
+
+    accuracy                           0.46        72
+   macro avg       0.49      0.46      0.44        72
+weighted avg       0.49      0.46      0.44        72
+
+⚠️ Labels not predicted at all: {1048, 1001, 1004, 1047}
+XGBoost Top-1 Accuracy: 0.4583333333333333
+XGBoost Top-2 Accuracy: 0.6666666666666666
+XGBoost Top-3 Accuracy: 0.8055555555555556
+XGBoost Top-4 Accuracy: 0.8472222222222222
+XGBoost Top-5 Accuracy: 0.8611111111111112
+Recognition Rate at rank 1: 0.46
+F1 Score: 0.4378787878787878
+Precision: 0.4853395061728395
+Recall: 0.4583333333333333
+With MinMaxScaler
+Minimum samples per class in training set: 2
+Fitting 2 folds for each of 216 candidates, totalling 432 fits
+XGBoost Accuracy: 0.4583333333333333
+Classification Report:
+              precision    recall  f1-score   support
+
+        1001       0.00      0.00      0.00         2
+        1002       0.50      1.00      0.67         2
+        1003       0.33      0.50      0.40         2
+        1004       0.00      0.00      0.00         2
+        1005       0.22      1.00      0.36         2
+        1006       0.00      0.00      0.00         2
+        1007       1.00      0.50      0.67         2
+        1008       0.00      0.00      0.00         2
+        1009       0.00      0.00      0.00         2
+        1012       1.00      0.50      0.67         2
+        1013       1.00      1.00      1.00         2
+        1029       0.00      0.00      0.00         2
+        1036       0.50      0.50      0.50         2
+        1037       0.67      1.00      0.80         2
+        1039       0.50      0.50      0.50         2
+        1041       0.50      0.50      0.50         2
+        1042       1.00      0.50      0.67         2
+        1043       0.33      0.50      0.40         2
+        1044       1.00      0.50      0.67         2
+        1045       0.67      1.00      0.80         2
+        1046       1.00      0.50      0.67         2
+        1047       0.00      0.00      0.00         2
+        1048       0.00      0.00      0.00         2
+        1049       0.25      0.50      0.33         2
+        1050       0.50      0.50      0.50         2
+        1051       1.00      0.50      0.67         2
+        1052       0.00      0.00      0.00         2
+        1053       0.00      0.00      0.00         2
+        1054       0.00      0.00      0.00         2
+        1055       0.50      1.00      0.67         2
+        1056       1.00      0.50      0.67         2
+        1057       1.00      1.00      1.00         2
+        1058       0.50      0.50      0.50         2
+        1062       0.50      0.50      0.50         2
+        1063       1.00      0.50      0.67         2
+        1064       1.00      1.00      1.00         2
+
+    accuracy                           0.46        72
+   macro avg       0.49      0.46      0.44        72
+weighted avg       0.49      0.46      0.44        72
+
+⚠️ Labels not predicted at all: {1048, 1001, 1004, 1047}
+XGBoost Top-1 Accuracy: 0.4583333333333333
+XGBoost Top-2 Accuracy: 0.6666666666666666
+XGBoost Top-3 Accuracy: 0.8055555555555556
+XGBoost Top-4 Accuracy: 0.8472222222222222
+XGBoost Top-5 Accuracy: 0.8611111111111112
+Recognition Rate at rank 1: 0.46
+F1 Score: 0.4378787878787878
+Precision: 0.4853395061728395
+Recall: 0.4583333333333333
+F vs. T
+Index(['Key.backspaceKey.backspace_median', 'Key.backspaceKey.backspace_mean',
+       'Key.backspaceKey.backspace_stdev', 'Key.backspaceKey.backspace_q1',
+       'Key.backspaceKey.backspace_q3', 'eKey.space_median', 'eKey.space_mean',
+       'eKey.space_stdev', 'eKey.space_q1', 'eKey.space_q3',
+       'Key.spacet_median', 'Key.spacet_mean', 'Key.spacet_stdev',
+       'Key.spacet_q1', 'Key.spacet_q3', 'tKey.space_median',
+       'tKey.space_mean', 'tKey.space_stdev', 'tKey.space_q1', 'tKey.space_q3',
+       'sKey.space_median', 'sKey.space_mean', 'sKey.space_stdev',
+       'sKey.space_q1', 'sKey.space_q3', 'Key.spacea_median',
+       'Key.spacea_mean', 'Key.spacea_stdev', 'Key.spacea_q1', 'Key.spacea_q3',
+       'th_median', 'th_mean', 'th_stdev', 'th_q1', 'th_q3',
+       'nKey.space_median', 'nKey.space_mean', 'nKey.space_stdev',
+       'nKey.space_q1', 'nKey.space_q3', 'Key.spacei_median',
+       'Key.spacei_mean', 'Key.spacei_stdev', 'Key.spacei_q1', 'Key.spacei_q3',
+       'Key.spaces_median', 'Key.spaces_mean', 'Key.spaces_stdev',
+       'Key.spaces_q1', 'Key.spaces_q3'],
+      dtype='object')
+72
+Random Forest: F vs. T results:
+With StandardScaler
+Minimum samples per class in training set: 2
+Minimum samples per class in test set: 2
+Fitting 2 folds for each of 648 candidates, totalling 1296 fits
+Random Forest Accuracy: 0.6388888888888888
+Random Forest Top-1 Accuracy: 0.6388888888888888
+Random Forest Top-2 Accuracy: 0.7777777777777778
+Random Forest Top-3 Accuracy: 0.8333333333333334
+Random Forest Top-4 Accuracy: 0.8611111111111112
+Random Forest Top-5 Accuracy: 0.8888888888888888
+F1 Score: 0.6158730158730159
+Precision: 0.6499999999999999
+Recall: 0.6388888888888888
+With MinMaxScaler
+Minimum samples per class in training set: 2
+Minimum samples per class in test set: 2
+Fitting 2 folds for each of 648 candidates, totalling 1296 fits
+Random Forest Accuracy: 0.6388888888888888
+Random Forest Top-1 Accuracy: 0.6388888888888888
+Random Forest Top-2 Accuracy: 0.7777777777777778
+Random Forest Top-3 Accuracy: 0.8333333333333334
+Random Forest Top-4 Accuracy: 0.8611111111111112
+Random Forest Top-5 Accuracy: 0.8888888888888888
+F1 Score: 0.6158730158730159
+Precision: 0.6499999999999999
+Recall: 0.6388888888888888
+XGBoost: F vs. T results
+With StandardScaler
+Minimum samples per class in training set: 2
+Fitting 2 folds for each of 216 candidates, totalling 432 fits
+XGBoost Accuracy: 0.4583333333333333
+Classification Report:
+              precision    recall  f1-score   support
+
+        1001       0.67      1.00      0.80         2
+        1002       0.50      0.50      0.50         2
+        1003       0.33      0.50      0.40         2
+        1004       1.00      1.00      1.00         2
+        1005       0.00      0.00      0.00         2
+        1006       0.00      0.00      0.00         2
+        1007       0.00      0.00      0.00         2
+        1008       0.50      0.50      0.50         2
+        1009       0.00      0.00      0.00         2
+        1012       1.00      0.50      0.67         2
+        1013       0.50      1.00      0.67         2
+        1029       0.00      0.00      0.00         2
+        1036       1.00      0.50      0.67         2
+        1037       0.00      0.00      0.00         2
+        1039       0.00      0.00      0.00         2
+        1041       0.67      1.00      0.80         2
+        1042       1.00      1.00      1.00         2
+        1043       0.00      0.00      0.00         2
+        1044       1.00      1.00      1.00         2
+        1045       0.00      0.00      0.00         2
+        1046       0.00      0.00      0.00         2
+        1047       1.00      0.50      0.67         2
+        1048       0.00      0.00      0.00         2
+        1049       0.50      1.00      0.67         2
+        1050       0.00      0.00      0.00         2
+        1051       0.50      0.50      0.50         2
+        1052       0.00      0.00      0.00         2
+        1053       0.50      1.00      0.67         2
+        1054       0.00      0.00      0.00         2
+        1055       0.50      1.00      0.67         2
+        1056       1.00      1.00      1.00         2
+        1057       1.00      0.50      0.67         2
+        1058       0.50      0.50      0.50         2
+        1062       0.67      1.00      0.80         2
+        1063       0.50      0.50      0.50         2
+        1064       1.00      0.50      0.67         2
+
+    accuracy                           0.46        72
+   macro avg       0.44      0.46      0.42        72
+weighted avg       0.44      0.46      0.42        72
+
+⚠️ Labels not predicted at all: {1007, 1043, 1045, 1046, 1052}
+XGBoost Top-1 Accuracy: 0.4583333333333333
+XGBoost Top-2 Accuracy: 0.6805555555555556
+XGBoost Top-3 Accuracy: 0.75
+XGBoost Top-4 Accuracy: 0.7777777777777778
+XGBoost Top-5 Accuracy: 0.7916666666666666
+Recognition Rate at rank 1: 0.46
+F1 Score: 0.425
+Precision: 0.43981481481481477
+Recall: 0.4583333333333333
+With MinMaxScaler
+Minimum samples per class in training set: 2
+Fitting 2 folds for each of 216 candidates, totalling 432 fits
+XGBoost Accuracy: 0.4583333333333333
+Classification Report:
+              precision    recall  f1-score   support
+
+        1001       0.67      1.00      0.80         2
+        1002       0.50      0.50      0.50         2
+        1003       0.33      0.50      0.40         2
+        1004       1.00      1.00      1.00         2
+        1005       0.00      0.00      0.00         2
+        1006       0.00      0.00      0.00         2
+        1007       0.00      0.00      0.00         2
+        1008       0.50      0.50      0.50         2
+        1009       0.00      0.00      0.00         2
+        1012       1.00      0.50      0.67         2
+        1013       0.50      1.00      0.67         2
+        1029       0.00      0.00      0.00         2
+        1036       1.00      0.50      0.67         2
+        1037       0.00      0.00      0.00         2
+        1039       0.00      0.00      0.00         2
+        1041       0.67      1.00      0.80         2
+        1042       1.00      1.00      1.00         2
+        1043       0.00      0.00      0.00         2
+        1044       1.00      1.00      1.00         2
+        1045       0.00      0.00      0.00         2
+        1046       0.00      0.00      0.00         2
+        1047       1.00      0.50      0.67         2
+        1048       0.00      0.00      0.00         2
+        1049       0.50      1.00      0.67         2
+        1050       0.00      0.00      0.00         2
+        1051       0.50      0.50      0.50         2
+        1052       0.00      0.00      0.00         2
+        1053       0.50      1.00      0.67         2
+        1054       0.00      0.00      0.00         2
+        1055       0.50      1.00      0.67         2
+        1056       1.00      1.00      1.00         2
+        1057       1.00      0.50      0.67         2
+        1058       0.50      0.50      0.50         2
+        1062       0.67      1.00      0.80         2
+        1063       0.50      0.50      0.50         2
+        1064       1.00      0.50      0.67         2
+
+    accuracy                           0.46        72
+   macro avg       0.44      0.46      0.42        72
+weighted avg       0.44      0.46      0.42        72
+
+⚠️ Labels not predicted at all: {1007, 1043, 1045, 1046, 1052}
+XGBoost Top-1 Accuracy: 0.4583333333333333
+XGBoost Top-2 Accuracy: 0.6805555555555556
+XGBoost Top-3 Accuracy: 0.75
+XGBoost Top-4 Accuracy: 0.7777777777777778
+XGBoost Top-5 Accuracy: 0.7916666666666666
+Recognition Rate at rank 1: 0.46
+F1 Score: 0.425
+Precision: 0.43981481481481477
+Recall: 0.4583333333333333
+I vs. F
+Index(['Key.backspaceKey.backspace_median', 'Key.backspaceKey.backspace_mean',
+       'Key.backspaceKey.backspace_stdev', 'Key.backspaceKey.backspace_q1',
+       'Key.backspaceKey.backspace_q3', 'eKey.space_median', 'eKey.space_mean',
+       'eKey.space_stdev', 'eKey.space_q1', 'eKey.space_q3',
+       'Key.spacet_median', 'Key.spacet_mean', 'Key.spacet_stdev',
+       'Key.spacet_q1', 'Key.spacet_q3', 'tKey.space_median',
+       'tKey.space_mean', 'tKey.space_stdev', 'tKey.space_q1', 'tKey.space_q3',
+       'sKey.space_median', 'sKey.space_mean', 'sKey.space_stdev',
+       'sKey.space_q1', 'sKey.space_q3', 'Key.spacea_median',
+       'Key.spacea_mean', 'Key.spacea_stdev', 'Key.spacea_q1', 'Key.spacea_q3',
+       'th_median', 'th_mean', 'th_stdev', 'th_q1', 'th_q3',
+       'nKey.space_median', 'nKey.space_mean', 'nKey.space_stdev',
+       'nKey.space_q1', 'nKey.space_q3', 'Key.spacei_median',
+       'Key.spacei_mean', 'Key.spacei_stdev', 'Key.spacei_q1', 'Key.spacei_q3',
+       'Key.spaces_median', 'Key.spaces_mean', 'Key.spaces_stdev',
+       'Key.spaces_q1', 'Key.spaces_q3'],
+      dtype='object')
+72
+Random Forest: I vs. F results:
+With StandardScaler
+Minimum samples per class in training set: 2
+Minimum samples per class in test set: 2
+Fitting 2 folds for each of 648 candidates, totalling 1296 fits
+Random Forest Accuracy: 0.7222222222222222
+Random Forest Top-1 Accuracy: 0.7222222222222222
+Random Forest Top-2 Accuracy: 0.7638888888888888
+Random Forest Top-3 Accuracy: 0.8055555555555556
+Random Forest Top-4 Accuracy: 0.8611111111111112
+Random Forest Top-5 Accuracy: 0.8888888888888888
+F1 Score: 0.6944444444444444
+Precision: 0.7222222222222222
+Recall: 0.7222222222222222
+With MinMaxScaler
+Minimum samples per class in training set: 2
+Minimum samples per class in test set: 2
+Fitting 2 folds for each of 648 candidates, totalling 1296 fits
+Random Forest Accuracy: 0.7222222222222222
+Random Forest Top-1 Accuracy: 0.7222222222222222
+Random Forest Top-2 Accuracy: 0.7638888888888888
+Random Forest Top-3 Accuracy: 0.8055555555555556
+Random Forest Top-4 Accuracy: 0.8611111111111112
+Random Forest Top-5 Accuracy: 0.8888888888888888
+F1 Score: 0.6944444444444444
+Precision: 0.7222222222222222
+Recall: 0.7222222222222222
+XGBoost: I vs. F results
+With StandardScaler
+Minimum samples per class in training set: 2
+Fitting 2 folds for each of 216 candidates, totalling 432 fits
+XGBoost Accuracy: 0.5694444444444444
+Classification Report:
+              precision    recall  f1-score   support
+
+        1001       0.00      0.00      0.00         2
+        1002       1.00      0.50      0.67         2
+        1003       0.50      0.50      0.50         2
+        1004       1.00      0.50      0.67         2
+        1005       1.00      0.50      0.67         2
+        1006       0.50      1.00      0.67         2
+        1007       0.50      1.00      0.67         2
+        1008       1.00      0.50      0.67         2
+        1009       1.00      0.50      0.67         2
+        1012       1.00      0.50      0.67         2
+        1013       0.33      1.00      0.50         2
+        1029       0.00      0.00      0.00         2
+        1036       1.00      1.00      1.00         2
+        1037       1.00      0.50      0.67         2
+        1039       0.25      0.50      0.33         2
+        1041       0.00      0.00      0.00         2
+        1042       0.67      1.00      0.80         2
+        1043       1.00      0.50      0.67         2
+        1044       1.00      0.50      0.67         2
+        1045       1.00      1.00      1.00         2
+        1046       0.50      1.00      0.67         2
+        1047       0.00      0.00      0.00         2
+        1048       0.33      0.50      0.40         2
+        1049       0.50      0.50      0.50         2
+        1050       0.50      0.50      0.50         2
+        1051       0.67      1.00      0.80         2
+        1052       1.00      0.50      0.67         2
+        1053       0.00      0.00      0.00         2
+        1054       0.00      0.00      0.00         2
+        1055       1.00      1.00      1.00         2
+        1056       0.00      0.00      0.00         2
+        1057       0.40      1.00      0.57         2
+        1058       1.00      0.50      0.67         2
+        1062       0.50      0.50      0.50         2
+        1063       0.67      1.00      0.80         2
+        1064       0.67      1.00      0.80         2
+
+    accuracy                           0.57        72
+   macro avg       0.60      0.57      0.54        72
+weighted avg       0.60      0.57      0.54        72
+
+⚠️ Labels not predicted at all: {1041, 1054, 1047}
+XGBoost Top-1 Accuracy: 0.5694444444444444
+XGBoost Top-2 Accuracy: 0.6666666666666666
+XGBoost Top-3 Accuracy: 0.7638888888888888
+XGBoost Top-4 Accuracy: 0.8055555555555556
+XGBoost Top-5 Accuracy: 0.8472222222222222
+Recognition Rate at rank 1: 0.57
+F1 Score: 0.5371693121693122
+Precision: 0.5967592592592593
+Recall: 0.5694444444444444
+With MinMaxScaler
+Minimum samples per class in training set: 2
+Fitting 2 folds for each of 216 candidates, totalling 432 fits
+XGBoost Accuracy: 0.5694444444444444
+Classification Report:
+              precision    recall  f1-score   support
+
+        1001       0.00      0.00      0.00         2
+        1002       1.00      0.50      0.67         2
+        1003       0.50      0.50      0.50         2
+        1004       1.00      0.50      0.67         2
+        1005       1.00      0.50      0.67         2
+        1006       0.50      1.00      0.67         2
+        1007       0.50      1.00      0.67         2
+        1008       1.00      0.50      0.67         2
+        1009       1.00      0.50      0.67         2
+        1012       1.00      0.50      0.67         2
+        1013       0.33      1.00      0.50         2
+        1029       0.00      0.00      0.00         2
+        1036       1.00      1.00      1.00         2
+        1037       1.00      0.50      0.67         2
+        1039       0.25      0.50      0.33         2
+        1041       0.00      0.00      0.00         2
+        1042       0.67      1.00      0.80         2
+        1043       1.00      0.50      0.67         2
+        1044       1.00      0.50      0.67         2
+        1045       1.00      1.00      1.00         2
+        1046       0.50      1.00      0.67         2
+        1047       0.00      0.00      0.00         2
+        1048       0.33      0.50      0.40         2
+        1049       0.50      0.50      0.50         2
+        1050       0.50      0.50      0.50         2
+        1051       0.67      1.00      0.80         2
+        1052       1.00      0.50      0.67         2
+        1053       0.00      0.00      0.00         2
+        1054       0.00      0.00      0.00         2
+        1055       1.00      1.00      1.00         2
+        1056       0.00      0.00      0.00         2
+        1057       0.40      1.00      0.57         2
+        1058       1.00      0.50      0.67         2
+        1062       0.50      0.50      0.50         2
+        1063       0.67      1.00      0.80         2
+        1064       0.67      1.00      0.80         2
+
+    accuracy                           0.57        72
+   macro avg       0.60      0.57      0.54        72
+weighted avg       0.60      0.57      0.54        72
+
+⚠️ Labels not predicted at all: {1041, 1054, 1047}
+XGBoost Top-1 Accuracy: 0.5694444444444444
+XGBoost Top-2 Accuracy: 0.6666666666666666
+XGBoost Top-3 Accuracy: 0.7638888888888888
+XGBoost Top-4 Accuracy: 0.8055555555555556
+XGBoost Top-5 Accuracy: 0.8472222222222222
+Recognition Rate at rank 1: 0.57
+F1 Score: 0.5371693121693122
+Precision: 0.5967592592592593
+Recall: 0.5694444444444444
+I vs. T
+Index(['Key.backspaceKey.backspace_median', 'Key.backspaceKey.backspace_mean',
+       'Key.backspaceKey.backspace_stdev', 'Key.backspaceKey.backspace_q1',
+       'Key.backspaceKey.backspace_q3', 'eKey.space_median', 'eKey.space_mean',
+       'eKey.space_stdev', 'eKey.space_q1', 'eKey.space_q3',
+       'Key.spacet_median', 'Key.spacet_mean', 'Key.spacet_stdev',
+       'Key.spacet_q1', 'Key.spacet_q3', 'tKey.space_median',
+       'tKey.space_mean', 'tKey.space_stdev', 'tKey.space_q1', 'tKey.space_q3',
+       'sKey.space_median', 'sKey.space_mean', 'sKey.space_stdev',
+       'sKey.space_q1', 'sKey.space_q3', 'Key.spacea_median',
+       'Key.spacea_mean', 'Key.spacea_stdev', 'Key.spacea_q1', 'Key.spacea_q3',
+       'th_median', 'th_mean', 'th_stdev', 'th_q1', 'th_q3',
+       'nKey.space_median', 'nKey.space_mean', 'nKey.space_stdev',
+       'nKey.space_q1', 'nKey.space_q3', 'Key.spacei_median',
+       'Key.spacei_mean', 'Key.spacei_stdev', 'Key.spacei_q1', 'Key.spacei_q3',
+       'Key.spaces_median', 'Key.spaces_mean', 'Key.spaces_stdev',
+       'Key.spaces_q1', 'Key.spaces_q3'],
+      dtype='object')
+72
+Random Forest: I vs. T results:
+With StandardScaler
+Minimum samples per class in training set: 2
+Minimum samples per class in test set: 2
+Fitting 2 folds for each of 648 candidates, totalling 1296 fits
+Random Forest Accuracy: 0.6388888888888888
+Random Forest Top-1 Accuracy: 0.6388888888888888
+Random Forest Top-2 Accuracy: 0.7361111111111112
+Random Forest Top-3 Accuracy: 0.8055555555555556
+Random Forest Top-4 Accuracy: 0.8472222222222222
+Random Forest Top-5 Accuracy: 0.9166666666666666
+F1 Score: 0.5917989417989419
+Precision: 0.5898148148148148
+Recall: 0.6388888888888888
+With MinMaxScaler
+Minimum samples per class in training set: 2
+Minimum samples per class in test set: 2
+Fitting 2 folds for each of 648 candidates, totalling 1296 fits
+Random Forest Accuracy: 0.6388888888888888
+Random Forest Top-1 Accuracy: 0.6388888888888888
+Random Forest Top-2 Accuracy: 0.7361111111111112
+Random Forest Top-3 Accuracy: 0.8055555555555556
+Random Forest Top-4 Accuracy: 0.8472222222222222
+Random Forest Top-5 Accuracy: 0.9166666666666666
+F1 Score: 0.5917989417989419
+Precision: 0.5898148148148148
+Recall: 0.6388888888888888
+XGBoost: I vs. T results
+With StandardScaler
+Minimum samples per class in training set: 2
+Fitting 2 folds for each of 216 candidates, totalling 432 fits
+XGBoost Accuracy: 0.3888888888888889
+Classification Report:
+              precision    recall  f1-score   support
+
+        1001       0.50      0.50      0.50         2
+        1002       0.33      0.50      0.40         2
+        1003       0.00      0.00      0.00         2
+        1004       1.00      0.50      0.67         2
+        1005       0.00      0.00      0.00         2
+        1006       0.00      0.00      0.00         2
+        1007       0.33      0.50      0.40         2
+        1008       0.00      0.00      0.00         2
+        1009       0.00      0.00      0.00         2
+        1012       0.50      0.50      0.50         2
+        1013       0.50      1.00      0.67         2
+        1029       1.00      1.00      1.00         2
+        1036       1.00      0.50      0.67         2
+        1037       0.67      1.00      0.80         2
+        1039       0.50      0.50      0.50         2
+        1041       0.00      0.00      0.00         2
+        1042       0.22      1.00      0.36         2
+        1043       0.00      0.00      0.00         2
+        1044       0.00      0.00      0.00         2
+        1045       1.00      1.00      1.00         2
+        1046       0.00      0.00      0.00         2
+        1047       0.67      1.00      0.80         2
+        1048       0.00      0.00      0.00         2
+        1049       0.33      0.50      0.40         2
+        1050       0.00      0.00      0.00         2
+        1051       0.50      0.50      0.50         2
+        1052       0.00      0.00      0.00         2
+        1053       0.50      0.50      0.50         2
+        1054       1.00      0.50      0.67         2
+        1055       0.50      0.50      0.50         2
+        1056       0.00      0.00      0.00         2
+        1057       0.20      0.50      0.29         2
+        1058       0.00      0.00      0.00         2
+        1062       1.00      0.50      0.67         2
+        1063       0.33      0.50      0.40         2
+        1064       1.00      0.50      0.67         2
+
+    accuracy                           0.39        72
+   macro avg       0.38      0.39      0.36        72
+weighted avg       0.38      0.39      0.36        72
+
+⚠️ Labels not predicted at all: {1056, 1003, 1005, 1044, 1052}
+XGBoost Top-1 Accuracy: 0.3888888888888889
+XGBoost Top-2 Accuracy: 0.5833333333333334
+XGBoost Top-3 Accuracy: 0.6666666666666666
+XGBoost Top-4 Accuracy: 0.7083333333333334
+XGBoost Top-5 Accuracy: 0.7916666666666666
+Recognition Rate at rank 1: 0.39
+F1 Score: 0.3569264069264069
+Precision: 0.3774691358024691
+Recall: 0.3888888888888889
+With MinMaxScaler
+Minimum samples per class in training set: 2
+Fitting 2 folds for each of 216 candidates, totalling 432 fits
+XGBoost Accuracy: 0.3888888888888889
+Classification Report:
+              precision    recall  f1-score   support
+
+        1001       0.50      0.50      0.50         2
+        1002       0.33      0.50      0.40         2
+        1003       0.00      0.00      0.00         2
+        1004       1.00      0.50      0.67         2
+        1005       0.00      0.00      0.00         2
+        1006       0.00      0.00      0.00         2
+        1007       0.33      0.50      0.40         2
+        1008       0.00      0.00      0.00         2
+        1009       0.00      0.00      0.00         2
+        1012       0.50      0.50      0.50         2
+        1013       0.50      1.00      0.67         2
+        1029       1.00      1.00      1.00         2
+        1036       1.00      0.50      0.67         2
+        1037       0.67      1.00      0.80         2
+        1039       0.50      0.50      0.50         2
+        1041       0.00      0.00      0.00         2
+        1042       0.22      1.00      0.36         2
+        1043       0.00      0.00      0.00         2
+        1044       0.00      0.00      0.00         2
+        1045       1.00      1.00      1.00         2
+        1046       0.00      0.00      0.00         2
+        1047       0.67      1.00      0.80         2
+        1048       0.00      0.00      0.00         2
+        1049       0.33      0.50      0.40         2
+        1050       0.00      0.00      0.00         2
+        1051       0.50      0.50      0.50         2
+        1052       0.00      0.00      0.00         2
+        1053       0.50      0.50      0.50         2
+        1054       1.00      0.50      0.67         2
+        1055       0.50      0.50      0.50         2
+        1056       0.00      0.00      0.00         2
+        1057       0.20      0.50      0.29         2
+        1058       0.00      0.00      0.00         2
+        1062       1.00      0.50      0.67         2
+        1063       0.33      0.50      0.40         2
+        1064       1.00      0.50      0.67         2
+
+    accuracy                           0.39        72
+   macro avg       0.38      0.39      0.36        72
+weighted avg       0.38      0.39      0.36        72
+
+⚠️ Labels not predicted at all: {1056, 1003, 1005, 1044, 1052}
+XGBoost Top-1 Accuracy: 0.3888888888888889
+XGBoost Top-2 Accuracy: 0.5833333333333334
+XGBoost Top-3 Accuracy: 0.6666666666666666
+XGBoost Top-4 Accuracy: 0.7083333333333334
+XGBoost Top-5 Accuracy: 0.7916666666666666
+Recognition Rate at rank 1: 0.39
+F1 Score: 0.3569264069264069
+Precision: 0.3774691358024691
+Recall: 0.3888888888888889
+T vs. F
+Index(['Key.backspaceKey.backspace_median', 'Key.backspaceKey.backspace_mean',
+       'Key.backspaceKey.backspace_stdev', 'Key.backspaceKey.backspace_q1',
+       'Key.backspaceKey.backspace_q3', 'eKey.space_median', 'eKey.space_mean',
+       'eKey.space_stdev', 'eKey.space_q1', 'eKey.space_q3',
+       'Key.spacet_median', 'Key.spacet_mean', 'Key.spacet_stdev',
+       'Key.spacet_q1', 'Key.spacet_q3', 'tKey.space_median',
+       'tKey.space_mean', 'tKey.space_stdev', 'tKey.space_q1', 'tKey.space_q3',
+       'sKey.space_median', 'sKey.space_mean', 'sKey.space_stdev',
+       'sKey.space_q1', 'sKey.space_q3', 'Key.spacea_median',
+       'Key.spacea_mean', 'Key.spacea_stdev', 'Key.spacea_q1', 'Key.spacea_q3',
+       'th_median', 'th_mean', 'th_stdev', 'th_q1', 'th_q3',
+       'nKey.space_median', 'nKey.space_mean', 'nKey.space_stdev',
+       'nKey.space_q1', 'nKey.space_q3', 'Key.spacei_median',
+       'Key.spacei_mean', 'Key.spacei_stdev', 'Key.spacei_q1', 'Key.spacei_q3',
+       'Key.spaces_median', 'Key.spaces_mean', 'Key.spaces_stdev',
+       'Key.spaces_q1', 'Key.spaces_q3'],
+      dtype='object')
+72
+Random Forest: T vs. F results:
+With StandardScaler
+Minimum samples per class in training set: 2
+Minimum samples per class in test set: 2
+Fitting 2 folds for each of 648 candidates, totalling 1296 fits
+Random Forest Accuracy: 0.6527777777777778
+Random Forest Top-1 Accuracy: 0.6527777777777778
+Random Forest Top-2 Accuracy: 0.7638888888888888
+Random Forest Top-3 Accuracy: 0.8472222222222222
+Random Forest Top-4 Accuracy: 0.875
+Random Forest Top-5 Accuracy: 0.9027777777777778
+F1 Score: 0.5992063492063493
+Precision: 0.601388888888889
+Recall: 0.6527777777777778
+With MinMaxScaler
+Minimum samples per class in training set: 2
+Minimum samples per class in test set: 2
+Fitting 2 folds for each of 648 candidates, totalling 1296 fits
+Random Forest Accuracy: 0.6527777777777778
+Random Forest Top-1 Accuracy: 0.6527777777777778
+Random Forest Top-2 Accuracy: 0.7638888888888888
+Random Forest Top-3 Accuracy: 0.8472222222222222
+Random Forest Top-4 Accuracy: 0.875
+Random Forest Top-5 Accuracy: 0.9027777777777778
+F1 Score: 0.5992063492063493
+Precision: 0.601388888888889
+Recall: 0.6527777777777778
+XGBoost: T vs. F results
+With StandardScaler
+Minimum samples per class in training set: 2
+Fitting 2 folds for each of 216 candidates, totalling 432 fits
+XGBoost Accuracy: 0.4305555555555556
+Classification Report:
+              precision    recall  f1-score   support
+
+        1001       1.00      0.50      0.67         2
+        1002       0.00      0.00      0.00         2
+        1003       0.33      0.50      0.40         2
+        1004       1.00      1.00      1.00         2
+        1005       0.00      0.00      0.00         2
+        1006       0.00      0.00      0.00         2
+        1007       0.50      0.50      0.50         2
+        1008       0.50      0.50      0.50         2
+        1009       0.17      0.50      0.25         2
+        1012       0.67      1.00      0.80         2
+        1013       1.00      0.50      0.67         2
+        1029       0.00      0.00      0.00         2
+        1036       0.00      0.00      0.00         2
+        1037       1.00      0.50      0.67         2
+        1039       0.50      0.50      0.50         2
+        1041       1.00      0.50      0.67         2
+        1042       0.50      0.50      0.50         2
+        1043       0.00      0.00      0.00         2
+        1044       0.67      1.00      0.80         2
+        1045       0.50      0.50      0.50         2
+        1046       0.67      1.00      0.80         2
+        1047       0.00      0.00      0.00         2
+        1048       0.25      0.50      0.33         2
+        1049       0.33      0.50      0.40         2
+        1050       1.00      0.50      0.67         2
+        1051       1.00      0.50      0.67         2
+        1052       0.33      0.50      0.40         2
+        1053       0.50      1.00      0.67         2
+        1054       0.00      0.00      0.00         2
+        1055       0.00      0.00      0.00         2
+        1056       1.00      1.00      1.00         2
+        1057       0.00      0.00      0.00         2
+        1058       0.00      0.00      0.00         2
+        1062       0.50      0.50      0.50         2
+        1063       0.00      0.00      0.00         2
+        1064       0.40      1.00      0.57         2
+
+    accuracy                           0.43        72
+   macro avg       0.43      0.43      0.40        72
+weighted avg       0.43      0.43      0.40        72
+
+⚠️ Labels not predicted at all: {1043, 1036, 1054, 1055}
+XGBoost Top-1 Accuracy: 0.4305555555555556
+XGBoost Top-2 Accuracy: 0.6111111111111112
+XGBoost Top-3 Accuracy: 0.7361111111111112
+XGBoost Top-4 Accuracy: 0.7777777777777778
+XGBoost Top-5 Accuracy: 0.8055555555555556
+Recognition Rate at rank 1: 0.43
+F1 Score: 0.40059523809523806
+Precision: 0.425462962962963
+Recall: 0.4305555555555556
+With MinMaxScaler
+Minimum samples per class in training set: 2
+Fitting 2 folds for each of 216 candidates, totalling 432 fits
+XGBoost Accuracy: 0.4305555555555556
+Classification Report:
+              precision    recall  f1-score   support
+
+        1001       1.00      0.50      0.67         2
+        1002       0.00      0.00      0.00         2
+        1003       0.33      0.50      0.40         2
+        1004       1.00      1.00      1.00         2
+        1005       0.00      0.00      0.00         2
+        1006       0.00      0.00      0.00         2
+        1007       0.50      0.50      0.50         2
+        1008       0.50      0.50      0.50         2
+        1009       0.17      0.50      0.25         2
+        1012       0.67      1.00      0.80         2
+        1013       1.00      0.50      0.67         2
+        1029       0.00      0.00      0.00         2
+        1036       0.00      0.00      0.00         2
+        1037       1.00      0.50      0.67         2
+        1039       0.50      0.50      0.50         2
+        1041       1.00      0.50      0.67         2
+        1042       0.50      0.50      0.50         2
+        1043       0.00      0.00      0.00         2
+        1044       0.67      1.00      0.80         2
+        1045       0.50      0.50      0.50         2
+        1046       0.67      1.00      0.80         2
+        1047       0.00      0.00      0.00         2
+        1048       0.25      0.50      0.33         2
+        1049       0.33      0.50      0.40         2
+        1050       1.00      0.50      0.67         2
+        1051       1.00      0.50      0.67         2
+        1052       0.33      0.50      0.40         2
+        1053       0.50      1.00      0.67         2
+        1054       0.00      0.00      0.00         2
+        1055       0.00      0.00      0.00         2
+        1056       1.00      1.00      1.00         2
+        1057       0.00      0.00      0.00         2
+        1058       0.00      0.00      0.00         2
+        1062       0.50      0.50      0.50         2
+        1063       0.00      0.00      0.00         2
+        1064       0.40      1.00      0.57         2
+
+    accuracy                           0.43        72
+   macro avg       0.43      0.43      0.40        72
+weighted avg       0.43      0.43      0.40        72
+
+⚠️ Labels not predicted at all: {1043, 1036, 1054, 1055}
+XGBoost Top-1 Accuracy: 0.4305555555555556
+XGBoost Top-2 Accuracy: 0.6111111111111112
+XGBoost Top-3 Accuracy: 0.7361111111111112
+XGBoost Top-4 Accuracy: 0.7777777777777778
+XGBoost Top-5 Accuracy: 0.8055555555555556
+Recognition Rate at rank 1: 0.43
+F1 Score: 0.40059523809523806
+Precision: 0.425462962962963
+Recall: 0.4305555555555556
+T vs. I
+Index(['Key.backspaceKey.backspace_median', 'Key.backspaceKey.backspace_mean',
+       'Key.backspaceKey.backspace_stdev', 'Key.backspaceKey.backspace_q1',
+       'Key.backspaceKey.backspace_q3', 'eKey.space_median', 'eKey.space_mean',
+       'eKey.space_stdev', 'eKey.space_q1', 'eKey.space_q3',
+       'Key.spacet_median', 'Key.spacet_mean', 'Key.spacet_stdev',
+       'Key.spacet_q1', 'Key.spacet_q3', 'tKey.space_median',
+       'tKey.space_mean', 'tKey.space_stdev', 'tKey.space_q1', 'tKey.space_q3',
+       'sKey.space_median', 'sKey.space_mean', 'sKey.space_stdev',
+       'sKey.space_q1', 'sKey.space_q3', 'Key.spacea_median',
+       'Key.spacea_mean', 'Key.spacea_stdev', 'Key.spacea_q1', 'Key.spacea_q3',
+       'th_median', 'th_mean', 'th_stdev', 'th_q1', 'th_q3',
+       'nKey.space_median', 'nKey.space_mean', 'nKey.space_stdev',
+       'nKey.space_q1', 'nKey.space_q3', 'Key.spacei_median',
+       'Key.spacei_mean', 'Key.spacei_stdev', 'Key.spacei_q1', 'Key.spacei_q3',
+       'Key.spaces_median', 'Key.spaces_mean', 'Key.spaces_stdev',
+       'Key.spaces_q1', 'Key.spaces_q3'],
+      dtype='object')
+72
+Random Forest: T vs. I results:
+With StandardScaler
+Minimum samples per class in training set: 2
+Minimum samples per class in test set: 2
+Fitting 2 folds for each of 648 candidates, totalling 1296 fits
+Random Forest Accuracy: 0.6805555555555556
+Random Forest Top-1 Accuracy: 0.6805555555555556
+Random Forest Top-2 Accuracy: 0.8194444444444444
+Random Forest Top-3 Accuracy: 0.8611111111111112
+Random Forest Top-4 Accuracy: 0.8888888888888888
+Random Forest Top-5 Accuracy: 0.9027777777777778
+F1 Score: 0.6354497354497355
+Precision: 0.6564814814814814
+Recall: 0.6805555555555556
+With MinMaxScaler
+Minimum samples per class in training set: 2
+Minimum samples per class in test set: 2
+Fitting 2 folds for each of 648 candidates, totalling 1296 fits
+Random Forest Accuracy: 0.6805555555555556
+Random Forest Top-1 Accuracy: 0.6805555555555556
+Random Forest Top-2 Accuracy: 0.8194444444444444
+Random Forest Top-3 Accuracy: 0.8611111111111112
+Random Forest Top-4 Accuracy: 0.8888888888888888
+Random Forest Top-5 Accuracy: 0.9027777777777778
+F1 Score: 0.6354497354497355
+Precision: 0.6564814814814814
+Recall: 0.6805555555555556
+XGBoost: T vs. I results
+With StandardScaler
+Minimum samples per class in training set: 2
+Fitting 2 folds for each of 216 candidates, totalling 432 fits
+XGBoost Accuracy: 0.4722222222222222
+Classification Report:
+              precision    recall  f1-score   support
+
+        1001       0.50      1.00      0.67         2
+        1002       0.00      0.00      0.00         2
+        1003       0.40      1.00      0.57         2
+        1004       1.00      0.50      0.67         2
+        1005       0.00      0.00      0.00         2
+        1006       0.00      0.00      0.00         2
+        1007       1.00      0.50      0.67         2
+        1008       0.33      0.50      0.40         2
+        1009       0.00      0.00      0.00         2
+        1012       1.00      0.50      0.67         2
+        1013       1.00      0.50      0.67         2
+        1029       0.67      1.00      0.80         2
+        1036       1.00      0.50      0.67         2
+        1037       0.67      1.00      0.80         2
+        1039       0.00      0.00      0.00         2
+        1041       0.00      0.00      0.00         2
+        1042       0.33      0.50      0.40         2
+        1043       1.00      0.50      0.67         2
+        1044       0.25      0.50      0.33         2
+        1045       0.00      0.00      0.00         2
+        1046       0.50      1.00      0.67         2
+        1047       0.50      1.00      0.67         2
+        1048       1.00      0.50      0.67         2
+        1049       0.50      0.50      0.50         2
+        1050       0.00      0.00      0.00         2
+        1051       0.50      0.50      0.50         2
+        1052       0.50      1.00      0.67         2
+        1053       0.40      1.00      0.57         2
+        1054       0.00      0.00      0.00         2
+        1055       1.00      0.50      0.67         2
+        1056       1.00      0.50      0.67         2
+        1057       1.00      0.50      0.67         2
+        1058       0.33      0.50      0.40         2
+        1062       0.00      0.00      0.00         2
+        1063       0.00      0.00      0.00         2
+        1064       1.00      1.00      1.00         2
+
+    accuracy                           0.47        72
+   macro avg       0.48      0.47      0.43        72
+weighted avg       0.48      0.47      0.43        72
+
+⚠️ Labels not predicted at all: {1062, 1063, 1002, 1041, 1054}
+XGBoost Top-1 Accuracy: 0.4722222222222222
+XGBoost Top-2 Accuracy: 0.5833333333333334
+XGBoost Top-3 Accuracy: 0.6388888888888888
+XGBoost Top-4 Accuracy: 0.6944444444444444
+XGBoost Top-5 Accuracy: 0.7361111111111112
+Recognition Rate at rank 1: 0.47
+F1 Score: 0.4335978835978836
+Precision: 0.48287037037037034
+Recall: 0.4722222222222222
+With MinMaxScaler
+Minimum samples per class in training set: 2
+Fitting 2 folds for each of 216 candidates, totalling 432 fits
+XGBoost Accuracy: 0.4722222222222222
+Classification Report:
+              precision    recall  f1-score   support
+
+        1001       0.50      1.00      0.67         2
+        1002       0.00      0.00      0.00         2
+        1003       0.40      1.00      0.57         2
+        1004       1.00      0.50      0.67         2
+        1005       0.00      0.00      0.00         2
+        1006       0.00      0.00      0.00         2
+        1007       1.00      0.50      0.67         2
+        1008       0.33      0.50      0.40         2
+        1009       0.00      0.00      0.00         2
+        1012       1.00      0.50      0.67         2
+        1013       1.00      0.50      0.67         2
+        1029       0.67      1.00      0.80         2
+        1036       1.00      0.50      0.67         2
+        1037       0.67      1.00      0.80         2
+        1039       0.00      0.00      0.00         2
+        1041       0.00      0.00      0.00         2
+        1042       0.33      0.50      0.40         2
+        1043       1.00      0.50      0.67         2
+        1044       0.25      0.50      0.33         2
+        1045       0.00      0.00      0.00         2
+        1046       0.50      1.00      0.67         2
+        1047       0.50      1.00      0.67         2
+        1048       1.00      0.50      0.67         2
+        1049       0.50      0.50      0.50         2
+        1050       0.00      0.00      0.00         2
+        1051       0.50      0.50      0.50         2
+        1052       0.50      1.00      0.67         2
+        1053       0.40      1.00      0.57         2
+        1054       0.00      0.00      0.00         2
+        1055       1.00      0.50      0.67         2
+        1056       1.00      0.50      0.67         2
+        1057       1.00      0.50      0.67         2
+        1058       0.33      0.50      0.40         2
+        1062       0.00      0.00      0.00         2
+        1063       0.00      0.00      0.00         2
+        1064       1.00      1.00      1.00         2
+
+    accuracy                           0.47        72
+   macro avg       0.48      0.47      0.43        72
+weighted avg       0.48      0.47      0.43        72
+
+⚠️ Labels not predicted at all: {1062, 1063, 1002, 1041, 1054}
+XGBoost Top-1 Accuracy: 0.4722222222222222
+XGBoost Top-2 Accuracy: 0.5833333333333334
+XGBoost Top-3 Accuracy: 0.6388888888888888
+XGBoost Top-4 Accuracy: 0.6944444444444444
+XGBoost Top-5 Accuracy: 0.7361111111111112
+Recognition Rate at rank 1: 0.47
+F1 Score: 0.4335978835978836
+Precision: 0.48287037037037034
+Recall: 0.4722222222222222
