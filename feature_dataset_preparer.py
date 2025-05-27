@@ -2,6 +2,7 @@ import ast
 import os
 import json
 import re
+import argparse
 from ml_models import (
     run_random_forest_model,
     run_xgboost_model,
@@ -9,6 +10,7 @@ from ml_models import (
     run_svm_model,
     finalize_experiments,
     set_total_experiments,
+    set_global_params,
     OUTPUT_DIR,
 )
 from feature_table import (
@@ -22,6 +24,14 @@ import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import LabelEncoder
+
+# Add command line argument parsing
+parser = argparse.ArgumentParser(description='Run ML experiments with optional settings')
+parser.add_argument('-e', '--early-stop', action='store_true', 
+                   help='Use early stopping for XGBoost and CatBoost models')
+parser.add_argument('-s', '--seeds', type=int, default=1,
+                   help='Number of different random seeds to test (default: 1)')
+args = parser.parse_args()
 
 
 # Deserialization of columns
@@ -285,10 +295,11 @@ def run_experiments(df: pd.DataFrame):
         ([3], 2, "T_vs_I"),
     ]
     
-    # Calculate total experiments: each experiment runs 4 models (RF, XGB, CatBoost, SVM)
-    total_model_runs = len(experiments) * 4
+    # Calculate total experiments: each experiment runs 4 models × number of seeds
+    total_model_runs = len(experiments) * 4 * args.seeds
     set_total_experiments(total_model_runs)
     print(f"📊 Total model runs planned: {total_model_runs}")
+    print(f"🎲 Random seeds to test: {args.seeds}")
     
     with open(os.path.join(os.getcwd(), "classifier_config.json"), "r") as f:
         config = json.load(f)
@@ -349,42 +360,54 @@ def run_experiments(df: pd.DataFrame):
         # Run all models WITHOUT scaling (data is pre-normalized)
         # All scaling code has been removed since data is pre-normalized elsewhere
         
-        print(f"\n🤖 Running Random Forest models...")
-        try:
-            run_random_forest_model(
-                X_train, X_test, y_train, y_test, 
-                experiment_name=experiment_name
-            )
-        except Exception as e:
-            print(f"❌ Random Forest failed: {e}")
+        # Determine which seeds to use
+        seeds = [42, 123, 456, 789, 999] if args.seeds > 1 else [42]
+        seeds = seeds[:args.seeds]  # Use only requested number of seeds
         
-        print(f"\n🚀 Running XGBoost models...")
-        try:
-            run_xgboost_model(
-                X_train, X_test, y_train, y_test, 
-                experiment_name=experiment_name
-            )
-        except Exception as e:
-            print(f"❌ XGBoost failed: {e}")
-        
-        print(f"\n🐱 Running CatBoost models...")
-        try:
-            run_catboost_model(
-                X_train, X_test, y_train, y_test, 
-                experiment_name=experiment_name
-            )
-        except Exception as e:
-            print(f"❌ CatBoost failed: {e}")
-        
-        # Run SVM (no scaling needed as data is pre-normalized)
-        print(f"\n⚙️ Running SVM model...")
-        try:
-            run_svm_model(
-                X_train, X_test, y_train, y_test, 
-                experiment_name=experiment_name
-            )
-        except Exception as e:
-            print(f"❌ SVM failed: {e}")
+        for seed_idx, seed in enumerate(seeds):
+            seed_suffix = f"_seed{seed}" if args.seeds > 1 else ""
+            
+            print(f"\n🎲 Running with random seed {seed} ({seed_idx + 1}/{len(seeds)})")
+            
+            print(f"\n🤖 Running Random Forest...")
+            try:
+                run_random_forest_model(
+                    X_train, X_test, y_train, y_test, 
+                    experiment_name=f"{experiment_name}{seed_suffix}",
+                    random_seed=seed
+                )
+            except Exception as e:
+                print(f"❌ Random Forest failed with seed {seed}: {e}")
+            
+            print(f"\n🚀 Running XGBoost...")
+            try:
+                run_xgboost_model(
+                    X_train, X_test, y_train, y_test, 
+                    experiment_name=f"{experiment_name}{seed_suffix}",
+                    random_seed=seed
+                )
+            except Exception as e:
+                print(f"❌ XGBoost failed with seed {seed}: {e}")
+            
+            print(f"\n🐱 Running CatBoost...")
+            try:
+                run_catboost_model(
+                    X_train, X_test, y_train, y_test, 
+                    experiment_name=f"{experiment_name}{seed_suffix}",
+                    random_seed=seed
+                )
+            except Exception as e:
+                print(f"❌ CatBoost failed with seed {seed}: {e}")
+            
+            print(f"\n⚙️ Running SVM...")
+            try:
+                run_svm_model(
+                    X_train, X_test, y_train, y_test, 
+                    experiment_name=f"{experiment_name}{seed_suffix}",
+                    random_seed=seed
+                )
+            except Exception as e:
+                print(f"❌ SVM failed with seed {seed}: {e}")
         
         print(f"✅ Completed experiment {exp_idx}/{total_experiments}: {experiment_name}")
     
@@ -398,6 +421,9 @@ def main():
     """Main execution function"""
     print("🚀 Starting User Identification ML Pipeline...")
     print("=" * 60)
+    
+    # Set global parameters in ml_models
+    set_global_params(early_stop=args.early_stop, num_seeds=args.seeds)
     
     # Option 1: Setup experiments from scratch (uncomment if needed)
     # print("🔧 Setting up experiments from raw data...")

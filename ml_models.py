@@ -1,7 +1,6 @@
 import os
 import json
 import pickle
-import argparse
 import warnings
 from datetime import datetime
 from pathlib import Path
@@ -42,23 +41,32 @@ warnings.filterwarnings('ignore', category=FutureWarning)
 with open(os.path.join(os.getcwd(), "classifier_config.json"), "r") as f:
     config = json.load(f)
 
-# Add command line argument parsing
-parser = argparse.ArgumentParser(description='Run ML experiments with optional early stopping')
-parser.add_argument('-e', '--early-stop', action='store_true', 
-                   help='Use early stopping for XGBoost and CatBoost models')
-args = parser.parse_args()
+# Global variables that will be set by the main script
+EARLY_STOP = False
+NUM_SEEDS = 1
 
 # Global results storage
 EXPERIMENT_RESULTS = []
 DETAILED_RESULTS = []
 TIMESTAMP = datetime.now().isoformat().replace(':', '-').replace('.', '-')[:19]
-EARLY_STOP_SUFFIX = "_early_stop" if args.early_stop else ""
+EARLY_STOP_SUFFIX = "_early_stop" if EARLY_STOP else ""
 OUTPUT_DIR = Path(f"experiment_results_{TIMESTAMP}{EARLY_STOP_SUFFIX}")
 OUTPUT_DIR.mkdir(exist_ok=True)
 
 # Progress tracking
 TOTAL_EXPERIMENTS = 0
 CURRENT_EXPERIMENT = 0
+
+
+def set_global_params(early_stop=False, num_seeds=1):
+    """Set global parameters from the main script"""
+    global EARLY_STOP, NUM_SEEDS, EARLY_STOP_SUFFIX, OUTPUT_DIR
+    EARLY_STOP = early_stop
+    NUM_SEEDS = num_seeds
+    # Update the suffix and output directory
+    EARLY_STOP_SUFFIX = "_early_stop" if EARLY_STOP else ""
+    OUTPUT_DIR = Path(f"experiment_results_{TIMESTAMP}{EARLY_STOP_SUFFIX}")
+    OUTPUT_DIR.mkdir(exist_ok=True)
 
 
 def validate_data_quality(X_train, X_test, y_train, y_test):
@@ -217,7 +225,7 @@ def create_top_k_confusion_matrices(y_true, y_pred_proba, label_encoder, title, 
 
 def save_model_with_metadata(model, model_name, experiment_name, hyperparams, metrics, random_seed=42):
     """Save model with comprehensive metadata"""
-    early_stop_suffix = "_early_stop" if args.early_stop else ""
+    early_stop_suffix = "_early_stop" if EARLY_STOP else ""
     
     # Clean experiment name for filename
     clean_experiment_name = experiment_name.replace(f"_{model_name}", "").replace("_no_scaling", "")
@@ -232,7 +240,7 @@ def save_model_with_metadata(model, model_name, experiment_name, hyperparams, me
         'clean_experiment_name': clean_experiment_name,
         'timestamp': TIMESTAMP,
         'random_seed': random_seed,
-        'early_stopping_used': args.early_stop,
+        'early_stopping_used': EARLY_STOP,
         'hyperparameters': hyperparams,
         'performance_metrics': metrics,
         'config_used': config,
@@ -287,14 +295,14 @@ def run_xgboost_model(X_train, X_test, y_train, y_test, experiment_name="unknown
     print(f"Minimum samples per class: {min_samples_per_class}")
 
     # Configure early stopping and parallelism
-    early_stopping_rounds = 50 if args.early_stop else None
-    eval_set = [(X_test_scaled, y_test_encoded)] if args.early_stop else None
+    early_stopping_rounds = 50 if EARLY_STOP else None
+    eval_set = [(X_test_scaled, y_test_encoded)] if EARLY_STOP else None
     n_jobs = min(4, os.cpu_count() // 2) if os.cpu_count() > 4 else 1
 
     if min_samples_per_class < 2:
         print("⚠️ Not enough samples for CV → using default parameters")
         best_params = {
-            'n_estimators': 1000 if args.early_stop else 200,
+            'n_estimators': 1000 if EARLY_STOP else 200,
             'max_depth': 6,
             'learning_rate': 0.1,
             'subsample': 0.8,
@@ -306,7 +314,7 @@ def run_xgboost_model(X_train, X_test, y_train, y_test, experiment_name="unknown
         best_xgb = XGBClassifier(**best_params)
         
         with tqdm(desc="Training XGBoost", leave=False) as pbar:
-            if args.early_stop:
+            if EARLY_STOP:
                 best_xgb.fit(X_train_scaled, y_train_encoded, 
                              early_stopping_rounds=early_stopping_rounds,
                              eval_set=eval_set, verbose=False)
@@ -318,7 +326,7 @@ def run_xgboost_model(X_train, X_test, y_train, y_test, experiment_name="unknown
 
         # STREAMLINED parameter grid for speed
         param_grid = {
-            "n_estimators": [1000] if args.early_stop else [100, 200],
+            "n_estimators": [1000] if EARLY_STOP else [100, 200],
             "max_depth": [4, 6, 8],
             "learning_rate": [0.05, 0.1],
             "subsample": [0.8, 1.0],
@@ -345,7 +353,7 @@ def run_xgboost_model(X_train, X_test, y_train, y_test, experiment_name="unknown
         print(f"Best XGBoost params: {best_params}")
         
         # Refit with early stopping if requested
-        if args.early_stop:
+        if EARLY_STOP:
             best_xgb.set_params(n_estimators=1000)
             with tqdm(desc="Final XGBoost Training", leave=False) as pbar:
                 best_xgb.fit(X_train_scaled, y_train_encoded,
@@ -404,7 +412,7 @@ def run_xgboost_model(X_train, X_test, y_train, y_test, experiment_name="unknown
         'model': 'XGBoost',
         'experiment': experiment_name,
         'random_seed': random_seed,
-        'early_stopping': args.early_stop,
+        'early_stopping': EARLY_STOP,
         'model_path': model_path,
         'hyperparameters': str(hyperparams),
         **all_metrics
@@ -417,7 +425,7 @@ def run_xgboost_model(X_train, X_test, y_train, y_test, experiment_name="unknown
             'model': 'XGBoost',
             'experiment': experiment_name,
             'random_seed': random_seed,
-            'early_stopping': args.early_stop,
+            'early_stopping': EARLY_STOP,
             'k_value': k,
             'train_top_k_accuracy': train_metrics.get(f'train_top_{k}_accuracy', 0),
             'test_top_k_accuracy': test_metrics.get(f'test_top_{k}_accuracy', 0),
@@ -596,14 +604,14 @@ def run_catboost_model(X_train, X_test, y_train, y_test, experiment_name="unknow
     print(f"Minimum samples per class: {min_samples_per_class}")
 
     # Configure early stopping
-    early_stopping_rounds = 50 if args.early_stop else None
-    eval_set = Pool(X_test_scaled, y_test_encoded) if args.early_stop else None
+    early_stopping_rounds = 50 if EARLY_STOP else None
+    eval_set = Pool(X_test_scaled, y_test_encoded) if EARLY_STOP else None
     thread_count = min(4, os.cpu_count() // 2) if os.cpu_count() > 4 else 1
 
     if min_samples_per_class < 2:
         print("⚠️ Not enough samples for CV → using default parameters")
         best_params = {
-            'iterations': 1000 if args.early_stop else 100,
+            'iterations': 1000 if EARLY_STOP else 100,
             'depth': 6,
             'learning_rate': 0.1,
             'l2_leaf_reg': 3,
@@ -616,7 +624,7 @@ def run_catboost_model(X_train, X_test, y_train, y_test, experiment_name="unknow
         best_catboost_model = CatBoostClassifier(**best_params)
         
         with tqdm(desc="Training CatBoost", leave=False) as pbar:
-            if args.early_stop and eval_set:
+            if EARLY_STOP and eval_set:
                 best_catboost_model.fit(
                     X_train_scaled, y_train_encoded,
                     early_stopping_rounds=early_stopping_rounds,
@@ -631,7 +639,7 @@ def run_catboost_model(X_train, X_test, y_train, y_test, experiment_name="unknow
 
         # STREAMLINED parameter grid for speed
         param_grid = {
-            "iterations": [1000] if args.early_stop else [100, 200],
+            "iterations": [1000] if EARLY_STOP else [100, 200],
             "depth": [4, 6, 8],
             "learning_rate": [0.05, 0.1],
             "l2_leaf_reg": [1, 3, 5],
@@ -658,7 +666,7 @@ def run_catboost_model(X_train, X_test, y_train, y_test, experiment_name="unknow
         best_catboost_model = CatBoostClassifier(**best_params, random_seed=random_seed, verbose=0, thread_count=thread_count)
         
         with tqdm(desc="Final CatBoost Training", leave=False) as pbar:
-            if args.early_stop and eval_set:
+            if EARLY_STOP and eval_set:
                 best_catboost_model.fit(
                     X_train_scaled, y_train_encoded,
                     early_stopping_rounds=early_stopping_rounds,
@@ -732,7 +740,7 @@ def run_catboost_model(X_train, X_test, y_train, y_test, experiment_name="unknow
         'model': 'CatBoost',
         'experiment': experiment_name,
         'random_seed': random_seed,
-        'early_stopping': args.early_stop,
+        'early_stopping': EARLY_STOP,
         'model_path': model_path,
         'hyperparameters': str(hyperparams),
         **all_metrics
@@ -744,7 +752,7 @@ def run_catboost_model(X_train, X_test, y_train, y_test, experiment_name="unknow
             'model': 'CatBoost',
             'experiment': experiment_name,
             'random_seed': random_seed,
-            'early_stopping': args.early_stop,
+            'early_stopping': EARLY_STOP,
             'k_value': k,
             'train_top_k_accuracy': train_metrics.get(f'train_top_{k}_accuracy', 0),
             'test_top_k_accuracy': test_metrics.get(f'test_top_{k}_accuracy', 0),
@@ -881,16 +889,16 @@ def run_svm_model(X_train, X_test, y_train, y_test, experiment_name="unknown", r
 
 
 def create_performance_plots(results_df):
-    """Create comprehensive performance plots"""
+    """Create comprehensive performance plots with proper data"""
     if results_df.empty:
         print("⚠️ No results to plot")
         return
         
-    # Create basic performance plots
+    # Create comprehensive performance plots
     fig = make_subplots(
         rows=2, cols=2,
-        subplot_titles=('Top-1 Accuracy by Model', 'Top-K Accuracy Progression', 
-                       'F1 vs Top-1 Accuracy', 'Model Performance Overview'),
+        subplot_titles=('Top-1 Accuracy by Model', 'Top-K Accuracy Trends', 
+                       'F1 Score vs Top-1 Accuracy', 'Model Performance Overview'),
         specs=[[{"secondary_y": False}, {"secondary_y": False}],
                [{"secondary_y": False}, {"secondary_y": False}]]
     )
@@ -898,20 +906,103 @@ def create_performance_plots(results_df):
     models = results_df['model'].unique()
     colors = px.colors.qualitative.Set1[:len(models)]
     
-    # Top-1 accuracy by model
+    # 1. Top-1 accuracy by model (by experiment)
     for i, model in enumerate(models):
         model_data = results_df[results_df['model'] == model]
         
         if 'test_top_1_accuracy' in model_data.columns:
             fig.add_trace(
                 go.Scatter(x=model_data['experiment'], y=model_data['test_top_1_accuracy'],
-                          name=f'{model} Top-1', line=dict(color=colors[i]),
+                          name=f'{model}', line=dict(color=colors[i]),
                           mode='lines+markers'),
                 row=1, col=1
             )
     
-    fig.update_layout(height=800, title_text="User Identification Performance Analysis")
+    # 2. Top-K accuracy trends (average across all experiments for each model)
+    k_values = [1, 2, 3, 4, 5]
+    for i, model in enumerate(models):
+        model_data = results_df[results_df['model'] == model]
+        k_accuracies = []
+        for k in k_values:
+            col_name = f'test_top_{k}_accuracy'
+            if col_name in model_data.columns:
+                avg_acc = model_data[col_name].fillna(0).mean()
+                k_accuracies.append(avg_acc)
+            else:
+                k_accuracies.append(0)
+        
+        fig.add_trace(
+            go.Scatter(x=k_values, y=k_accuracies,
+                      name=f'{model}', line=dict(color=colors[i]),
+                      mode='lines+markers', showlegend=False),
+            row=1, col=2
+        )
+    
+    # 3. F1 vs Top-1 Accuracy scatter plot
+    for i, model in enumerate(models):
+        model_data = results_df[results_df['model'] == model]
+        if 'test_top_1_accuracy' in model_data.columns and 'test_f1_weighted' in model_data.columns:
+            fig.add_trace(
+                go.Scatter(x=model_data['test_f1_weighted'].fillna(0), 
+                          y=model_data['test_top_1_accuracy'].fillna(0),
+                          name=f'{model}', mode='markers', 
+                          marker=dict(color=colors[i], size=8),
+                          showlegend=False),
+                row=2, col=1
+            )
+    
+    # 4. Model Performance Overview (average Top-1 and Top-5 for each model)
+    model_names = []
+    avg_top1_scores = []
+    avg_top5_scores = []
+    
+    for model in models:
+        model_data = results_df[results_df['model'] == model]
+        avg_top1 = model_data.get('test_top_1_accuracy', pd.Series([0])).fillna(0).mean()
+        avg_top5 = model_data.get('test_top_5_accuracy', pd.Series([0])).fillna(0).mean()
+        
+        model_names.append(model)
+        avg_top1_scores.append(avg_top1)
+        avg_top5_scores.append(avg_top5)
+    
+    # Add Top-1 bars (in blue/teal)
+    fig.add_trace(
+        go.Bar(x=model_names, y=avg_top1_scores, 
+               name='Avg Top-1', marker_color='teal',
+               showlegend=True),
+        row=2, col=2
+    )
+    
+    # Add Top-5 bars (in purple)
+    fig.add_trace(
+        go.Bar(x=model_names, y=avg_top5_scores, 
+               name='Avg Top-5', marker_color='purple',
+               showlegend=True),
+        row=2, col=2
+    )
+    
+    # Update layout
+    fig.update_layout(
+        height=800, 
+        title_text="User Identification Performance Analysis",
+        barmode='group'  # Group bars side by side
+    )
+    
+    # Add axis labels
+    fig.update_xaxes(title_text="Experiment", row=1, col=1)
+    fig.update_yaxes(title_text="Top-1 Accuracy", row=1, col=1)
+    
+    fig.update_xaxes(title_text="K Value", row=1, col=2)
+    fig.update_yaxes(title_text="Top-K Accuracy", row=1, col=2)
+    
+    fig.update_xaxes(title_text="F1 Score (Weighted)", row=2, col=1)
+    fig.update_yaxes(title_text="Top-1 Accuracy", row=2, col=1)
+    
+    fig.update_xaxes(title_text="Model", row=2, col=2)
+    fig.update_yaxes(title_text="Average Accuracy", row=2, col=2)
+    
     fig.write_html(OUTPUT_DIR / "performance_plots.html")
+    print(f"📈 Performance plots saved to: {OUTPUT_DIR / 'performance_plots.html'}")
 
 
 def generate_html_report():
@@ -945,6 +1036,7 @@ def generate_html_report():
     <!DOCTYPE html>
     <html>
     <head>
+        <meta charset="UTF-8">
         <title>User Identification Results - {TIMESTAMP}</title>
         <style>
             body {{ font-family: Arial, sans-serif; margin: 40px; background-color: #f5f5f5; }}
@@ -959,16 +1051,16 @@ def generate_html_report():
     </head>
     <body>
         <div class="header">
-            <h1>🔐 User Identification Analysis</h1>
+            <h1>User Identification Analysis</h1>
             <p><strong>Timestamp:</strong> {TIMESTAMP}</p>
             <p><strong>Task:</strong> Cross-Platform User Identification</p>
-            <p><strong>Early Stopping:</strong> {'✅ Enabled' if args.early_stop else '❌ Disabled'}</p>
+            <p><strong>Early Stopping:</strong> {'Enabled' if EARLY_STOP else 'Disabled'}</p>
             <p><strong>Total Model Runs:</strong> {len(results_df)}</p>
             <p><strong>Data:</strong> Pre-normalized (no additional scaling)</p>
         </div>
         
         <div class="section">
-            <h2>🎯 Best Performance Summary</h2>
+            <h2>Best Performance Summary</h2>
             <div class="info-box">
                 <p><strong>Best Top-1 Accuracy:</strong> <span class="metric-highlight">{results_df.loc[best_top1_idx, 'test_top_1_accuracy']:.4f}</span></p>
                 <p><strong>Best Top-1 Model:</strong> <span class="metric-highlight">{results_df.loc[best_top1_idx, 'model']} ({results_df.loc[best_top1_idx, 'experiment']})</span></p>
@@ -978,7 +1070,7 @@ def generate_html_report():
         </div>
         
         <div class="section">
-            <h2>📊 Top-K Performance Summary</h2>
+            <h2>Top-K Performance Summary</h2>
             <table>
                 <tr>
                     <th>Model</th>
@@ -1010,14 +1102,14 @@ def generate_html_report():
         </div>
         
         <div class="section">
-            <h2>📁 Generated Files</h2>
+            <h2>Generated Files</h2>
             <ul>
-                <li>📊 <strong>Summary Results:</strong> experiment_results_{TIMESTAMP}.csv</li>
-                <li>📋 <strong>Detailed Top-K Results:</strong> detailed_topk_results_{TIMESTAMP}.csv</li>
-                <li>📈 <strong>Performance Plots:</strong> performance_plots.html</li>
-                <li>🤖 <strong>Trained Models:</strong> {len([r for r in EXPERIMENT_RESULTS if 'model_path' in r])} models with metadata</li>
-                <li>🖼️ <strong>Confusion Matrices:</strong> Enhanced Top-1 and Top-5 visualizations</li>
-                <li>📊 <strong>Feature Importance:</strong> Available for tree-based models</li>
+                <li><strong>Summary Results:</strong> experiment_results_{TIMESTAMP}.csv</li>
+                <li><strong>Detailed Top-K Results:</strong> detailed_topk_results_{TIMESTAMP}.csv</li>
+                <li><strong>Performance Plots:</strong> performance_plots.html</li>
+                <li><strong>Trained Models:</strong> {len([r for r in EXPERIMENT_RESULTS if 'model_path' in r])} models with metadata</li>
+                <li><strong>Confusion Matrices:</strong> Enhanced Top-1 and Top-5 visualizations</li>
+                <li><strong>Feature Importance:</strong> Available for tree-based models</li>
             </ul>
         </div>
     </body>
@@ -1026,7 +1118,7 @@ def generate_html_report():
     
     # Save HTML report
     html_path = OUTPUT_DIR / f"user_identification_report_{TIMESTAMP}.html"
-    with open(html_path, 'w') as f:
+    with open(html_path, 'w', encoding='utf-8') as f:
         f.write(html_content)
     
     print(f"📋 HTML report: {html_path}")
@@ -1051,7 +1143,7 @@ def finalize_experiments():
 
 if __name__ == "__main__":
     print(f"🚀 Fast User Identification ML Models loaded")
-    print(f"⚡ Early stopping: {args.early_stop}")
+    print(f"⚡ Early stopping: {EARLY_STOP}")
     print(f"📁 Results: {OUTPUT_DIR}")
     print(f"🔧 Data preprocessing: Pre-normalized")
     print(f"⚡ Speed optimized: Streamlined parameter grids")
