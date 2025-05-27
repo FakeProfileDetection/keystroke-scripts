@@ -1,6 +1,5 @@
 import os
 import json
-import enum
 import pickle
 import argparse
 import warnings
@@ -11,9 +10,8 @@ import numpy as np
 from tqdm import tqdm
 
 from sklearn.svm import SVC
-from sklearn.ensemble import RandomForestClassifier, ExtraTreesClassifier, GradientBoostingClassifier
-from sklearn.linear_model import LogisticRegression
-from sklearn.neighbors import KNeighborsClassifier
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.preprocessing import LabelEncoder
 from catboost import CatBoostClassifier, Pool
 from sklearn.model_selection import (
     GridSearchCV,
@@ -35,7 +33,6 @@ import bob.measure
 import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-import plotly.offline as pyo
 
 # Suppress warnings
 warnings.filterwarnings('ignore', category=UserWarning)
@@ -49,14 +46,11 @@ with open(os.path.join(os.getcwd(), "classifier_config.json"), "r") as f:
 parser = argparse.ArgumentParser(description='Run ML experiments with optional early stopping')
 parser.add_argument('-e', '--early-stop', action='store_true', 
                    help='Use early stopping for XGBoost and CatBoost models')
-parser.add_argument('-s', '--seeds', type=int, default=1,
-                   help='Number of different random seeds to test (default: 1)')
 args = parser.parse_args()
 
 # Global results storage
 EXPERIMENT_RESULTS = []
 DETAILED_RESULTS = []
-HYPERPARAMETER_ANALYSIS = []  # New: Store all CV results for analysis
 TIMESTAMP = datetime.now().isoformat().replace(':', '-').replace('.', '-')[:19]
 EARLY_STOP_SUFFIX = "_early_stop" if args.early_stop else ""
 OUTPUT_DIR = Path(f"experiment_results_{TIMESTAMP}{EARLY_STOP_SUFFIX}")
@@ -221,84 +215,11 @@ def create_top_k_confusion_matrices(y_true, y_pred_proba, label_encoder, title, 
             plt.close()
 
 
-def analyze_hyperparameter_performance():
-    """Analyze hyperparameter search results to suggest improvements"""
-    if not HYPERPARAMETER_ANALYSIS:
-        return
-    
-    analysis_df = pd.DataFrame(HYPERPARAMETER_ANALYSIS)
-    
-    # Save detailed hyperparameter results
-    hp_csv_path = OUTPUT_DIR / f"hyperparameter_analysis_{TIMESTAMP}.csv"
-    analysis_df.to_csv(hp_csv_path, index=False)
-    
-    print(f"\n📊 Hyperparameter Analysis Summary:")
-    print(f"Total grid search combinations tested: {len(analysis_df)}")
-    
-    # Group by model and analyze
-    for model_name in analysis_df['model'].unique():
-        model_data = analysis_df[analysis_df['model'] == model_name]
-        
-        print(f"\n🔍 {model_name} Analysis:")
-        print(f"  • Combinations tested: {len(model_data)}")
-        print(f"  • Best CV score: {model_data['cv_score'].max():.4f}")
-        print(f"  • Worst CV score: {model_data['cv_score'].min():.4f}")
-        print(f"  • Score variance: {model_data['cv_score'].var():.6f}")
-        
-        # Check if we're hitting parameter boundaries
-        best_params = model_data.loc[model_data['cv_score'].idxmax(), 'params']
-        print(f"  • Best parameters: {best_params}")
-        
-        # Analyze parameter distributions
-        param_cols = [col for col in model_data.columns if col.startswith('param_')]
-        if param_cols:
-            print(f"  • Parameter analysis:")
-            for param_col in param_cols:
-                unique_vals = model_data[param_col].dropna().unique()
-                if len(unique_vals) > 1:
-                    # Check if best value is at boundary
-                    best_val = model_data.loc[model_data['cv_score'].idxmax(), param_col]
-                    if pd.notna(best_val):
-                        sorted_vals = sorted(unique_vals)
-                        if (best_val == sorted_vals[0] or best_val == sorted_vals[-1]) and len(sorted_vals) > 2:
-                            print(f"    ⚠️ {param_col}: Best value ({best_val}) at boundary - consider expanding range")
-                        else:
-                            print(f"    ✅ {param_col}: Best value ({best_val}) not at boundary")
-    
-    # Generate recommendations
-    print(f"\n💡 Recommendations:")
-    
-    # Check variance in scores
-    overall_variance = analysis_df['cv_score'].var()
-    if overall_variance > 0.01:
-        print("  • High score variance detected - hyperparameter tuning is important!")
-    else:
-        print("  • Low score variance - current hyperparameters may be sufficient")
-    
-    # Model comparison
-    model_scores = analysis_df.groupby('model')['cv_score'].max()
-    best_model = model_scores.idxmax()
-    print(f"  • Best performing model: {best_model} (CV score: {model_scores[best_model]:.4f})")
-    
-    # Suggest additional models
-    tested_models = set(analysis_df['model'].unique())
-    additional_models = {
-        'ExtraTrees': 'Extra Trees Classifier',
-        'GradientBoosting': 'Gradient Boosting Classifier', 
-        'KNN': 'K-Nearest Neighbors',
-        'LogisticRegression': 'Logistic Regression'
-    } 
-    
-    untested = set(additional_models.keys()) - tested_models
-    if untested:
-        print(f"  • Consider testing additional models: {', '.join([additional_models[m] for m in untested])}")
-
-
 def save_model_with_metadata(model, model_name, experiment_name, hyperparams, metrics, random_seed=42):
     """Save model with comprehensive metadata"""
     early_stop_suffix = "_early_stop" if args.early_stop else ""
     
-    # Clean experiment name for filename (remove redundant model name)
+    # Clean experiment name for filename
     clean_experiment_name = experiment_name.replace(f"_{model_name}", "").replace("_no_scaling", "")
     
     # Create filename with all relevant info
@@ -333,31 +254,8 @@ def save_model_with_metadata(model, model_name, experiment_name, hyperparams, me
     return str(filepath)
 
 
-def run_with_multiple_seeds(model_func, X_train, X_test, y_train, y_test, experiment_name, model_name):
-    """Run model with multiple random seeds if specified"""
-    all_results = []
-    
-    seeds = [42, 123, 456, 789, 999] if args.seeds > 1 else [42]
-    seeds = seeds[:args.seeds]  # Use only requested number of seeds
-    
-    for seed_idx, seed in enumerate(seeds):
-        print(f"  🎲 Running with random seed {seed} ({seed_idx + 1}/{len(seeds)})")
-        
-        # Set random seeds for reproducibility
-        np.random.seed(seed)
-        
-        try:
-            result = model_func(X_train, X_test, y_train, y_test, experiment_name, seed)
-            result['random_seed'] = seed
-            all_results.append(result)
-        except Exception as e:
-            print(f"❌ Failed with seed {seed}: {e}")
-    
-    return all_results
-
-
 def run_xgboost_model(X_train, X_test, y_train, y_test, experiment_name="unknown", random_seed=42):
-    """Enhanced XGBoost model with comprehensive tracking"""
+    """Fast XGBoost model with streamlined parameters"""
     global CURRENT_EXPERIMENT
     CURRENT_EXPERIMENT += 1
     
@@ -381,7 +279,6 @@ def run_xgboost_model(X_train, X_test, y_train, y_test, experiment_name="unknown
         X_test_scaled = np.nan_to_num(X_test_scaled, nan=np.nanmedian(X_test_scaled))
 
     # Encode labels
-    from sklearn.preprocessing import LabelEncoder
     label_encoder = LabelEncoder()
     y_train_encoded = label_encoder.fit_transform(y_train)
     y_test_encoded = label_encoder.transform(y_test)
@@ -408,7 +305,7 @@ def run_xgboost_model(X_train, X_test, y_train, y_test, experiment_name="unknown
         }
         best_xgb = XGBClassifier(**best_params)
         
-        with tqdm(desc="Training XGBoost", unit="epoch") as pbar:
+        with tqdm(desc="Training XGBoost", leave=False) as pbar:
             if args.early_stop:
                 best_xgb.fit(X_train_scaled, y_train_encoded, 
                              early_stopping_rounds=early_stopping_rounds,
@@ -417,22 +314,21 @@ def run_xgboost_model(X_train, X_test, y_train, y_test, experiment_name="unknown
                 best_xgb.fit(X_train_scaled, y_train_encoded)
             pbar.update(1)
     else:
-        stratified_kfold = StratifiedKFold(n_splits=3, shuffle=True, random_state=random_seed)
+        stratified_kfold = StratifiedKFold(n_splits=2, shuffle=True, random_state=random_seed)
 
-        # Expanded parameter grid
+        # STREAMLINED parameter grid for speed
         param_grid = {
-            "n_estimators": [1000] if args.early_stop else [100, 200, 500],
-            "max_depth": [3, 4, 6, 8],
-            "learning_rate": [0.01, 0.05, 0.1, 0.2],
-            "subsample": [0.7, 0.8, 0.9, 1.0],
-            "colsample_bytree": [0.7, 0.8, 0.9, 1.0],
-            "reg_lambda": [0.1, 1, 3, 10],
-            "reg_alpha": [0, 0.1, 1],
+            "n_estimators": [1000] if args.early_stop else [100, 200],
+            "max_depth": [4, 6, 8],
+            "learning_rate": [0.05, 0.1],
+            "subsample": [0.8, 1.0],
+            "colsample_bytree": [0.8, 1.0],
+            "reg_lambda": [1, 3],
         }
 
         base_estimator = XGBClassifier(random_state=random_seed, n_jobs=n_jobs)
         
-        with tqdm(desc="Grid Search XGBoost") as pbar:
+        with tqdm(desc="Grid Search XGBoost", leave=False) as pbar:
             grid_search_xgb = GridSearchCV(
                 base_estimator,
                 param_grid,
@@ -440,27 +336,9 @@ def run_xgboost_model(X_train, X_test, y_train, y_test, experiment_name="unknown
                 cv=stratified_kfold,
                 n_jobs=n_jobs,
                 verbose=0,
-                return_train_score=True
             )
             grid_search_xgb.fit(X_train_scaled, y_train_encoded)
             pbar.update(1)
-            
-        # Store hyperparameter analysis data
-        cv_results = pd.DataFrame(grid_search_xgb.cv_results_)
-        for idx, row in cv_results.iterrows():
-            hp_record = {
-                'model': 'XGBoost',
-                'experiment': experiment_name,
-                'random_seed': random_seed,
-                'cv_score': row['mean_test_score'],
-                'cv_std': row['std_test_score'],
-                'params': str(row['params']),
-                'rank': row['rank_test_score']
-            }
-            # Add individual parameters for analysis
-            for param, value in row['params'].items():
-                hp_record[f'param_{param}'] = value
-            HYPERPARAMETER_ANALYSIS.append(hp_record)
             
         best_xgb = grid_search_xgb.best_estimator_
         best_params = grid_search_xgb.best_params_
@@ -469,7 +347,7 @@ def run_xgboost_model(X_train, X_test, y_train, y_test, experiment_name="unknown
         # Refit with early stopping if requested
         if args.early_stop:
             best_xgb.set_params(n_estimators=1000)
-            with tqdm(desc="Final XGBoost Training") as pbar:
+            with tqdm(desc="Final XGBoost Training", leave=False) as pbar:
                 best_xgb.fit(X_train_scaled, y_train_encoded,
                             early_stopping_rounds=early_stopping_rounds,
                             eval_set=eval_set, verbose=False)
@@ -509,7 +387,7 @@ def run_xgboost_model(X_train, X_test, y_train, y_test, experiment_name="unknown
     if config.get("draw_feature_importance_graph", False):
         plt.figure(figsize=(12, 8))
         plot_importance(best_xgb, importance_type="weight", max_num_features=15)
-        plt.title(f"XGBoost Feature Importance - {clean_exp_name}\nBest Params: {str(best_params)[:100]}...")
+        plt.title(f"XGBoost Feature Importance - {clean_exp_name}")
         plt.tight_layout()
         plt.savefig(OUTPUT_DIR / f"xgboost_feature_importance_{clean_exp_name}.png", 
                    dpi=300, bbox_inches='tight')
@@ -552,9 +430,8 @@ def run_xgboost_model(X_train, X_test, y_train, y_test, experiment_name="unknown
     return all_metrics
 
 
-# I'll continue with the other models in the next response due to length limits...
 def run_random_forest_model(X_train, X_test, y_train, y_test, experiment_name="unknown", random_seed=42):
-    """Enhanced Random Forest model"""
+    """Fast Random Forest model with streamlined parameters"""
     global CURRENT_EXPERIMENT
     CURRENT_EXPERIMENT += 1
     
@@ -569,7 +446,6 @@ def run_random_forest_model(X_train, X_test, y_train, y_test, experiment_name="u
     X_test_scaled = X_test.values
 
     # Encode labels
-    from sklearn.preprocessing import LabelEncoder
     label_encoder = LabelEncoder()
     y_train_encoded = label_encoder.fit_transform(y_train)
     y_test_encoded = label_encoder.transform(y_test)
@@ -586,24 +462,24 @@ def run_random_forest_model(X_train, X_test, y_train, y_test, experiment_name="u
             random_state=random_seed,
             n_jobs=n_jobs
         )
-        with tqdm(desc="Training Random Forest") as pbar:
+        with tqdm(desc="Training Random Forest", leave=False) as pbar:
             best_rf.fit(X_train_scaled, y_train_encoded)
             pbar.update(1)
         best_params = best_rf.get_params()
     else:
-        stratified_kfold = StratifiedKFold(n_splits=3, shuffle=True, random_state=random_seed)
+        stratified_kfold = StratifiedKFold(n_splits=2, shuffle=True, random_state=random_seed)
 
-        # Expanded parameter grid
+        # STREAMLINED parameter grid for speed
         param_grid = {
-            "n_estimators": [100, 300, 500, 800],
-            "max_depth": [5, 10, 15, 20, None],
-            "min_samples_split": [2, 5, 10, 20],
-            "min_samples_leaf": [1, 2, 4, 8],
-            "max_features": ["sqrt", "log2", 0.5, 0.7],
+            "n_estimators": [100, 300, 500],
+            "max_depth": [10, 20, None],
+            "min_samples_split": [2, 10],
+            "min_samples_leaf": [1, 2],
+            "max_features": ["sqrt", "log2"],
             "bootstrap": [True, False],
         }
 
-        with tqdm(desc="Grid Search Random Forest") as pbar:
+        with tqdm(desc="Grid Search Random Forest", leave=False) as pbar:
             grid_search_rf = GridSearchCV(
                 RandomForestClassifier(random_state=random_seed, n_jobs=n_jobs),
                 param_grid,
@@ -611,32 +487,15 @@ def run_random_forest_model(X_train, X_test, y_train, y_test, experiment_name="u
                 cv=stratified_kfold,
                 n_jobs=n_jobs,
                 verbose=0,
-                return_train_score=True
             )
             grid_search_rf.fit(X_train_scaled, y_train_encoded)
             pbar.update(1)
-
-        # Store hyperparameter analysis
-        cv_results = pd.DataFrame(grid_search_rf.cv_results_)
-        for idx, row in cv_results.iterrows():
-            hp_record = {
-                'model': 'RandomForest',
-                'experiment': experiment_name,
-                'random_seed': random_seed,
-                'cv_score': row['mean_test_score'],
-                'cv_std': row['std_test_score'],
-                'params': str(row['params']),
-                'rank': row['rank_test_score']
-            }
-            for param, value in row['params'].items():
-                hp_record[f'param_{param}'] = value
-            HYPERPARAMETER_ANALYSIS.append(hp_record)
 
         best_rf = grid_search_rf.best_estimator_
         best_params = grid_search_rf.best_params_
         print(f"Best RF params: {best_params}")
 
-    # Predictions and metrics (similar structure as XGBoost)
+    # Predictions and metrics
     y_pred_train = best_rf.predict(X_train_scaled)
     y_pred_test = best_rf.predict(X_test_scaled)
     
@@ -663,7 +522,7 @@ def run_random_forest_model(X_train, X_test, y_train, y_test, experiment_name="u
     create_top_k_confusion_matrices(y_test, y_pred_proba_test, label_encoder,
                                    f"Random Forest {clean_exp_name}", f"rf_{clean_exp_name}")
 
-    # Feature importance with hyperparameter info
+    # Feature importance
     if config.get("draw_feature_importance_graph", False):
         plt.figure(figsize=(12, 8))
         feature_importances = best_rf.feature_importances_
@@ -673,13 +532,13 @@ def run_random_forest_model(X_train, X_test, y_train, y_test, experiment_name="u
         plt.barh(range(len(indices)), feature_importances[indices], align="center")
         plt.yticks(range(len(indices)), [feature_names[i] for i in indices])
         plt.xlabel("Feature Importance")
-        plt.title(f"Random Forest Feature Importance - {clean_exp_name}\nBest Params: {str(best_params)[:100]}...")
+        plt.title(f"Random Forest Feature Importance - {clean_exp_name}")
         plt.tight_layout()
         plt.savefig(OUTPUT_DIR / f"rf_feature_importance_{clean_exp_name}.png", 
                    dpi=300, bbox_inches='tight')
         plt.close()
 
-    # Save model and results (similar to XGBoost pattern)
+    # Save model and results
     model_path = save_model_with_metadata(
         best_rf, "RandomForest", experiment_name, best_params, all_metrics, random_seed
     )
@@ -713,8 +572,313 @@ def run_random_forest_model(X_train, X_test, y_train, y_test, experiment_name="u
     return all_metrics
 
 
-# Similar implementations for CatBoost, SVM, and new models...
-# [The rest of the models follow the same pattern but I need to continue in another artifact due to length]
+def run_catboost_model(X_train, X_test, y_train, y_test, experiment_name="unknown", random_seed=42):
+    """Fast CatBoost model with streamlined parameters"""
+    global CURRENT_EXPERIMENT
+    CURRENT_EXPERIMENT += 1
+    
+    print(f"\n🐱 Running CatBoost - {experiment_name} ({CURRENT_EXPERIMENT}/{TOTAL_EXPERIMENTS})")
+    
+    # Validate data and use pre-normalized values
+    is_valid, issues = validate_data_quality(X_train, X_test, y_train, y_test)
+    if not is_valid:
+        print(f"⚠️ Data quality issues: {issues}")
+    
+    X_train_scaled = X_train.values
+    X_test_scaled = X_test.values
+
+    # Encode labels
+    label_encoder = LabelEncoder()
+    y_train_encoded = label_encoder.fit_transform(y_train)
+    y_test_encoded = label_encoder.transform(y_test)
+
+    min_samples_per_class = y_train.value_counts().min()
+    print(f"Minimum samples per class: {min_samples_per_class}")
+
+    # Configure early stopping
+    early_stopping_rounds = 50 if args.early_stop else None
+    eval_set = Pool(X_test_scaled, y_test_encoded) if args.early_stop else None
+    thread_count = min(4, os.cpu_count() // 2) if os.cpu_count() > 4 else 1
+
+    if min_samples_per_class < 2:
+        print("⚠️ Not enough samples for CV → using default parameters")
+        best_params = {
+            'iterations': 1000 if args.early_stop else 100,
+            'depth': 6,
+            'learning_rate': 0.1,
+            'l2_leaf_reg': 3,
+            'border_count': 64,
+            'random_seed': random_seed,
+            'verbose': 0,
+            'thread_count': thread_count,
+        }
+        
+        best_catboost_model = CatBoostClassifier(**best_params)
+        
+        with tqdm(desc="Training CatBoost", leave=False) as pbar:
+            if args.early_stop and eval_set:
+                best_catboost_model.fit(
+                    X_train_scaled, y_train_encoded,
+                    early_stopping_rounds=early_stopping_rounds,
+                    eval_set=eval_set,
+                    use_best_model=True
+                )
+            else:
+                best_catboost_model.fit(X_train_scaled, y_train_encoded)
+            pbar.update(1)
+    else:
+        stratified_kfold = StratifiedKFold(n_splits=2, shuffle=True, random_state=random_seed)
+
+        # STREAMLINED parameter grid for speed
+        param_grid = {
+            "iterations": [1000] if args.early_stop else [100, 200],
+            "depth": [4, 6, 8],
+            "learning_rate": [0.05, 0.1],
+            "l2_leaf_reg": [1, 3, 5],
+            "border_count": [32, 64],
+        }
+
+        with tqdm(desc="Grid Search CatBoost", leave=False) as pbar:
+            grid_search = GridSearchCV(
+                estimator=CatBoostClassifier(verbose=0, random_seed=random_seed, thread_count=thread_count),
+                param_grid=param_grid,
+                scoring="accuracy",
+                cv=stratified_kfold,
+                verbose=0,
+                n_jobs=1,  # CatBoost handles parallelism internally
+            )
+            grid_search.fit(X_train_scaled, y_train_encoded)
+            pbar.update(1)
+
+        best_params = grid_search.best_params_
+        best_score = grid_search.best_score_
+        print(f"Best CatBoost params: {best_params}")
+
+        # Train final model with best params
+        best_catboost_model = CatBoostClassifier(**best_params, random_seed=random_seed, verbose=0, thread_count=thread_count)
+        
+        with tqdm(desc="Final CatBoost Training", leave=False) as pbar:
+            if args.early_stop and eval_set:
+                best_catboost_model.fit(
+                    X_train_scaled, y_train_encoded,
+                    early_stopping_rounds=early_stopping_rounds,
+                    eval_set=eval_set,
+                    use_best_model=True
+                )
+            else:
+                best_catboost_model.fit(X_train_scaled, y_train_encoded)
+            pbar.update(1)
+
+    # Predictions and metrics
+    y_pred_train = best_catboost_model.predict(X_train_scaled)
+    y_pred_test = best_catboost_model.predict(X_test_scaled)
+    
+    y_pred_train_decoded = label_encoder.inverse_transform(y_pred_train)
+    y_pred_test_decoded = label_encoder.inverse_transform(y_pred_test)
+    
+    y_pred_proba_train = best_catboost_model.predict_proba(X_train_scaled)
+    y_pred_proba_test = best_catboost_model.predict_proba(X_test_scaled)
+
+    train_metrics = calculate_comprehensive_metrics(
+        y_train, y_pred_train_decoded, y_pred_proba_train, label_encoder, "train"
+    )
+    test_metrics = calculate_comprehensive_metrics(
+        y_test, y_pred_test_decoded, y_pred_proba_test, label_encoder, "test"
+    )
+    
+    all_metrics = {**train_metrics, **test_metrics}
+    
+    print(f"CatBoost Train Top-1: {train_metrics.get('train_top_1_accuracy', 0):.4f}")
+    print(f"CatBoost Test Top-1: {test_metrics.get('test_top_1_accuracy', 0):.4f}")
+    print(f"CatBoost Test Top-5: {test_metrics.get('test_top_5_accuracy', 0):.4f}")
+    
+    clean_exp_name = experiment_name.replace("_no_scaling", "")
+    create_top_k_confusion_matrices(y_test, y_pred_proba_test, label_encoder,
+                                   f"CatBoost {clean_exp_name}", f"catboost_{clean_exp_name}")
+
+    # Feature importance
+    if config.get("draw_feature_importance_graph", False):
+        try:
+            feature_importances = best_catboost_model.get_feature_importance(
+                Pool(X_train_scaled, label=y_train_encoded)
+            )
+            feature_names = X_train.columns
+            plt.figure(figsize=(12, 8))
+            sorted_indices = feature_importances.argsort()[-15:]
+            plt.barh(
+                range(len(sorted_indices)),
+                feature_importances[sorted_indices],
+                align="center",
+            )
+            plt.yticks(
+                range(len(sorted_indices)), [feature_names[i] for i in sorted_indices]
+            )
+            plt.xlabel("Feature Importance")
+            plt.title(f"CatBoost Feature Importance - {clean_exp_name}")
+            plt.tight_layout()
+            plt.savefig(OUTPUT_DIR / f"catboost_feature_importance_{clean_exp_name}.png", 
+                       dpi=300, bbox_inches='tight')
+            plt.close()
+        except Exception as e:
+            print(f"⚠️ Could not generate feature importance plot: {e}")
+
+    # Save model and results
+    hyperparams = best_params if 'best_params' in locals() else best_catboost_model.get_params()
+    model_path = save_model_with_metadata(
+        best_catboost_model, "CatBoost", experiment_name, hyperparams, all_metrics, random_seed
+    )
+    
+    result_record = {
+        'model': 'CatBoost',
+        'experiment': experiment_name,
+        'random_seed': random_seed,
+        'early_stopping': args.early_stop,
+        'model_path': model_path,
+        'hyperparameters': str(hyperparams),
+        **all_metrics
+    }
+    EXPERIMENT_RESULTS.append(result_record)
+    
+    for k in range(1, 6):
+        detailed_record = {
+            'model': 'CatBoost',
+            'experiment': experiment_name,
+            'random_seed': random_seed,
+            'early_stopping': args.early_stop,
+            'k_value': k,
+            'train_top_k_accuracy': train_metrics.get(f'train_top_{k}_accuracy', 0),
+            'test_top_k_accuracy': test_metrics.get(f'test_top_{k}_accuracy', 0),
+            'model_path': model_path,
+            'hyperparameters': str(hyperparams),
+            'timestamp': TIMESTAMP
+        }
+        DETAILED_RESULTS.append(detailed_record)
+    
+    return all_metrics
+
+
+def run_svm_model(X_train, X_test, y_train, y_test, experiment_name="unknown", random_seed=42):
+    """Fast SVM model with streamlined parameters"""
+    global CURRENT_EXPERIMENT
+    CURRENT_EXPERIMENT += 1
+    
+    print(f"\n⚙️ Running SVM - {experiment_name} ({CURRENT_EXPERIMENT}/{TOTAL_EXPERIMENTS})")
+    
+    # Validate data and use pre-normalized values
+    is_valid, issues = validate_data_quality(X_train, X_test, y_train, y_test)
+    if not is_valid:
+        print(f"⚠️ Data quality issues: {issues}")
+    
+    X_train_scaled = X_train.values
+    X_test_scaled = X_test.values
+
+    # Encode labels
+    label_encoder = LabelEncoder()
+    y_train_encoded = label_encoder.fit_transform(y_train)
+    y_test_encoded = label_encoder.transform(y_test)
+
+    min_samples_per_class = y_train.value_counts().min()
+    print(f"Minimum samples per class: {min_samples_per_class}")
+
+    if min_samples_per_class < 2:
+        print("⚠️ Not enough samples for CV → using default parameters")
+        best_svm = SVC(
+            C=1,
+            kernel="rbf",
+            gamma="scale",
+            probability=True,
+            random_state=random_seed,
+        )
+        with tqdm(desc="Training SVM", leave=False) as pbar:
+            best_svm.fit(X_train_scaled, y_train_encoded)
+            pbar.update(1)
+        best_params = best_svm.get_params()
+    else:
+        stratified_kfold = StratifiedKFold(n_splits=2, shuffle=True, random_state=random_seed)
+
+        # STREAMLINED parameter grid for speed
+        param_grid = {
+            "C": [0.1, 1, 10],
+            "kernel": ["rbf"],  # Only RBF for speed
+            "gamma": ["scale", "auto"],
+        }
+
+        with tqdm(desc="Grid Search SVM", leave=False) as pbar:
+            grid_search_svm = GridSearchCV(
+                SVC(probability=True, random_state=random_seed),
+                param_grid,
+                scoring="accuracy",
+                cv=stratified_kfold,
+                n_jobs=1,  # SVM doesn't parallelize well
+                verbose=0,
+            )
+            grid_search_svm.fit(X_train_scaled, y_train_encoded)
+            pbar.update(1)
+            
+        best_svm = grid_search_svm.best_estimator_
+        best_params = grid_search_svm.best_params_
+        print(f"Best SVM params: {best_params}")
+
+    # Predictions and metrics
+    y_pred_train = best_svm.predict(X_train_scaled)
+    y_pred_test = best_svm.predict(X_test_scaled)
+    
+    y_pred_train_decoded = label_encoder.inverse_transform(y_pred_train)
+    y_pred_test_decoded = label_encoder.inverse_transform(y_pred_test)
+    
+    y_pred_proba_train = best_svm.predict_proba(X_train_scaled)
+    y_pred_proba_test = best_svm.predict_proba(X_test_scaled)
+
+    train_metrics = calculate_comprehensive_metrics(
+        y_train, y_pred_train_decoded, y_pred_proba_train, label_encoder, "train"
+    )
+    test_metrics = calculate_comprehensive_metrics(
+        y_test, y_pred_test_decoded, y_pred_proba_test, label_encoder, "test"
+    )
+    
+    all_metrics = {**train_metrics, **test_metrics}
+    
+    print(f"SVM Train Top-1: {train_metrics.get('train_top_1_accuracy', 0):.4f}")
+    print(f"SVM Test Top-1: {test_metrics.get('test_top_1_accuracy', 0):.4f}")
+    print(f"SVM Test Top-5: {test_metrics.get('test_top_5_accuracy', 0):.4f}")
+    
+    clean_exp_name = experiment_name.replace("_no_scaling", "")
+    create_top_k_confusion_matrices(y_test, y_pred_proba_test, label_encoder,
+                                   f"SVM {clean_exp_name}", f"svm_{clean_exp_name}")
+
+    # Save model and results
+    model_path = save_model_with_metadata(
+        best_svm, "SVM", experiment_name, best_params, all_metrics, random_seed
+    )
+    
+    result_record = {
+        'model': 'SVM',
+        'experiment': experiment_name,
+        'random_seed': random_seed,
+        'early_stopping': False,
+        'model_path': model_path,
+        'hyperparameters': str(best_params),
+        **all_metrics
+    }
+    EXPERIMENT_RESULTS.append(result_record)
+    
+    for k in range(1, 6):
+        detailed_record = {
+            'model': 'SVM',
+            'experiment': experiment_name,
+            'random_seed': random_seed,
+            'early_stopping': False,
+            'k_value': k,
+            'train_top_k_accuracy': train_metrics.get(f'train_top_{k}_accuracy', 0),
+            'test_top_k_accuracy': test_metrics.get(f'test_top_{k}_accuracy', 0),
+            'model_path': model_path,
+            'hyperparameters': str(best_params),
+            'timestamp': TIMESTAMP
+        }
+        DETAILED_RESULTS.append(detailed_record)
+    
+    return all_metrics
+
 
 def create_performance_plots(results_df):
     """Create comprehensive performance plots"""
@@ -722,11 +886,11 @@ def create_performance_plots(results_df):
         print("⚠️ No results to plot")
         return
         
-    # Enhanced plotting with multiple seeds analysis
+    # Create basic performance plots
     fig = make_subplots(
         rows=2, cols=2,
         subplot_titles=('Top-1 Accuracy by Model', 'Top-K Accuracy Progression', 
-                       'Random Seed Stability', 'Hyperparameter Impact'),
+                       'F1 vs Top-1 Accuracy', 'Model Performance Overview'),
         specs=[[{"secondary_y": False}, {"secondary_y": False}],
                [{"secondary_y": False}, {"secondary_y": False}]]
     )
@@ -734,35 +898,24 @@ def create_performance_plots(results_df):
     models = results_df['model'].unique()
     colors = px.colors.qualitative.Set1[:len(models)]
     
-    # Top-1 accuracy by model (with error bars if multiple seeds)
+    # Top-1 accuracy by model
     for i, model in enumerate(models):
         model_data = results_df[results_df['model'] == model]
         
-        if 'random_seed' in model_data.columns and len(model_data['random_seed'].unique()) > 1:
-            # Multiple seeds - show mean and std
-            seed_stats = model_data.groupby('experiment')['test_top_1_accuracy'].agg(['mean', 'std']).reset_index()
-            fig.add_trace(
-                go.Scatter(x=seed_stats['experiment'], y=seed_stats['mean'],
-                          error_y=dict(type='data', array=seed_stats['std']),
-                          name=f'{model} (avg)', line=dict(color=colors[i]),
-                          mode='lines+markers'),
-                row=1, col=1
-            )
-        else:
-            # Single seed
+        if 'test_top_1_accuracy' in model_data.columns:
             fig.add_trace(
                 go.Scatter(x=model_data['experiment'], y=model_data['test_top_1_accuracy'],
-                          name=f'{model}', line=dict(color=colors[i]),
+                          name=f'{model} Top-1', line=dict(color=colors[i]),
                           mode='lines+markers'),
                 row=1, col=1
             )
     
-    fig.update_layout(height=800, title_text="Enhanced User Identification Performance Analysis")
+    fig.update_layout(height=800, title_text="User Identification Performance Analysis")
     fig.write_html(OUTPUT_DIR / "performance_plots.html")
 
 
 def generate_html_report():
-    """Generate comprehensive HTML report with hyperparameter analysis"""
+    """Generate comprehensive HTML report"""
     if not EXPERIMENT_RESULTS:
         print("⚠️ No experiment results to report")
         return
@@ -771,7 +924,7 @@ def generate_html_report():
     results_df = pd.DataFrame(EXPERIMENT_RESULTS)
     detailed_df = pd.DataFrame(DETAILED_RESULTS)
     
-    # Save CSV files
+    # Save CSV files (without scaler column as requested)
     csv_path = OUTPUT_DIR / f"experiment_results_{TIMESTAMP}.csv"
     detailed_csv_path = OUTPUT_DIR / f"detailed_topk_results_{TIMESTAMP}.csv"
     
@@ -781,13 +934,10 @@ def generate_html_report():
     print(f"📊 Results saved to: {csv_path}")
     print(f"📊 Detailed Top-K results saved to: {detailed_csv_path}")
     
-    # Analyze hyperparameters
-    analyze_hyperparameter_performance()
-    
     # Create performance plots
     create_performance_plots(results_df)
     
-    # Generate enhanced HTML report
+    # Generate HTML report
     best_top1_idx = results_df['test_top_1_accuracy'].fillna(0).idxmax()
     best_top5_idx = results_df['test_top_5_accuracy'].fillna(0).idxmax()
     
@@ -795,7 +945,7 @@ def generate_html_report():
     <!DOCTYPE html>
     <html>
     <head>
-        <title>Enhanced User Identification Results - {TIMESTAMP}</title>
+        <title>User Identification Results - {TIMESTAMP}</title>
         <style>
             body {{ font-family: Arial, sans-serif; margin: 40px; background-color: #f5f5f5; }}
             .header {{ background-color: #2c3e50; color: white; padding: 20px; border-radius: 10px; margin-bottom: 30px; }}
@@ -804,23 +954,21 @@ def generate_html_report():
             th, td {{ padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }}
             th {{ background-color: #34495e; color: white; }}
             .metric-highlight {{ font-weight: bold; color: #27ae60; }}
-            .warning {{ color: #e74c3c; font-weight: bold; }}
             .info-box {{ background-color: #ecf0f1; padding: 15px; border-left: 4px solid #3498db; margin-bottom: 20px; }}
         </style>
     </head>
     <body>
         <div class="header">
-            <h1>🔐 Enhanced User Identification Analysis</h1>
+            <h1>🔐 User Identification Analysis</h1>
             <p><strong>Timestamp:</strong> {TIMESTAMP}</p>
             <p><strong>Task:</strong> Cross-Platform User Identification</p>
-            <p><strong>Random Seeds Tested:</strong> {args.seeds}</p>
             <p><strong>Early Stopping:</strong> {'✅ Enabled' if args.early_stop else '❌ Disabled'}</p>
             <p><strong>Total Model Runs:</strong> {len(results_df)}</p>
-            <p><strong>Hyperparameter Combinations:</strong> {len(HYPERPARAMETER_ANALYSIS)}</p>
+            <p><strong>Data:</strong> Pre-normalized (no additional scaling)</p>
         </div>
         
         <div class="section">
-            <h2>🎯 Peak Performance Summary</h2>
+            <h2>🎯 Best Performance Summary</h2>
             <div class="info-box">
                 <p><strong>Best Top-1 Accuracy:</strong> <span class="metric-highlight">{results_df.loc[best_top1_idx, 'test_top_1_accuracy']:.4f}</span></p>
                 <p><strong>Best Top-1 Model:</strong> <span class="metric-highlight">{results_df.loc[best_top1_idx, 'model']} ({results_df.loc[best_top1_idx, 'experiment']})</span></p>
@@ -830,22 +978,46 @@ def generate_html_report():
         </div>
         
         <div class="section">
-            <h2>🔬 Hyperparameter Analysis Insights</h2>
-            <p>Grid search tested <strong>{len(HYPERPARAMETER_ANALYSIS)}</strong> hyperparameter combinations across all models.</p>
-            <p>📊 <strong>Detailed Analysis:</strong> See hyperparameter_analysis_{TIMESTAMP}.csv for complete results</p>
-            <p>💡 <strong>Recommendations:</strong> Check console output for specific parameter expansion suggestions</p>
+            <h2>📊 Top-K Performance Summary</h2>
+            <table>
+                <tr>
+                    <th>Model</th>
+                    <th>Experiment</th>
+                    <th>Top-1</th>
+                    <th>Top-2</th>
+                    <th>Top-3</th>
+                    <th>Top-4</th>
+                    <th>Top-5</th>
+                </tr>
+    """
+    
+    # Add top-k performance table
+    for _, row in results_df.iterrows():
+        html_content += f"""
+                <tr>
+                    <td>{row['model']}</td>
+                    <td>{row['experiment']}</td>
+                    <td>{row.get('test_top_1_accuracy', 0):.4f}</td>
+                    <td>{row.get('test_top_2_accuracy', 0):.4f}</td>
+                    <td>{row.get('test_top_3_accuracy', 0):.4f}</td>
+                    <td>{row.get('test_top_4_accuracy', 0):.4f}</td>
+                    <td>{row.get('test_top_5_accuracy', 0):.4f}</td>
+                </tr>
+        """
+    
+    html_content += f"""
+            </table>
         </div>
         
         <div class="section">
-            <h2>📁 Complete File Inventory</h2>
+            <h2>📁 Generated Files</h2>
             <ul>
                 <li>📊 <strong>Summary Results:</strong> experiment_results_{TIMESTAMP}.csv</li>
                 <li>📋 <strong>Detailed Top-K Results:</strong> detailed_topk_results_{TIMESTAMP}.csv</li>
-                <li>🔬 <strong>Hyperparameter Analysis:</strong> hyperparameter_analysis_{TIMESTAMP}.csv</li>
-                <li>📈 <strong>Interactive Plots:</strong> performance_plots.html</li>
-                <li>🤖 <strong>Trained Models:</strong> {len([r for r in EXPERIMENT_RESULTS if 'model_path' in r])} models with full metadata</li>
+                <li>📈 <strong>Performance Plots:</strong> performance_plots.html</li>
+                <li>🤖 <strong>Trained Models:</strong> {len([r for r in EXPERIMENT_RESULTS if 'model_path' in r])} models with metadata</li>
                 <li>🖼️ <strong>Confusion Matrices:</strong> Enhanced Top-1 and Top-5 visualizations</li>
-                <li>📊 <strong>Feature Importance:</strong> With hyperparameter annotations</li>
+                <li>📊 <strong>Feature Importance:</strong> Available for tree-based models</li>
             </ul>
         </div>
     </body>
@@ -853,11 +1025,11 @@ def generate_html_report():
     """
     
     # Save HTML report
-    html_path = OUTPUT_DIR / f"enhanced_user_identification_report_{TIMESTAMP}.html"
+    html_path = OUTPUT_DIR / f"user_identification_report_{TIMESTAMP}.html"
     with open(html_path, 'w') as f:
         f.write(html_content)
     
-    print(f"📋 Enhanced HTML report: {html_path}")
+    print(f"📋 HTML report: {html_path}")
     return html_path
 
 
@@ -871,18 +1043,15 @@ def finalize_experiments():
     """Generate all reports and analysis"""
     if EXPERIMENT_RESULTS:
         generate_html_report()
-        print(f"\n🎉 Enhanced user identification analysis complete!")
+        print(f"\n🎉 User identification analysis complete!")
         print(f"📁 All results in: {OUTPUT_DIR}")
-        print(f"🔍 Key insights:")
-        print(f"   - Models tested: {len(set([r['model'] for r in EXPERIMENT_RESULTS]))}")
-        print(f"   - Hyperparameter combinations: {len(HYPERPARAMETER_ANALYSIS)}")
-        print(f"   - Random seeds: {args.seeds}")
     else:
         print("⚠️ No experiments were run")
 
 
 if __name__ == "__main__":
-    print(f"🚀 Enhanced User Identification ML Models loaded")
+    print(f"🚀 Fast User Identification ML Models loaded")
     print(f"⚡ Early stopping: {args.early_stop}")
-    print(f"🎲 Random seeds: {args.seeds}")
     print(f"📁 Results: {OUTPUT_DIR}")
+    print(f"🔧 Data preprocessing: Pre-normalized")
+    print(f"⚡ Speed optimized: Streamlined parameter grids")

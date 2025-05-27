@@ -3,7 +3,6 @@ import os
 import json
 import re
 from ml_models import (
-    ScalarType,
     run_random_forest_model,
     run_xgboost_model,
     run_catboost_model,
@@ -263,9 +262,7 @@ def run_experiments(df: pd.DataFrame):
     if min_users_per_platform < 5:
         print("⚠️ Warning: Very few users per platform - results may not be reliable")
     
-    # Run platform leakage analysis
-    leakage_acc, leaky_features = analyze_platform_leakage(df)
-    
+    # Platform leakage analysis was already run in main(), so we skip it here
     # Optionally remove leaky features (uncomment if needed)
     # if leakage_acc > 0.7:
     #     print("🔧 Removing highly leaky features...")
@@ -350,49 +347,41 @@ def run_experiments(df: pd.DataFrame):
             plt.close()
 
         # Run all models WITHOUT scaling (data is pre-normalized)
-        # Commented out scaling options as requested - data is pre-normalized elsewhere
-        # scalers_to_test = [ScalarType.STANDARD, ScalarType.MIN_MAX]
-        scalers_to_test = [ScalarType.NONE]  # No additional scaling
+        # All scaling code has been removed since data is pre-normalized elsewhere
         
         print(f"\n🤖 Running Random Forest models...")
-        for scaler in scalers_to_test:
-            print(f"  📊 Running without additional scaling (data pre-normalized)...")
-            try:
-                run_random_forest_model(
-                    X_train, X_test, y_train, y_test, 
-                    scalar_obj=scaler, experiment_name=f"{experiment_name}_no_scaling"
-                )
-            except Exception as e:
-                print(f"❌ Random Forest failed: {e}")
+        try:
+            run_random_forest_model(
+                X_train, X_test, y_train, y_test, 
+                experiment_name=experiment_name
+            )
+        except Exception as e:
+            print(f"❌ Random Forest failed: {e}")
         
         print(f"\n🚀 Running XGBoost models...")
-        for scaler in scalers_to_test:
-            print(f"  📊 Running without additional scaling (data pre-normalized)...")
-            try:
-                run_xgboost_model(
-                    X_train, X_test, y_train, y_test, 
-                    scalar_obj=scaler, experiment_name=f"{experiment_name}_no_scaling"
-                )
-            except Exception as e:
-                print(f"❌ XGBoost failed: {e}")
+        try:
+            run_xgboost_model(
+                X_train, X_test, y_train, y_test, 
+                experiment_name=experiment_name
+            )
+        except Exception as e:
+            print(f"❌ XGBoost failed: {e}")
         
         print(f"\n🐱 Running CatBoost models...")
-        for scaler in scalers_to_test:
-            print(f"  📊 Running without additional scaling (data pre-normalized)...")
-            try:
-                run_catboost_model(
-                    X_train, X_test, y_train, y_test, 
-                    scalar_obj=scaler, experiment_name=f"{experiment_name}_no_scaling"
-                )
-            except Exception as e:
-                print(f"❌ CatBoost failed: {e}")
+        try:
+            run_catboost_model(
+                X_train, X_test, y_train, y_test, 
+                experiment_name=experiment_name
+            )
+        except Exception as e:
+            print(f"❌ CatBoost failed: {e}")
         
         # Run SVM (no scaling needed as data is pre-normalized)
         print(f"\n⚙️ Running SVM model...")
         try:
             run_svm_model(
                 X_train, X_test, y_train, y_test, 
-                experiment_name=f"{experiment_name}_SVM"
+                experiment_name=experiment_name
             )
         except Exception as e:
             print(f"❌ SVM failed: {e}")
@@ -413,7 +402,6 @@ def main():
     # Option 1: Setup experiments from scratch (uncomment if needed)
     # print("🔧 Setting up experiments from raw data...")
     # final_df = setup_experiments()
-    # analyze_platform_leakage(final_df)
     
     # Option 2: Load pre-processed data (current approach)
     print("📂 Loading pre-processed dataset...")
@@ -431,8 +419,8 @@ def main():
     
     print(f"📊 Dataset loaded with shape: {final_df.shape}")
     
-    # Run platform leakage analysis
-    analyze_platform_leakage(final_df)
+    # Run platform leakage analysis (once)
+    leakage_acc, leaky_features = analyze_platform_leakage(final_df)
     
     # Run all experiments
     run_experiments(final_df)
