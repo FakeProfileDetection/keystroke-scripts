@@ -1,14 +1,7 @@
-__pycache__
-*.png
-*.jpg
-*.jpeg
-*.gif
-*.svg
-*.webp
-*.mp4
-
+_pycache__
 # Ignore pickeld models
 *.pkl
+**/*.pkl
 # Ignore Jupyter Notebook checkpoints
 .ipynb_checkpoints
 # Ignore Python bytecode files
