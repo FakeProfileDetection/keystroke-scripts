@@ -20,7 +20,7 @@
     "GradientBoosting",
     "KNN",
     "LogisticRegression"
-]
+  ],
   
   "experiments": [
     {"name": "FI_vs_T", "platform": true, "train": [1, 2], "test": 3},
