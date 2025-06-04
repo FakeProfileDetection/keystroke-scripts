@@ -118,13 +118,22 @@ class Visualizer:
                 plot_importance(model, importance_type="weight", max_num_features=15)
                 plt.title(f"XGBoost Feature Importance - {experiment_name}")
             
-            elif model_name == "RandomForest":
+            elif model_name in ["RandomForest", "ExtraTrees", "GradientBoosting"]:
                 importances = model.feature_importances_
                 indices = np.argsort(importances)[-15:]
                 plt.barh(range(len(indices)), importances[indices], align="center")
                 plt.yticks(range(len(indices)), [feature_names[i] for i in indices])
                 plt.xlabel("Feature Importance")
                 plt.title(f"Random Forest Feature Importance - {experiment_name}")
+                
+            elif model_name == "LightGBM":
+                # LightGBM has feature_importances_ like sklearn models
+                importances = model.feature_importances_
+                indices = np.argsort(importances)[-15:]
+                plt.barh(range(len(indices)), importances[indices], align="center")
+                plt.yticks(range(len(indices)), [feature_names[i] for i in indices])
+                plt.xlabel("Feature Importance")
+                plt.title(f"LightGBM Feature Importance - {experiment_name}")
             
             elif model_name == "CatBoost":
                 # Create a dummy pool for feature importance
