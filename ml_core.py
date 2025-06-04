@@ -242,7 +242,7 @@ class ModelTrainer:
             model_init_params['n_jobs'] = -1  # KNN supports parallel distance computation
         if model_name.lower() == 'logisticregression':
             model_init_params['n_jobs'] = -1  # LogisticRegression supports parallel computation
-            model_init_params['max_iter'] = 1000  # Default max_iter to avoid convergence warnings
+            # model_init_params['max_iter'] = 1000  # Default max_iter to avoid convergence warnings
         
         # Create model instance
         model_instance = model_class(**model_init_params)
