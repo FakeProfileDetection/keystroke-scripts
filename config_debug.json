@@ -1,0 +1,66 @@
+{
+  "dataset_path": "../eda/ml-experients-with-outliers2025-05-31_142307/imputation_user/dataset_3_full_with_outliers_IL_filtered.csv",
+  "early_stopping": false,
+  "seeds": [42],
+  "output_affix": "debug",
+  "show_class_distributions": false,
+  "draw_feature_importance": true,
+  "debug": true,
+  "use_gpu": false,
+  
+  "models_to_train": [
+    "RandomForest",
+    "XGBoost",
+    "CatBoost",
+    "SVM",
+    "MLP",
+    "NaiveBayes"
+  ],
+  
+  "experiments": [
+    {"name": "FI_vs_T", "platform": true, "train": [1, 2], "test": 3},
+    {"name": "I_vs_F", "platform": true, "train": [2], "test": 1},
+
+    {"name": "P3_S1_vs_S2", "session": true, "platform": 3, "train": [1], "test": 2},
+    {"name": "All_S1_vs_S2", "session": true, "platform": "all", "train": [1], "test": 2}
+  ],
+  
+  "param_grids": {
+    "randomforest": {
+      "n_estimators": [50],
+      "max_depth": [10]
+    },
+    
+    "xgboost": {
+      "n_estimators": [50],
+      "max_depth": [6],
+      "learning_rate": [0.1]
+    },
+    
+    "catboost": {
+      "iterations": [50],
+      "depth": [6],
+      "learning_rate": [0.1]
+    },
+    
+    "svm": {
+      "C": [1],
+      "kernel": ["rbf"],
+      "gamma": ["scale"]
+    },
+    
+    "mlp": {
+      "hidden_layer_sizes": [[50]],
+      "activation": ["relu"],
+      "solver": ["adam"],
+      "alpha": [0.0001],
+      "learning_rate": ["constant"],
+      "batch_size": [16],
+      "learning_rate_init": [0.001],
+      "max_iter": [1000]
+    },
+    
+    "naivebayes": {}
+  }
+}
+

@@ -1,0 +1,87 @@
+{
+  "dataset_path": "../eda/ml-experients-with-outliers2025-05-31_142307/imputation_user/dataset_3_full_with_outliers_IL_filtered.csv",
+  "early_stopping": false,
+  "seeds": [42, 123, 456],
+  "output_affix": "debug-dataset3",
+  "show_class_distributions": false,
+  "draw_feature_importance": true,
+  "debug": false,
+  "use_gpu": true,
+  
+  "models_to_train": [
+    "RandomForest",
+    "XGBoost", 
+    "CatBoost",
+    "SVM",
+    "MLP",
+    "NaiveBayes"
+  ],
+  
+  "experiments": [
+    {"name": "FI_vs_T", "platform": true, "train": [1, 2], "test": 3},
+    {"name": "FT_vs_I", "platform": true, "train": [1, 3], "test": 2},
+    {"name": "IF_vs_T", "platform": true, "train": [2, 1], "test": 3},
+    {"name": "IT_vs_F", "platform": true, "train": [2, 3], "test": 1},
+    {"name": "TF_vs_I", "platform": true, "train": [3, 1], "test": 2},
+    {"name": "TI_vs_F", "platform": true, "train": [3, 2], "test": 1},
+    {"name": "F_vs_I", "platform": true, "train": [1], "test": 2},
+    {"name": "F_vs_T", "platform": true, "train": [1], "test": 3},
+    {"name": "I_vs_F", "platform": true, "train": [2], "test": 1},
+    {"name": "I_vs_T", "platform": true, "train": [2], "test": 3},
+    {"name": "T_vs_F", "platform": true, "train": [3], "test": 1},
+    {"name": "T_vs_I", "platform": true, "train": [3], "test": 2},
+    
+    {"name": "P1_S1_vs_S2", "session": true, "platform": 1, "train": [1], "test": 2},
+    {"name": "P2_S1_vs_S2", "session": true, "platform": 2, "train": [1], "test": 2},
+    {"name": "P3_S1_vs_S2", "session": true, "platform": 3, "train": [1], "test": 2},
+    {"name": "All_S1_vs_S2", "session": true, "platform": "all", "train": [1], "test": 2}
+  ],
+  
+  "param_grids": {
+    "randomforest": {
+      "n_estimators": [100, 300, 500],
+      "max_depth": [10, 20, null],
+      "min_samples_split": [2, 10],
+      "min_samples_leaf": [1, 2],
+      "max_features": ["sqrt", "log2"],
+      "bootstrap": [true, false]
+    },
+    
+    "xgboost": {
+      "n_estimators": [100, 200],
+      "max_depth": [4, 6, 8],
+      "learning_rate": [0.05, 0.1],
+      "subsample": [0.8, 1.0],
+      "colsample_bytree": [0.8, 1.0],
+      "reg_lambda": [1, 3]
+    },
+    
+    "catboost": {
+      "iterations": [100, 200],
+      "depth": [4, 6, 8],
+      "learning_rate": [0.05, 0.1],
+      "l2_leaf_reg": [1, 3, 5],
+      "border_count": [32, 64]
+    },
+    
+    "svm": {
+      "decision_function_shape": ["ovo", "ovr"],
+      "C": [0.1, 1, 10, 100],
+      "kernel": ["rbf", "linear", "poly", "sigmoid"],
+      "gamma": ["scale", "auto"]
+    },
+    
+    "mlp": {
+      "hidden_layer_sizes": [[50], [100], [50, 50]],
+      "activation": ["relu", "tanh"],
+      "solver": ["adam", "lbfgs"],
+      "alpha": [0.0001, 0.001],
+      "learning_rate": ["constant", "adaptive"],
+      "batch_size": [36, 16, 8, 2, 1],
+      "learning_rate_init": [0.001, 0.01],
+      "max_iter": [5000, 2000]
+    },
+    
+    "naivebayes": {}
+  }
+}
