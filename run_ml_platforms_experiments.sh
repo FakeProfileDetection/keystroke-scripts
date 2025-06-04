@@ -5,12 +5,12 @@ set -euo pipefail  # Exit on error, undefined vars, and pipe failures
 echo "Running ML platforms experiments..."
 ROOT_DATA_DIR="../eda"
 OUTLIER_DIRS=(
-    "$ROOT_DATA_DIR/ml-experients-with-outliers2025-05-31_142307/imputation_global"
+    # "$ROOT_DATA_DIR/ml-experients-with-outliers2025-05-31_142307/imputation_global"
     "$ROOT_DATA_DIR/ml-experients-with-outliers2025-05-31_142307/imputation_user"
 )
 
 WITHOUT_OUTLIER_DIRS=(
-    "$ROOT_DATA_DIR/ml-experients-without-outliers2025-05-31_143027/imputation_global"
+    # "$ROOT_DATA_DIR/ml-experients-without-outliers2025-05-31_143027/imputation_global"
     "$ROOT_DATA_DIR/ml-experients-without-outliers2025-05-31_143027/imputation_user"
 )
 

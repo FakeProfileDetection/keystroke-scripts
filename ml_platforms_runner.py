@@ -30,7 +30,7 @@ class MLExperimentRunner:
         self.detailed_results: List[dict] = []
         
         # Initialize components
-        self.trainer = ModelTrainer(config, self.output_dir, self.timestamp)
+        self.trainer = ModelTrainer(config, self.output_dir, self.timestamp, use_gpu=self.use_gpu)
         self.visualizer = Visualizer(config, self.output_dir, self.timestamp)
         
         # Experiment configurations: (train_platforms, test_platform, name)
@@ -85,6 +85,7 @@ class MLExperimentRunner:
         print(f"🎮 GPU acceleration: {'Enabled' if self.use_gpu else 'Disabled'}")
         print(f"🐛 Debug mode: {'Enabled' if self.config.debug_mode else 'Disabled'}")
         
+        # TODO: is this necessary?
         df_pd = df.to_pandas()  # Convert once for sklearn compatibility
         
         for exp_idx, (train_platforms, test_platform, exp_name) in enumerate(self.experiments, 1):
@@ -154,9 +155,12 @@ class MLExperimentRunner:
                     ("XGBoost", self.trainer.train_xgboost),
                     ("CatBoost", self.trainer.train_catboost),
                     ("SVM", self.trainer.train_svm),
+                    ["MLPClassifier", self.trainer.train_mlp],
+                    ["NaiveBayes", self.trainer.train_naive_bayes]
                 ]
                 
                 for model_name, train_func in models_to_run:
+                    print("\n\nModel_name:", model_name)
                     try:
                         result = train_func(X_train_np, X_test_np, y_train_encoded, y_test_encoded, 
                                           full_exp_name, seed)
