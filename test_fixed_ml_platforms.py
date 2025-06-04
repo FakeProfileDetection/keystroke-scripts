@@ -73,6 +73,8 @@ def test_model_training():
         ("XGBoost", trainer.train_xgboost),
         ("CatBoost", trainer.train_catboost),
         ("SVM", trainer.train_svm),
+        ["MLPClassifier", trainer.train_mlp],
+        ["NaiveBayes", trainer.train_naive_bayes]
     ]
     
     results = []

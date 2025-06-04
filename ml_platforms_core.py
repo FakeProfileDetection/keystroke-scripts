@@ -16,7 +16,9 @@ import numpy as np
 
 from sklearn.svm import SVC
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.neural_network import MLPClassifier
 from sklearn.preprocessing import LabelEncoder
+from sklearn.naive_bayes import GaussianNB
 from catboost import CatBoostClassifier, Pool
 from sklearn.model_selection import GridSearchCV, StratifiedKFold, train_test_split
 from sklearn.metrics import (
@@ -66,11 +68,21 @@ class ExperimentResult:
 class ModelTrainer:
     """Handles training and evaluation of ML models."""
     
-    def __init__(self, config: ExperimentConfig, output_dir: Path, timestamp: str):
+    def __init__(self, config: ExperimentConfig, output_dir: Path, timestamp: str, use_gpu: bool = True):
         self.config = config
         self.output_dir = output_dir
         self.timestamp = timestamp
         self.label_encoder = LabelEncoder()
+        
+        # Check if GPU is available and use_gpu, else self.use_gpu = False
+        self.use_gpu = False
+        if self.use_gpu:    
+            import torch
+            if not torch.cuda.is_available():
+                print("⚠️ GPU not available, switching to CPU mode.")
+                self.use_gpu = False
+            
+        
     
     def calculate_metrics(self, y_true: np.ndarray, y_pred: np.ndarray, 
                          y_pred_proba: np.ndarray, prefix: str) -> Dict[str, float]:
@@ -162,6 +174,21 @@ class ModelTrainer:
                 return {"iterations": [50], "depth": [6], "learning_rate": [0.1]}
             elif model_type == "svm":
                 return {"C": [1], "kernel": ["rbf"], "gamma": ["scale"]}
+            elif model_type == "mlp":
+                return {
+                    "hidden_layer_sizes": [(50,)],
+                    "activation": ["relu"],
+                    "solver": ["adam"],
+                    "alpha": [0.0001],
+                    "learning_rate": ["constant"],
+                    "batch_size": [16],
+                    "learning_rate_init": [0.001],
+                    "max_iter": [1000],
+                    "early_stopping": [False],
+                }
+            elif model_type == "naive_bayes":
+                # Naive Bayes does not require hyperparameter tuning
+                return {}
         else:
             # Full grids matching the original ml_models.py
             if model_type == "random_forest":
@@ -181,6 +208,7 @@ class ModelTrainer:
                     "subsample": [0.8, 1.0],
                     "colsample_bytree": [0.8, 1.0],
                     "reg_lambda": [1, 3],
+                    "device": ["cuda"] if self.use_gpu else ["cpu"],
                 }
             elif model_type == "catboost":
                 return {
@@ -192,12 +220,80 @@ class ModelTrainer:
                 }
             elif model_type == "svm":
                 return {
-                    "C": [0.1, 1, 10],
-                    "kernel": ["rbf"],
-                    "gamma": ["scale", "auto"],
+                    "decision_function_shape": ["ovo", "ovr"],
+                    "C": [0.1, 1, 10, 100],
+                    "kernel": ["rbf","linear", "poly","sigmoid"],
+                    "gamma": ["scale", "auto",],
                 }
+            elif model_type == "mlp":
+                return {
+                    "hidden_layer_sizes": [(50,), (100,), (50, 50)],
+                    "activation": ["relu", "tanh"],
+                    "solver": ["adam", "lbfgs"],
+                    "alpha": [0.0001, 0.001],
+                    "learning_rate": ["constant", "adaptive"],
+                    "batch_size": [36, 16, 8, 2, 1],
+                    "learning_rate_init": [0.001, 0.01],
+                    "max_iter": [5000, 2000],
+                    "early_stopping": [True] if self.config.early_stopping else [False],
+                }
+            elif model_type == "naive_bayes":
+                # Naive Bayes does not require hyperparameter tuning
+                return {}
         return {}
     
+    def train_naive_bayes(self, X_train: np.ndarray, X_test: np.ndarray, 
+                          y_train: np.ndarray, y_test: np.ndarray, 
+                          experiment_name: str, seed: int) -> ExperimentResult: 
+        
+        """Train Naive Bayes model."""
+        print(f"🔍 Training Naive Bayes - {experiment_name}")
+        
+        min_samples_per_class = np.bincount(y_train).min()
+        
+        if min_samples_per_class < 2:
+            model = GaussianNB()
+            model.fit(X_train, y_train)
+            best_params = model.get_params()
+        else:
+            param_grid = self.get_param_grid("naive_bayes", self.config.debug_mode)
+            
+            cv = StratifiedKFold(n_splits=2, shuffle=True, random_state=seed)
+            grid_search = GridSearchCV(
+                GaussianNB(),
+                param_grid, cv=cv, scoring="accuracy", n_jobs=-1, verbose=0
+            )
+            grid_search.fit(X_train, y_train)
+            model = grid_search.best_estimator_
+            best_params = grid_search.best_params_
+            
+        # Predictions and metrics
+        train_pred = model.predict(X_train)
+        test_pred = model.predict(X_test)
+        train_proba = model.predict_proba(X_train)
+        test_proba = model.predict_proba(X_test)
+        
+        train_metrics = self.calculate_metrics(y_train, train_pred, train_proba, "train")
+        test_metrics = self.calculate_metrics(y_test, test_pred, test_proba, "test")
+        all_metrics = {**train_metrics, **test_metrics}
+        
+        # Create confusion matrices
+        clean_exp_name = experiment_name.replace("_no_scaling", "")
+        visualizer = Visualizer(self.config, self.output_dir, self.timestamp)
+        visualizer.create_confusion_matrices(y_test, test_proba,
+                                             f"NaiveBayes {clean_exp_name}", 
+                                             f"naive_bayes_{clean_exp_name}")
+        
+        # Feature importance plot
+        if self.config.draw_feature_importance:
+            visualizer.plot_feature_importance(model, "NaiveBayes", experiment_name, 
+                                             [f"feature_{i}" for i in range(X_train.shape[1])])
+        model_path = self.save_model(model, "NaiveBayes", experiment_name, best_params, all_metrics, seed)
+        
+        return ExperimentResult("NaiveBayes", experiment_name, seed, train_metrics,
+                                test_metrics, model_path, best_params)
+        
+        
     def train_random_forest(self, X_train: np.ndarray, X_test: np.ndarray, 
                            y_train: np.ndarray, y_test: np.ndarray, 
                            experiment_name: str, seed: int) -> ExperimentResult:
@@ -237,7 +333,7 @@ class ModelTrainer:
         visualizer = Visualizer(self.config, self.output_dir, self.timestamp)
         visualizer.create_confusion_matrices(y_test, test_proba, 
                                            f"RandomForest {clean_exp_name}", 
-                                           f"rf_{clean_exp_name}")
+                                           f"RandomForest_{clean_exp_name}")
         
         # Feature importance plot
         if self.config.draw_feature_importance:
@@ -452,6 +548,56 @@ class ModelTrainer:
         model_path = self.save_model(model, "CatBoost", experiment_name, best_params, all_metrics, seed)
         
         return ExperimentResult("CatBoost", experiment_name, seed, train_metrics, 
+                              test_metrics, model_path, best_params)
+    def train_mlp(self, X_train: np.ndarray, X_test: np.ndarray, 
+                           y_train: np.ndarray, y_test: np.ndarray, 
+                           experiment_name: str, seed: int) -> ExperimentResult:
+        """Train Random Forest model."""
+        print(f"🌲 Training Random Forest - {experiment_name}")
+        
+        min_samples_per_class = np.bincount(y_train).min()
+        
+        if min_samples_per_class < 2:
+            model = MLPClassifier(n_estimators=500, random_state=seed)
+            model.fit(X_train, y_train)
+            best_params = model.get_params()
+        else:
+            param_grid = self.get_param_grid("mlp", self.config.debug_mode)
+            
+            cv = StratifiedKFold(n_splits=2, shuffle=True, random_state=seed)
+            grid_search = GridSearchCV(
+                MLPClassifier(random_state=seed),
+                param_grid, cv=cv, scoring="accuracy", n_jobs=-1, verbose=0
+            )
+            grid_search.fit(X_train, y_train)
+            model = grid_search.best_estimator_
+            best_params = grid_search.best_params_
+        
+        # Predictions and metrics
+        train_pred = model.predict(X_train)
+        test_pred = model.predict(X_test)
+        train_proba = model.predict_proba(X_train)
+        test_proba = model.predict_proba(X_test)
+        
+        train_metrics = self.calculate_metrics(y_train, train_pred, train_proba, "train")
+        test_metrics = self.calculate_metrics(y_test, test_pred, test_proba, "test")
+        all_metrics = {**train_metrics, **test_metrics}
+        
+        # Create confusion matrices
+        clean_exp_name = experiment_name.replace("_no_scaling", "")
+        visualizer = Visualizer(self.config, self.output_dir, self.timestamp)
+        visualizer.create_confusion_matrices(y_test, test_proba, 
+                                           f"train_mlp {clean_exp_name}", 
+                                           f"mlp_{clean_exp_name}")
+        
+        # Feature importance plot
+        if self.config.draw_feature_importance:
+            visualizer.plot_feature_importance(model, "mlp", experiment_name, 
+                                             [f"feature_{i}" for i in range(X_train.shape[1])])
+        
+        model_path = self.save_model(model, "mlp", experiment_name, best_params, all_metrics, seed)
+        
+        return ExperimentResult("mlp", experiment_name, seed, train_metrics, 
                               test_metrics, model_path, best_params)
     
     def train_svm(self, X_train: np.ndarray, X_test: np.ndarray, 

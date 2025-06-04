@@ -4,6 +4,7 @@ ml_platforms_visualizer.py - Visualization and reporting functionality.
 
 from pathlib import Path
 from typing import List, Tuple, Any
+import re
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -151,14 +152,17 @@ class Visualizer:
         if results_df.empty:
             print("⚠️ No results to plot")
             return
-        
+        results_df['experiment'] = results_df["experiment"].str.replace(r'_seed\d+','',regex=True)
+    
         # Create comprehensive performance plots
         fig = make_subplots(
             rows=2, cols=2,
-            subplot_titles=('Top-1 Accuracy by Model', 'Top-K Accuracy Trends', 
-                           'F1 Score vs Top-1 Accuracy', 'Model Performance Overview'),
+            # subplot_titles=('Top-1 Accuracy by Model & Experiment', 'Top-K Accuracy Trends', 
+            #                'F1 Score vs Top-1 Accuracy', 'Model Performance Overview'),
+            subplot_titles=('Top-1 Accuracy by Model & Experiment', 'Top-K Accuracy Trends', 
+                        'Top-5 Accuracy by Model & Experiment', 'Model Performance Overview'),
             specs=[[{"secondary_y": False}, {"secondary_y": False}],
-                   [{"secondary_y": False}, {"secondary_y": False}]]
+                [{"secondary_y": False}, {"secondary_y": False}]]
         )
         
         models = results_df['model'].unique()
@@ -171,8 +175,19 @@ class Visualizer:
             if 'test_top_1_accuracy' in model_data.columns:
                 fig.add_trace(
                     go.Scatter(x=model_data['experiment'], y=model_data['test_top_1_accuracy'],
-                              name=f'{model}', line=dict(color=colors[i]),
-                              mode='lines+markers'),
+                            name=f'{model}', line=dict(color=colors[i]),
+                            mode='markers'),
+                    row=1, col=1
+                )
+
+                # Calculate means for each experiment
+                means_data = model_data.groupby('experiment')['test_top_1_accuracy'].mean().reset_index()
+                
+                # Plot means with a line (no markers)
+                fig.add_trace(
+                    go.Scatter(x=means_data['experiment'], y=means_data['test_top_1_accuracy'],
+                            name=f'{model} (mean)', line=dict(color=colors[i], dash='dash'),
+                            mode='lines', showlegend=False),
                     row=1, col=1
                 )
         
@@ -191,21 +206,44 @@ class Visualizer:
             
             fig.add_trace(
                 go.Scatter(x=k_values, y=k_accuracies,
-                          name=f'{model}', line=dict(color=colors[i]),
-                          mode='lines+markers', showlegend=False),
+                        name=f'{model}', line=dict(color=colors[i]),
+                        mode='lines+markers', showlegend=False),
                 row=1, col=2
             )
         
         # 3. F1 vs Top-1 Accuracy scatter plot
+        # for i, model in enumerate(models):
+        #     model_data = results_df[results_df['model'] == model]
+        #     if 'test_top_1_accuracy' in model_data.columns and 'test_f1_weighted' in model_data.columns:
+        #         fig.add_trace(
+        #             go.Scatter(x=model_data['test_f1_weighted'].fillna(0), 
+        #                       y=model_data['test_top_1_accuracy'].fillna(0),
+        #                       name=f'{model}', mode='markers', 
+        #                       marker=dict(color=colors[i], size=8),
+        #                       showlegend=False),
+        #             row=2, col=1
+        #         )
+
+        # 3. Experiment versus Top-5 Accuracy
         for i, model in enumerate(models):
             model_data = results_df[results_df['model'] == model]
-            if 'test_top_1_accuracy' in model_data.columns and 'test_f1_weighted' in model_data.columns:
+            
+            if 'test_top_5_accuracy' in model_data.columns:
                 fig.add_trace(
-                    go.Scatter(x=model_data['test_f1_weighted'].fillna(0), 
-                              y=model_data['test_top_1_accuracy'].fillna(0),
-                              name=f'{model}', mode='markers', 
-                              marker=dict(color=colors[i], size=8),
-                              showlegend=False),
+                    go.Scatter(x=model_data['experiment'], y=model_data['test_top_5_accuracy'],
+                            name=f'{model}', line=dict(color=colors[i]),
+                            mode='markers',showlegend=False),
+                    row=2, col=1
+                )
+
+                # Calculate means for each experiment
+                means_data = model_data.groupby('experiment')['test_top_5_accuracy'].mean().reset_index()
+                
+                # Plot means with a line (no markers)
+                fig.add_trace(
+                    go.Scatter(x=means_data['experiment'], y=means_data['test_top_5_accuracy'],
+                            name=f'{model} (mean)', line=dict(color=colors[i], dash='dash',),
+                            mode='lines'),
                     row=2, col=1
                 )
         
@@ -226,13 +264,13 @@ class Visualizer:
         # Add bars
         fig.add_trace(
             go.Bar(x=model_names, y=avg_top1_scores, 
-                   name='Avg Top-1', marker_color='teal'),
+                name='Avg Top-1', marker_color='teal'),
             row=2, col=2
         )
         
         fig.add_trace(
             go.Bar(x=model_names, y=avg_top5_scores, 
-                   name='Avg Top-5', marker_color='purple'),
+                name='Avg Top-5', marker_color='purple'),
             row=2, col=2
         )
         
@@ -248,8 +286,8 @@ class Visualizer:
         fig.update_yaxes(title_text="Top-1 Accuracy", row=1, col=1)
         fig.update_xaxes(title_text="K Value", row=1, col=2)
         fig.update_yaxes(title_text="Top-K Accuracy", row=1, col=2)
-        fig.update_xaxes(title_text="F1 Score (Weighted)", row=2, col=1)
-        fig.update_yaxes(title_text="Top-1 Accuracy", row=2, col=1)
+        fig.update_xaxes(title_text="Experiment", row=2, col=1)
+        fig.update_yaxes(title_text="Top-5 Accuracy", row=2, col=1)
         fig.update_xaxes(title_text="Model", row=2, col=2)
         fig.update_yaxes(title_text="Average Accuracy", row=2, col=2)
         
