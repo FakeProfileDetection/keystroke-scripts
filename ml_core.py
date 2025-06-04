@@ -13,16 +13,20 @@ import pandas as pd
 import numpy as np
 
 from sklearn.svm import SVC
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import RandomForestClassifier, ExtraTreesClassifier, GradientBoostingClassifier
 from sklearn.neural_network import MLPClassifier
 from sklearn.preprocessing import LabelEncoder
 from sklearn.naive_bayes import GaussianNB
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.linear_model import LogisticRegression
 from catboost import CatBoostClassifier, Pool
 from sklearn.metrics import (
     accuracy_score, classification_report, f1_score, precision_score,
     recall_score, top_k_accuracy_score, confusion_matrix
 )
 from xgboost import XGBClassifier
+from lightgbm import LGBMClassifier
+
 import bob.measure
 
 from ml_visualizer import Visualizer
@@ -216,19 +220,29 @@ class ModelTrainer:
         
         # Initialize model with seed if applicable
         model_init_params = {}
-        if model_name.lower() in ['randomforest', 'xgboost', 'svm', 'mlp']:
+        if model_name.lower() in ['randomforest', 'xgboost', 'svm', 'mlp', 'lightgbm', 'extratrees', 'gradientboosting', 'logisticregression']:
             model_init_params['random_state'] = seed
         if model_name.lower() == 'catboost':
             # CatBoost uses random_seed, not random_state
             model_init_params['random_seed'] = seed
             model_init_params['verbose'] = False
             model_init_params['thread_count'] = -1
-        if model_name.lower() == 'randomforest':
+        if model_name.lower() in ['randomforest', 'extratrees']:
             model_init_params['n_jobs'] = -1
         if model_name.lower() == 'xgboost':
             model_init_params['n_jobs'] = -1
+        if model_name.lower() == 'lightgbm':
+            model_init_params['n_jobs'] = -1
+            model_init_params['verbose'] = -1
+        if model_name.lower() == 'gradientboosting':
+            model_init_params['verbose'] = 0
         if model_name.lower() == 'svm':
             model_init_params['probability'] = True
+        if model_name.lower() == 'knn':
+            model_init_params['n_jobs'] = -1  # KNN supports parallel distance computation
+        if model_name.lower() == 'logisticregression':
+            model_init_params['n_jobs'] = -1  # LogisticRegression supports parallel computation
+            model_init_params['max_iter'] = 1000  # Default max_iter to avoid convergence warnings
         
         # Create model instance
         model_instance = model_class(**model_init_params)
@@ -278,7 +292,7 @@ class ModelTrainer:
                                            f"{model_name.lower()}_{clean_exp_name}")
         
         # Feature importance plot for tree-based models
-        if self.config.draw_feature_importance and model_name.lower() in ['randomforest', 'xgboost', 'catboost']:
+        if self.config.draw_feature_importance and model_name.lower() in ['randomforest', 'xgboost', 'catboost','extratrees', 'gradientboosting', 'lightgbm']:
             visualizer.plot_feature_importance(model, model_name, experiment_name, 
                                              [f"feature_{i}" for i in range(X_train.shape[1])])
         
@@ -350,4 +364,19 @@ class ModelTrainer:
     
     def train_svm(self, *args, **kwargs) -> ExperimentResult:
         return self.train_model_generic(SVC, "SVM", *args, **kwargs)
+    
+    def train_lightgbm(self, *args, **kwargs) -> ExperimentResult:
+        return self.train_model_generic(LGBMClassifier, "LightGBM", *args, **kwargs)
+    
+    def train_extratrees(self, *args, **kwargs) -> ExperimentResult:
+        return self.train_model_generic(ExtraTreesClassifier, "ExtraTrees", *args, **kwargs)
+    
+    def train_gradientboosting(self, *args, **kwargs) -> ExperimentResult:
+        return self.train_model_generic(GradientBoostingClassifier, "GradientBoosting", *args, **kwargs)
+    
+    def train_knn(self, *args, **kwargs) -> ExperimentResult:
+        return self.train_model_generic(KNeighborsClassifier, "KNN", *args, **kwargs)
+
+    def train_logisticregression(self, *args, **kwargs) -> ExperimentResult:
+        return self.train_model_generic(LogisticRegression, "LogisticRegression", *args, **kwargs)
     

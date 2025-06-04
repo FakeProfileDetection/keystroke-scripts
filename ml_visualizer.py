@@ -152,6 +152,8 @@ class Visualizer:
         if results_df.empty:
             print("⚠️ No results to plot")
             return
+        
+        # Remove seed from experiment experiment name if it exists
         results_df['experiment'] = results_df["experiment"].str.replace(r'_seed\d+','',regex=True)
     
         # Create comprehensive performance plots
@@ -171,6 +173,7 @@ class Visualizer:
         # 1. Top-1 accuracy by model (by experiment)
         for i, model in enumerate(models):
             model_data = results_df[results_df['model'] == model]
+            model_data = model_data.sort_values(by="experiment")
             
             if 'test_top_1_accuracy' in model_data.columns:
                 fig.add_trace(
@@ -227,6 +230,7 @@ class Visualizer:
         # 3. Experiment versus Top-5 Accuracy
         for i, model in enumerate(models):
             model_data = results_df[results_df['model'] == model]
+            model_data = model_data.sort_values(by="experiment")
             
             if 'test_top_5_accuracy' in model_data.columns:
                 fig.add_trace(
@@ -300,6 +304,8 @@ class Visualizer:
             print("⚠️ No experiment results to report")
             return
         
+        results_df = results_df.sort_values(by="experiment")
+        
         # Find best performers
         best_top1_idx = results_df['test_top_1_accuracy'].fillna(0).idxmax()
         best_top5_idx = results_df['test_top_5_accuracy'].fillna(0).idxmax()
@@ -323,6 +329,10 @@ class Visualizer:
             </style>
         </head>
         <body>
+        """
+        
+        # Add header section
+        html_content += f"""
             <div class="header">
                 <h1>User Identification Analysis</h1>
                 <p><strong>Timestamp:</strong> {self.timestamp}</p>
@@ -344,50 +354,10 @@ class Visualizer:
                     <p><strong>Best Top-5 Model:</strong> <span class="metric-highlight">{results_df.loc[best_top5_idx, 'model']} ({results_df.loc[best_top5_idx, 'experiment']})</span></p>
                 </div>
             </div>
-            
-            <div class="section">
-                <h2>Top-K Performance Summary</h2>
-                <table>
-                    <tr>
-                        <th>Model</th>
-                        <th>Experiment</th>
-                        <th>Top-1</th>
-                        <th>Top-2</th>
-                        <th>Top-3</th>
-                        <th>Top-4</th>
-                        <th>Top-5</th>
-                    </tr>
         """
         
-        # Add top-k performance table
-        for _, row in results_df.iterrows():
-            html_content += f"""
-                    <tr>
-                        <td>{row['model']}</td>
-                        <td>{row['experiment']}</td>
-                        <td>{row.get('test_top_1_accuracy', 0):.4f}</td>
-                        <td>{row.get('test_top_2_accuracy', 0):.4f}</td>
-                        <td>{row.get('test_top_3_accuracy', 0):.4f}</td>
-                        <td>{row.get('test_top_4_accuracy', 0):.4f}</td>
-                        <td>{row.get('test_top_5_accuracy', 0):.4f}</td>
-                    </tr>
-            """
-        
-        html_content += f"""
-                </table>
-            </div>
-            
-            <div class="section">
-                <h2>Generated Files</h2>
-                <ul>
-                    <li><strong>Summary Results:</strong> experiment_results_{self.timestamp}.csv</li>
-                    <li><strong>Detailed Top-K Results:</strong> detailed_topk_results_{self.timestamp}.csv</li>
-                    <li><strong>Performance Plots:</strong> performance_plots.html</li>
-                    <li><strong>Trained Models:</strong> {len([r for r in results_df.iterrows() if 'model_path' in r[1]])} models with metadata</li>
-                    <li><strong>Confusion Matrices:</strong> Enhanced Top-1 and Top-5 visualizations for each model</li>
-                    <li><strong>Feature Importance:</strong> Available for tree-based models (if enabled)</li>
-                </ul>
-            </div>
+        # Add model performance breakdown
+        html_content += """
             
             <div class="section">
                 <h2>Model Performance Breakdown</h2>
@@ -400,8 +370,6 @@ class Visualizer:
                         <th>Std Dev</th>
                     </tr>
         """
-        
-        # Add model performance breakdown
         for model in results_df['model'].unique():
             model_data = results_df[results_df['model'] == model]
             avg_top1 = model_data['test_top_1_accuracy'].mean()
@@ -422,12 +390,106 @@ class Visualizer:
         html_content += """
                 </table>
             </div>
+            """
+        
+        # Add top-k performance table
+        html_content += """
+            <div class="section">
+                <h2>Mean Top-K Performance Summary</h2>
+                <table>
+                    <tr>
+                        <th>Model</th>
+                        <th>Experiment</th>
+                        <th>Top-1</th>
+                        <th>Top-2</th>
+                        <th>Top-3</th>
+                        <th>Top-4</th>
+                        <th>Top-5</th>
+                    </tr>
+        """
+        
+        # Get statistics for each model/experiment combination
+        for (model, experiment), group_df in results_df.groupby(['model', 'experiment']):
+            stats = group_df.describe()
+            
+            html_content += f"""
+                    <tr>
+                        <td>{model}</td>
+                        <td>{experiment}</td>
+                        <td>{stats.loc['mean', 'test_top_1_accuracy']:.4f} ± {stats.loc['std', 'test_top_1_accuracy']:.4f}</td>
+                        <td>{stats.loc['mean', 'test_top_2_accuracy']:.4f} ± {stats.loc['std', 'test_top_2_accuracy']:.4f}</td>
+                        <td>{stats.loc['mean', 'test_top_3_accuracy']:.4f} ± {stats.loc['std', 'test_top_3_accuracy']:.4f}</td>
+                        <td>{stats.loc['mean', 'test_top_4_accuracy']:.4f} ± {stats.loc['std', 'test_top_4_accuracy']:.4f}</td>
+                        <td>{stats.loc['mean', 'test_top_5_accuracy']:.4f} ± {stats.loc['std', 'test_top_5_accuracy']:.4f}</td>
+                    </tr>
+            """
+
+        html_content += f"""
+                </table>
+            </div>
+            """
+            
+        # Get max and min values
+        html_content += """
+            <div class="section">
+                <h2>Max/min Top-K Performance Summary</h2>
+                <table>
+                    <tr>
+                        <th>Model</th>
+                        <th>Experiment</th>
+                        <th>Top-1</th>
+                        <th>Top-2</th>
+                        <th>Top-3</th>
+                        <th>Top-4</th>
+                        <th>Top-5</th>
+                    </tr>
+        """
+        
+        # Get statistics for each model/experiment combination
+        for (model, experiment), group_df in results_df.groupby(['model', 'experiment']):
+            stats = group_df.describe()
+            
+            html_content += f"""
+                    <tr>
+                        <td>{model}</td>
+                        <td>{experiment}</td>
+                        <td>{stats.loc['max', 'test_top_1_accuracy']:.4f} - {stats.loc['min', 'test_top_1_accuracy']:.4f}</td>
+                        <td>{stats.loc['max', 'test_top_2_accuracy']:.4f} - {stats.loc['min', 'test_top_2_accuracy']:.4f}</td>
+                        <td>{stats.loc['max', 'test_top_3_accuracy']:.4f} - {stats.loc['min', 'test_top_3_accuracy']:.4f}</td>
+                        <td>{stats.loc['max', 'test_top_4_accuracy']:.4f} - {stats.loc['min', 'test_top_4_accuracy']:.4f}</td>
+                        <td>{stats.loc['max', 'test_top_5_accuracy']:.4f} - {stats.loc['min', 'test_top_5_accuracy']:.4f}</td>
+                    </tr>
+            """
+
+        html_content += f"""
+                </table>
+            </div>
+            """
+        
+        
+        # Add Generated Files section
+        html_content += """
+            <div class="section">
+                <h2>Generated Files</h2>
+                <ul>
+                    <li><strong>Summary Results:</strong> experiment_results_{self.timestamp}.csv</li>
+                    <li><strong>Detailed Top-K Results:</strong> detailed_topk_results_{self.timestamp}.csv</li>
+                    <li><strong>Performance Plots:</strong> performance_plots.html</li>
+                    <li><strong>Trained Models:</strong> {len([r for r in results_df.iterrows() if 'model_path' in r[1]])} models with metadata</li>
+                    <li><strong>Confusion Matrices:</strong> Enhanced Top-1 and Top-5 visualizations for each model</li>
+                    <li><strong>Feature Importance:</strong> Available for tree-based models (if enabled)</li>
+                </ul>
+            </div>
+            """
+            
+        # End
+        html_content += """
         </body>
         </html>
         """
         
         # Save HTML report
-        html_path = self.output_dir / f"user_identification_report_{self.timestamp}.html"
+        html_path = self.output_dir / f"user_identification_report.html"
         with open(html_path, 'w', encoding='utf-8') as f:
             f.write(html_content)
         

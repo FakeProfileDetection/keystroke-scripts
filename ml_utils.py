@@ -67,6 +67,14 @@ def prepare_param_grid(base_params: Dict[str, Any],
         else:
             params["early_stopping"] = [False]
     
+    elif model_type == "logisticregression":
+        # Ensure solver compatibility with penalty
+        if "penalty" in params and "solver" in params:
+            # If L1 is in penalties, ensure compatible solvers
+            if "l1" in params["penalty"]:
+                compatible_solvers = ["liblinear", "saga"]
+                params["solver"] = [s for s in params["solver"] if s in compatible_solvers]
+    
     return params
 
 

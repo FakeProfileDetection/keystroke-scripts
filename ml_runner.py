@@ -49,7 +49,12 @@ class MLExperimentRunner:
             "CatBoost": self.trainer.train_catboost,
             "SVM": self.trainer.train_svm,
             "MLP": self.trainer.train_mlp,
-            "NaiveBayes": self.trainer.train_naive_bayes
+            "NaiveBayes": self.trainer.train_naive_bayes,
+            "LightGBM": self.trainer.train_lightgbm,
+            "ExtraTrees": self.trainer.train_extratrees,
+            "GradientBoosting": self.trainer.train_gradientboosting,
+            "KNN": self.trainer.train_knn,
+            "LogisticRegression": self.trainer.train_logisticregression
         }
         
         print(f"📋 Configuration loaded:")

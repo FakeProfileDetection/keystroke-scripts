@@ -10,12 +10,17 @@
   
   "models_to_train": [
     "RandomForest",
-    "XGBoost", 
+    "XGBoost",
     "CatBoost",
     "SVM",
     "MLP",
-    "NaiveBayes"
-  ],
+    "NaiveBayes",
+    "LightGBM",
+    "ExtraTrees",
+    "GradientBoosting",
+    "KNN",
+    "LogisticRegression"
+]
   
   "experiments": [
     {"name": "FI_vs_T", "platform": true, "train": [1, 2], "test": 3},
@@ -83,5 +88,42 @@
     },
     
     "naivebayes": {}
-  }
+  },
+    "lightgbm": {
+    "n_estimators": [100, 200],
+    "max_depth": [6, 8, -1],
+    "learning_rate": [0.05, 0.1],
+    "num_leaves": [31, 50],
+    "min_child_samples": [20, 30]
+},
+    "extratrees": {
+    "n_estimators": [100, 300, 500],
+    "max_depth": [10, 20, null],
+    "min_samples_split": [2, 10],
+    "min_samples_leaf": [1, 2],
+    "max_features": ["sqrt", "log2"],
+    "bootstrap": [false],
+    "criterion": ["gini", "entropy"]
+},
+    "gradientboosting": {
+    "n_estimators": [100, 200, 300],
+    "max_depth": [3, 5, 7],
+    "learning_rate": [0.05, 0.1, 0.15],
+    "min_samples_split": [2, 10, 20],
+    "min_samples_leaf": [1, 5, 10],
+    "subsample": [0.8, 1.0],
+    "max_features": ["sqrt", "log2", null]
+},
+    "knn": {
+    "n_neighbors": [3, 5, 7, 10, 15],
+    "weights": ["uniform", "distance"],
+    "metric": ["euclidean", "manhattan", "cosine"],
+    "algorithm": ["auto", "ball_tree", "kd_tree"]
+},
+    "logisticregression": {
+    "C": [0.001, 0.01, 0.1, 1, 10, 100],
+    "penalty": ["l2", "l1"],
+    "solver": ["liblinear", "saga"],
+    "max_iter": [1000, 2000]
+}
 }
