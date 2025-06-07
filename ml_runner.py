@@ -28,7 +28,7 @@ class MLExperimentRunner:
     
     def __init__(self, config: ExperimentConfig, max_workers: int = None):
         self.config = config
-        self.max_workers = max_workers or 16
+        self.max_workers = max_workers or __import__('os').cpu_count()
         self.timestamp = datetime.now().strftime("%Y-%m-%d_%H%M%S")
         self.output_dir = self._create_output_dir()
         self.results: List[ExperimentResult] = []
@@ -129,11 +129,26 @@ class MLExperimentRunner:
             )
             
             print(f"Training on {filter_column}: {train_values}, Testing on: {test_value}")
-            print(f"{'='*60}")
             
+                        
             # Create train/test splits
-            train_mask = df_pd[filter_column].isin(train_values)
-            test_mask = df_pd[filter_column] == test_value
+            if filter_column == "session_id":
+                train_platforms = experiment.get("platform", "All")
+                if str(train_platforms).lower() == "all":
+                    print("Using  all platforms")
+                    train_mask = df_pd[filter_column].isin(train_values)
+                    test_mask = df_pd[filter_column] == test_value
+                else:
+                    if not isinstance(train_platforms, list):
+                        train_platforms = [train_platforms]
+                    print(f"Using platforms: {train_platforms}")
+                    train_mask = df_pd[filter_column].isin(train_values) & df_pd['platform_id'].isin(train_platforms)
+                    test_mask = df_pd[filter_column] == test_value
+            else:
+                train_mask = df_pd[filter_column].isin(train_values)
+                test_mask = df_pd[filter_column] == test_value
+                
+            print(f"{'='*60}")
             
             feature_cols = get_feature_columns(df_pd.columns.tolist())
             X_train = df_pd.loc[train_mask, feature_cols].values

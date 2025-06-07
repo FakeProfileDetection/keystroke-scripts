@@ -126,14 +126,14 @@ def get_experiment_filters(experiment_config: Dict[str, Any],
         tuple: (train_values, test_value, column_name)
     """
     # Check experiment type
-    if "platform" in experiment_config:
-        return (experiment_config["train"], 
-                experiment_config["test"], 
-                "platform_id")
-    elif "session" in experiment_config:
+    if experiment_config.get("session", False):
         return (experiment_config["train"], 
                 experiment_config["test"], 
                 "session_id")
+    elif "platform" in experiment_config:
+        return (experiment_config["train"], 
+                experiment_config["test"], 
+                "platform_id")
     else:
         raise ValueError(f"Unknown experiment type in config: {experiment_config}")
 
