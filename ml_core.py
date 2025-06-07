@@ -113,10 +113,13 @@ class ModelTrainer:
         self.timestamp = timestamp
         self.label_encoder = LabelEncoder()
         
+        
         # Check GPU availability
-        self.use_gpu = config.use_gpu and check_gpu_availability()
-        if config.use_gpu and not self.use_gpu:
-            print("⚠️ GPU not available, switching to CPU mode.")
+        # self.use_gpu = config.use_gpu and check_gpu_availability()
+        # if config.use_gpu and not self.use_gpu:
+        #     print("⚠️ GPU not available, switching to CPU mode.")
+            
+        self.use_gpu = False  # Force CPU mode for compatibility with bob.measure--seems to be running slow with GPU
     
     def calculate_metrics(self, y_true: np.ndarray, y_pred: np.ndarray, 
                          y_pred_proba: np.ndarray, prefix: str) -> Dict[str, float]:

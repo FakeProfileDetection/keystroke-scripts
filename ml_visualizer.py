@@ -5,6 +5,7 @@ ml_platforms_visualizer.py - Visualization and reporting functionality.
 from pathlib import Path
 from typing import List, Tuple, Any
 import re
+import os
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -24,7 +25,10 @@ class Visualizer:
         self.config = config
         self.output_dir = output_dir
         self.timestamp = timestamp
-    
+        self.dataset_name = self.config.dataset_path 
+        if self.dataset_name:
+            self.dataset_name = Path(self.dataset_name).name    
+            
     def plot_platform_leakage(self, features: List[Tuple[str, float]]):
         """Plot platform leakage analysis."""
         plt.figure(figsize=(12, 8))
@@ -177,7 +181,9 @@ class Visualizer:
         )
         
         models = results_df['model'].unique()
-        colors = px.colors.qualitative.Set1[:len(models)]
+        # Ensure we have enough colors for all models
+        base_colors = px.colors.qualitative.Set1
+        colors = (base_colors * ((len(models) // len(base_colors)) + 1))[:len(models)]
         
         # 1. Top-1 accuracy by model (by experiment)
         for i, model in enumerate(models):
@@ -186,20 +192,30 @@ class Visualizer:
             
             if 'test_top_1_accuracy' in model_data.columns:
                 fig.add_trace(
-                    go.Scatter(x=model_data['experiment'], y=model_data['test_top_1_accuracy'],
-                            name=f'{model}', line=dict(color=colors[i]),
-                            mode='markers'),
+                    go.Scatter(
+                        x=model_data['experiment'], 
+                        y=model_data['test_top_1_accuracy'],
+                        name=f'{model}', 
+                        line={"color": colors[i]},
+                        mode='markers'
+                    ),
                     row=1, col=1
                 )
 
                 # Calculate means for each experiment
-                means_data = model_data.groupby('experiment')['test_top_1_accuracy'].mean().reset_index()
+                means_data = (model_data.groupby('experiment')
+                             ['test_top_1_accuracy'].mean().reset_index())
                 
                 # Plot means with a line (no markers)
                 fig.add_trace(
-                    go.Scatter(x=means_data['experiment'], y=means_data['test_top_1_accuracy'],
-                            name=f'{model} (mean)', line=dict(color=colors[i], dash='dash'),
-                            mode='lines', showlegend=False),
+                    go.Scatter(
+                        x=means_data['experiment'], 
+                        y=means_data['test_top_1_accuracy'],
+                        name=f'{model} (mean)', 
+                        line={"color": colors[i], "dash": 'dash'},
+                        mode='lines', 
+                        showlegend=False
+                    ),
                     row=1, col=1
                 )
         
@@ -350,6 +366,7 @@ class Visualizer:
                 <p><strong>Debug Mode:</strong> {'Enabled' if self.config.debug_mode else 'Disabled'}</p>
                 <p><strong>Total Model Runs:</strong> {len(results_df)}</p>
                 <p><strong>Data:</strong> Pre-normalized (no additional scaling)</p>
+                <p><strong>Dataset:</strong> {self.dataset_name if self.dataset_name else 'N/A'}</p>
             </div>
             
             {'<div class="debug-mode"><strong>⚠️ DEBUG MODE:</strong> Results generated with minimal hyperparameter search for testing purposes only.</div>' if self.config.debug_mode else ''}

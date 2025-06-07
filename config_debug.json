@@ -8,9 +8,13 @@
   "debug": true,
   "use_gpu": false,
   
-  "models_to_train": [
+    "models_to_train": [
     "RandomForest",
     "XGBoost",
+    "CatBoost",
+    "SVM",
+    "MLP",
+    "NaiveBayes",
     "LightGBM",
     "ExtraTrees",
     "GradientBoosting",

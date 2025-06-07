@@ -9,3 +9,8 @@ bob.measure
 catboost
 polars
 pyarrow
+catboost
+lightgbm
+xgboost
+bob.measure
+pyarrow

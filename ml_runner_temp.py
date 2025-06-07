@@ -63,7 +63,6 @@ class MLExperimentRunner:
         print(f"  - Models to train: {', '.join(self.models_to_train)}")
         print(f"  - Number of experiments: {len(self.experiments)}")
         print(f"  - Random seeds: {config.random_seeds}")
-        print(f"  - Dataset path: {config.dataset_path}")
         
          # Define file paths once
         self.detailed_backup_path = self.output_dir / f"detailed_topk_results_{self.timestamp}.csv"
@@ -386,12 +385,6 @@ def main():
             print(f"  Sessions: {sorted(df['session_id'].unique().to_list())}")
         print(f"  Users: {df['user_id'].n_unique()}")
         
-        # Save config to output directory
-        config_file = runner.output_dir / f"config_{runner.timestamp}.json"
-        with open(config_file, 'w') as f:
-            import json
-            json.dump(final_config, f, indent=4)
-        
         # Run experiments
         runner.run_experiments(df)
         
@@ -411,3 +404,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

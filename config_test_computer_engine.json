@@ -1,8 +1,8 @@
 {
-  "dataset_path": "../eda/ml-experients-without-outliers2025-05-31_143027/imputation_user/dataset_3_full_without_outliers_IL_filtered.csv",
+  "dataset_path": "dataset_3_full_with_outliers_IL_filtered.csv",
   "early_stopping": false,
   "seeds": [42, 123, 456],
-  "output_affix": "debug-dataset3",
+  "output_affix": "gcloud-instance-dataset3",
   "show_class_distributions": false,
   "draw_feature_importance": true,
   "debug": false,
@@ -33,10 +33,11 @@
     {"name": "T_vs_F", "platform": true, "train": [3], "test": 1},
     {"name": "T_vs_I", "platform": true, "train": [3], "test": 2},
     
+    {"name": "S1_vs_S2_All", "session": true, "platform": "all", "train": [1], "test": 2},
     {"name": "S1_vs_S2_P1", "session": true, "platform": 1, "train": [1], "test": 2},
     {"name": "S1_vs_S2_P2", "session": true, "platform": 2, "train": [1], "test": 2},
-    {"name": "S1_vs_S2_P3", "session": true, "platform": 3, "train": [1], "test": 2},
-    {"name": "S1_vs_S2_All", "session": true, "platform": "all", "train": [1], "test": 2}
+    {"name": "S1_vs_S2_P3", "session": true, "platform": 3, "train": [1], "test": 2}
+    
   ],
   
   "param_grids": {
@@ -124,3 +125,4 @@
     "max_iter": [3000, 2000]
 }
 }
+
