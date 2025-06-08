@@ -173,6 +173,7 @@ class Visualizer:
             
         except Exception as e:
             print(f"⚠️ Could not generate feature importance plot for {model_name}: {e}")
+            plt.close()
     
     def create_performance_plots(self, results_df: pd.DataFrame):
         """Create comprehensive performance plots with Plotly."""
