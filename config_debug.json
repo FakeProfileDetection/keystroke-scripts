@@ -1,5 +1,5 @@
 {
-  "dataset_path": "../eda/ml-experients-without-outliers2025-05-31_143027/imputation_user/dataset_2_full_without_outliers_IL_filtered.csv",
+  "dataset_path": "../eda/ml-experients-without-outliers2025-05-31_143027/imputation_user/dataset_1_full_without_outliers_IL_filtered.csv",
   "early_stopping": false,
   "seeds": [42, 12345],
   "output_affix": "debug",
@@ -18,12 +18,15 @@
   
     "models_to_train": [
     "RandomForest",
-    "XGBoost"
+    "XGBoost",
+    "CatBoost",
+    "SVM",
+    "MLP"
   ],
   
   "experiments": [
-    {"name": "S1_vs_S2_P3", "session": true, "platform": 3, "train": [1], "test": 2},
-    {"name": "S1_vs_S2_All", "session": true, "platform": "all", "train": [1], "test": 2}
+    {"name": "T_vs_F", "platform": true, "train": [3], "test": 1},
+    {"name": "T_vs_I", "platform": true, "train": [3], "test": 2}
 
   ],
   

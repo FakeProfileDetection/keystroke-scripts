@@ -320,6 +320,9 @@ class ModelTrainer:
             # Remove n_estimators from params to avoid conflict
             early_stop_params = {k: v for k, v in best_params.items() if k != 'n_estimators'}
             
+            # Remove random_state from early_stop_params if it exists to avoid duplicate
+            early_stop_params.pop('random_state', None)
+            
             model = XGBClassifier(
                 **early_stop_params,
                 n_estimators=1000,
@@ -337,6 +340,9 @@ class ModelTrainer:
         elif model_name.lower() == 'catboost':
             # Remove iterations from params to avoid conflict
             early_stop_params = {k: v for k, v in best_params.items() if k != 'iterations'}
+            
+            # Remove random_state from early_stop_params if it exists to avoid duplicate
+            early_stop_params.pop('random_state', None)
             
             eval_set = Pool(X_test, y_test)
             model = CatBoostClassifier(

@@ -115,8 +115,16 @@ def perform_grid_search(model_instance: BaseEstimator,  # <-- Changed parameter 
     if min_samples_per_class < cv_folds:
         # Not enough samples for cross-validation
         # Use the provided instance directly
+        # Only return the params that were in the original param_grid
+        default_params = {}
+        for key, values in param_grid.items():
+            if isinstance(values, list) and len(values) > 0:
+                default_params[key] = values[0]
+            else:
+                default_params[key] = values
+        
         model_instance.fit(X_train, y_train)
-        return model_instance, model_instance.get_params(), False
+        return model_instance, default_params, False
     
     # Perform grid search
     cv = StratifiedKFold(n_splits=cv_folds, shuffle=True, random_state=random_seed)
