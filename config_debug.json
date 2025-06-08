@@ -1,5 +1,5 @@
 {
-  "dataset_path": "../eda/ml-experients-without-outliers2025-05-31_143027/imputation_user/dataset_3_full_without_outliers_IL_filtered.csv",
+  "dataset_path": "../eda/ml-experients-without-outliers2025-05-31_143027/imputation_user/dataset_2_full_without_outliers_IL_filtered.csv",
   "early_stopping": false,
   "seeds": [42, 12345],
   "output_affix": "debug",

@@ -31,9 +31,6 @@
   ],
   
   "experiments": [
-    {"name": "S1_vs_S2_P1", "session": true, "platform": 1, "train": [1], "test": 2},
-    {"name": "S1_vs_S2_P2", "session": true, "platform": 2, "train": [1], "test": 2},
-    {"name": "S1_vs_S2_P3", "session": true, "platform": 3, "train": [1], "test": 2},
     {"name": "S1_vs_S2_All", "session": true, "platform": "all", "train": [1], "test": 2},
 
     {"name": "FI_vs_T", "platform": true, "train": [1, 2], "test": 3},
