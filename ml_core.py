@@ -102,6 +102,7 @@ class ExperimentResult:
     test_metrics: Dict[str, float]
     model_path: str
     hyperparameters: Dict[str, Any]
+    cross_validation_used: bool 
 
 
 class ModelTrainer:
@@ -248,11 +249,15 @@ class ModelTrainer:
             model_init_params['n_jobs'] = -1  # LogisticRegression supports parallel computation
         
         # Create model instance
-        model_instance = model_class(**model_init_params)
-        
+        try:
+            model_instance = model_class(**model_init_params)
+        except Exception as e:
+            print(f"⚠️ Error initializing {model_name}: {e}")
+            raise e
+                
         # Perform grid search or direct training
         if param_grid and len(param_grid) > 0:
-            model, best_params = perform_grid_search(
+            model, best_params, cv_used  = perform_grid_search(
                 model_instance,
                 param_grid,
                 X_train,
@@ -269,6 +274,7 @@ class ModelTrainer:
             else:
                 model.fit(X_train, y_train)
             best_params = model.get_params()
+            cv_used = False  # No cross-validation used
         
         # Handle early stopping for specific models
         if self.config.early_stopping and model_name.lower() in ['xgboost', 'catboost']:
@@ -303,7 +309,7 @@ class ModelTrainer:
         model_path = self.save_model(model, model_name, experiment_name, best_params, all_metrics, seed)
         
         return ExperimentResult(model_name, experiment_name, seed, train_metrics,
-                              test_metrics, model_path, best_params)
+                              test_metrics, model_path, best_params, cv_used)
     
     def _train_with_early_stopping(self, model_class: Any, model_name: str,
                                   best_params: Dict, X_train: np.ndarray,
@@ -354,7 +360,7 @@ class ModelTrainer:
         return self.train_model_generic(GaussianNB, "NaiveBayes", *args, **kwargs)
     
     def train_random_forest(self, *args, **kwargs) -> ExperimentResult:
-        return self.train_model_generic(RandomForestClassifier, "RandomForest", *args, **kwargs)
+        return  self.train_model_generic(RandomForestClassifier, "RandomForest", *args, **kwargs)
     
     def train_xgboost(self, *args, **kwargs) -> ExperimentResult:
         return self.train_model_generic(XGBClassifier, "XGBoost", *args, **kwargs)

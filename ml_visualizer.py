@@ -184,10 +184,10 @@ class Visualizer:
         # Get ordered models to control plots
         # NOTE: This is not robust to name changes for the experiments.  It fits our experiments
         experiment_names = {"experiment": results_df['experiment'].unique()}
-        ordered_experiment_names = [
-            "FI_vs_T", "FT_vs_I", "IT_vs_F", "F_vs_T", "T_vs_F", "I_vs_T", "S!_vs_S2_P1",
-            "S!_vs_S2_P2", "S!_vs_S2_P3", "S!_vs_S2_All",
-        ]
+        # ordered_experiment_names = [
+        #     "FI_vs_T", "FT_vs_I", "IT_vs_F", "F_vs_T", "T_vs_F", "I_vs_T", "S!_vs_S2_P1",
+        #     "S!_vs_S2_P2", "S!_vs_S2_P3", "S!_vs_S2_All",
+        # ]
         ordered_experiment_names = []
         two_platforms = []
         one_platforms = []
@@ -533,6 +533,39 @@ class Visualizer:
             </div>
             """
         
+        # Add Cross-Validation Usage Summary
+        html_content += """
+            <div class="section">
+                <h2>Cross-Validation Usage Summary</h2>
+                <table>
+                    <tr>
+                        <th>Experiment</th>
+                        <th>Models with CV</th>
+                        <th>Models without CV</th>
+                        <th>Reason</th>
+                    </tr>
+        """
+
+        # Group by experiment to show CV usage
+        for experiment in results_df['experiment'].unique():
+            exp_data = results_df[results_df['experiment'] == experiment]
+            models_with_cv = exp_data[exp_data['cross_validation_used'] == True]['model'].unique()
+            models_without_cv = exp_data[exp_data['cross_validation_used'] == False]['model'].unique()
+            
+            html_content += f"""
+                    <tr>
+                        <td>{experiment}</td>
+                        <td>{', '.join(models_with_cv) if len(models_with_cv) > 0 else 'None'}</td>
+                        <td>{', '.join(models_without_cv) if len(models_without_cv) > 0 else 'None'}</td>
+                        <td>{'Insufficient samples per class' if len(models_without_cv) > 0 else 'N/A'}</td>
+                    </tr>
+            """
+
+        html_content += """
+                </table>
+                <p><em>Note: Cross-validation requires at least 2 samples per class for stratified 2-fold CV.</em></p>
+            </div>
+        """
         
         # Add Generated Files section
         html_content += """

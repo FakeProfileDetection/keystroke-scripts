@@ -189,6 +189,8 @@ class MLExperimentRunner:
                         continue
                     
                     print(f"\n\n🤖 Model: {model_name}")
+                    print("DEBUG: X_train shape:", X_train.shape)
+                    print("DEBUG: X_test shape:", X_test.shape)
                     try:
                         train_func = self.model_train_funcs[model_name]
                         result = train_func(
@@ -284,6 +286,7 @@ class MLExperimentRunner:
                 'model': r.model_name,
                 'experiment': r.experiment_name,
                 'random_seed': r.random_seed,
+                'cross_validation_used': r.cross_validation_used,
                 'early_stopping': self.config.early_stopping,
                 'model_path': r.model_path,
                 'hyperparameters': str(r.hyperparameters),
