@@ -119,8 +119,22 @@ class Visualizer:
             plt.figure(figsize=(12, 8))
             
             if model_name == "XGBoost":
-                plot_importance(model, importance_type="weight", max_num_features=15)
-                plt.title(f"XGBoost Feature Importance - {experiment_name}")
+                # plot_importance(model, importance_type="weight", max_num_features=15)
+                # plt.title(f"XGBoost Feature Importance - {experiment_name}")
+                try:
+                    # Check if the model has any feature importance
+                    importance_dict = model.get_booster().get_score(importance_type="weight")
+                    if not importance_dict:
+                        print(f"ℹ️ No feature importance available for {model_name} - {experiment_name} (model too simple)")
+                        plt.close()
+                        return
+                    plot_importance(model, importance_type="weight", max_num_features=15)
+                    plt.title(f"XGBoost Feature Importance - {experiment_name}")
+                except Exception as e:
+                    print(f"ℹ️ Could not plot feature importance for {model_name}: {str(e)}")
+                    plt.close()
+                    return
+                
             
             elif model_name in ["RandomForest", "ExtraTrees", "GradientBoosting"]:
                 importances = model.feature_importances_
