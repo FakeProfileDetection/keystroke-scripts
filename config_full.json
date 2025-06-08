@@ -1,12 +1,20 @@
 {
   "dataset_path": "../eda/ml-experients-without-outliers2025-05-31_143027/imputation_user/dataset_1_full_without_outliers_IL_filtered.csv",
-  "early_stopping": false,
+  "early_stopping": true,
   "seeds": [42, 123, 456],
-  "output_affix": "debug-dataset3",
+  "output_affix": "imputation_user",
   "show_class_distributions": false,
   "draw_feature_importance": true,
   "debug": false,
   "use_gpu": true,
+  "metadata": {
+    "raw_data": "loadable_Combined_HU_HT",
+    "processed_data": "processed_data-2025-05-31_140105-UbuntuSungoddess",
+    "extracted_features_dir": "ml-experients-without-outliers2025-05-31_143027",
+    "description": "Full dataset without outliers, filtered for IL users",
+    "version": "1.0",
+    "note": "This may need to be updated after running the experiment."
+  },
   
   "models_to_train": [
     "RandomForest",
