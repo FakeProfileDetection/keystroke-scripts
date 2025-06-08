@@ -205,6 +205,7 @@ class Visualizer:
                 # Calculate means for each experiment
                 means_data = (model_data.groupby('experiment')
                              ['test_top_1_accuracy'].mean().reset_index())
+                means_data = means_data.sort_values(by="experiment")
                 
                 # Plot means with a line (no markers)
                 fig.add_trace(
@@ -267,6 +268,7 @@ class Visualizer:
 
                 # Calculate means for each experiment
                 means_data = model_data.groupby('experiment')['test_top_5_accuracy'].mean().reset_index()
+                means_data = means_data.sort_values(by="experiment")
                 
                 # Plot means with a line (no markers)
                 fig.add_trace(
