@@ -180,7 +180,7 @@ class Visualizer:
                 [{"secondary_y": False}, {"secondary_y": False}]]
         )
         
-         models = results_df['model'].unique()
+        models = results_df['model'].unique()
         # Get ordered models to control plots
         # NOTE: This is not robust to name changes for the experiments.  It fits our experiments
         experiment_names = {"experiment": results_df['experiment'].unique()}
@@ -209,9 +209,7 @@ class Visualizer:
 
         results_df['experiment'] = pd.Categorical(results_df['experiment'], 
             categories=ordered_experiment_names, ordered=True)
-        results_df = results_df.sort_values(by='experiment')
-        print("results_df['experiment']:", results_df['experiment'].unique())
-        
+        results_df = results_df.sort_values(by='experiment')        
         
         # Ensure we have enough colors for all models
         base_colors = px.colors.qualitative.Set1
@@ -221,8 +219,6 @@ class Visualizer:
         for i, model in enumerate(models):
             model_data = results_df[results_df['model'] == model]
             model_data = model_data.sort_values(by="experiment")
-            print("model: ", model)
-            print("model_data: ", model_data)
             
             if 'test_top_1_accuracy' in model_data.columns:
                 fig.add_trace(
