@@ -78,34 +78,50 @@ def prepare_param_grid(base_params: Dict[str, Any],
     return params
 
 
-def perform_grid_search(model_class: BaseEstimator,
+# def perform_grid_search(model_class: BaseEstimator,
+#                        param_grid: Dict[str, Any],
+#                        X_train: np.ndarray,
+#                        y_train: np.ndarray,
+#                        cv_folds: int = 2,
+#                        random_seed: int = 42,
+#                        n_jobs: int = -1) -> Tuple[BaseEstimator, Dict[str, Any]]:
+#     """Perform grid search and return best model and parameters."""
+#     min_samples_per_class = np.bincount(y_train).min()
+    
+#     if min_samples_per_class < cv_folds:
+#         # Not enough samples for cross-validation
+#         # Use default parameters or first value from grid
+#         default_params = {}
+#         for key, values in param_grid.items():
+#             if isinstance(values, list) and len(values) > 0:
+#                 default_params[key] = values[0]
+#             else:
+#                 default_params[key] = values
+        
+#         model = model_class(**default_params)
+#         model.fit(X_train, y_train)
+#         return model, default_params
+
+def perform_grid_search(model_instance: BaseEstimator,  # <-- Changed parameter name for clarity
                        param_grid: Dict[str, Any],
                        X_train: np.ndarray,
                        y_train: np.ndarray,
                        cv_folds: int = 2,
                        random_seed: int = 42,
-                       n_jobs: int = -1) -> Tuple[BaseEstimator, Dict[str, Any]]:
+                       n_jobs: int = -1) -> Tuple[BaseEstimator, Dict[str, Any], bool]:
     """Perform grid search and return best model and parameters."""
     min_samples_per_class = np.bincount(y_train).min()
     
     if min_samples_per_class < cv_folds:
         # Not enough samples for cross-validation
-        # Use default parameters or first value from grid
-        default_params = {}
-        for key, values in param_grid.items():
-            if isinstance(values, list) and len(values) > 0:
-                default_params[key] = values[0]
-            else:
-                default_params[key] = values
-        
-        model = model_class(**default_params)
-        model.fit(X_train, y_train)
-        return model, default_params
+        # Use the provided instance directly
+        model_instance.fit(X_train, y_train)
+        return model_instance, model_instance.get_params(), False
     
     # Perform grid search
     cv = StratifiedKFold(n_splits=cv_folds, shuffle=True, random_state=random_seed)
     grid_search = GridSearchCV(
-        model_class,
+        model_instance,
         param_grid,
         cv=cv,
         scoring="accuracy",
@@ -114,7 +130,7 @@ def perform_grid_search(model_class: BaseEstimator,
     )
     grid_search.fit(X_train, y_train)
     
-    return grid_search.best_estimator_, grid_search.best_params_
+    return grid_search.best_estimator_, grid_search.best_params_, True
 
 
 def get_experiment_filters(experiment_config: Dict[str, Any], 
