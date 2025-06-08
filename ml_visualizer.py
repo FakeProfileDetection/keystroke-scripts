@@ -367,6 +367,15 @@ class Visualizer:
                 <p><strong>Total Model Runs:</strong> {len(results_df)}</p>
                 <p><strong>Data:</strong> Pre-normalized (no additional scaling)</p>
                 <p><strong>Dataset:</strong> {self.dataset_name if self.dataset_name else 'N/A'}</p>
+            """
+        if self.config.metadata and 'raw_data' in self.config.metadata:
+            html_content += f"<p><strong>Raw Data:</strong> {self.config.metadata['raw_data']}</p>"
+        if self.config.metadata and 'processed_data' in self.config.metadata:
+            html_content += f"<p><strong>Processed Data:</strong> {self.config.metadata['processed_data']}</p>" 
+        if self.config.metadata and "extracted_features_dir" in self.config.metadata:
+            html_content += f"<p><strong>Extracted Features Directory:</strong> {self.config.metadata['extracted_features_dir']}</p>"
+            
+        html_content += f"""
             </div>
             
             {'<div class="debug-mode"><strong>⚠️ DEBUG MODE:</strong> Results generated with minimal hyperparameter search for testing purposes only.</div>' if self.config.debug_mode else ''}

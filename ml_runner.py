@@ -105,7 +105,7 @@ class MLExperimentRunner:
         print(f"📊 Dataset shape: {df.shape}")
         
         # Validate required columns
-        required_cols = {"user_id"}
+        required_cols = {"user_id", "platform_id"}
         validate_dataset(df, list(required_cols))
         
         return df
