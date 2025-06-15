@@ -1,4 +1,5 @@
 import os
+import json
 import pandas as pd
 import numpy as np
 from rich.progress import track
@@ -26,6 +27,9 @@ def read_compact_format():
             "PL": np.float64,
             "RL": np.float64,
             "key1_timestamp": np.float64,
+            "valid": bool,
+            "error_description": str,
+            "outlier": bool,
         },
     )
     return df
@@ -57,25 +61,59 @@ def all_ids():
 
 def create_kht_data_from_df(df):
     """
-    Computes Key Hold Time (KHT) data from a given dataframe.
+    Computes Key Hold Time (KHT) data from a given dataframe using vectorized operations.
 
     Parameters:
-    - df (pandas.DataFrame): A dataframe with columns "key", "press_time", and "release_time",
-      where each row represents an instance of a key press and its associated press and release times.
+    - df (pandas.DataFrame): Must include columns "key1", "HL", "valid", "outlier".
 
     Returns:
-    - dict: A dictionary where keys are individual key characters and values are lists containing
-      computed KHT values (difference between the release time and press time) for each instance of the key.
-
-    Note:
-    KHT is defined as the difference between the release time and the press time for a given key instance.
-    This function computes the KHT for each key in the dataframe and aggregates the results by key.
+    - dict: A dictionary mapping each key to a list of its KHT (hold time) values.
     """
-    kht_dict = defaultdict(list)
-    for i, row in df.iterrows():
-        kht_dict[row["key1"]].append(row["key1_release"] - row["key1_press"])
-        kht_dict[row["key2"]].append(row["key2_release"] - row["key2_press"])
+    # Load config
+    with open(os.path.join(os.getcwd(), "classifier_config.json"), "r") as f:
+        config = json.load(f)
+
+    ignore_outliers = config.get("ignore_outliers", False)
+
+    # Apply filters
+    filtered_df = df[df["valid"]]
+    if ignore_outliers and "outlier" in df.columns:
+        filtered_df = filtered_df[filtered_df["outlier"] == False]
+
+    # Group by 'key1' and aggregate HL into lists
+    kht_dict = filtered_df.groupby("key1")["HL"].apply(list).to_dict()
+
     return kht_dict
+
+
+# def create_kht_data_from_df(df):
+#     """
+#     Computes Key Hold Time (KHT) data from a given dataframe.
+
+#     Parameters:
+#     - df (pandas.DataFrame): A dataframe with columns "key", "press_time", and "release_time",
+#       where each row represents an instance of a key press and its associated press and release times.
+
+#     Returns:
+#     - dict: A dictionary where keys are individual key characters and values are lists containing
+#       computed KHT values (difference between the release time and press time) for each instance of the key.
+
+#     Note:
+#     KHT is defined as the difference between the release time and the press time for a given key instance.
+#     This function computes the KHT for each key in the dataframe and aggregates the results by key.
+#     """
+#     with open(os.path.join(os.getcwd(), "classifier_config.json"), "r") as f:
+#         config = json.load(f)
+#     ignore_outliers = config.get("ignore_outliers", False)
+#     kht_dict = defaultdict(list)
+#     for i, row in df.iterrows():
+#         if row["valid"] is False:
+#             continue
+#         if ignore_outliers and row["outlier"]:
+#             continue
+#         kht_dict[row["key1"]].append(row["HL"])
+#         # kht_dict[row["key2"]].append(row["key2_release"] - row["key2_press"])
+#     return kht_dict
 
 
 def create_kit_data_from_df(df, kit_feature_type):
@@ -101,6 +139,10 @@ def create_kit_data_from_df(df, kit_feature_type):
     the results by key pair. The method for computing the KIT is determined by the `kit_feature_type` parameter.
     """
     kit_dict = defaultdict(list)
+    with open(os.path.join(os.getcwd(), "classifier_config.json"), "r") as f:
+        config = json.load(f)
+    ignore_outliers = config.get("ignore_outliers", False)
+
     if df.empty:
         # print("dig deeper: dataframe is empty!")
         return kit_dict
@@ -112,13 +154,17 @@ def create_kit_data_from_df(df, kit_feature_type):
             if current_row.empty:
                 print("dig deeper: row is empty!")
                 return kit_dict
+            if current_row["valid"] is False:
+                continue
+            if ignore_outliers and current_row["outlier"]:
+                continue
             key = str(current_row["key1"]) + str(current_row["key2"])
             initial_press = float(current_row["key1_press"])
             second_press = float(current_row["key2_press"])
             initial_release = float(current_row["key1_release"])
             second_release = float(current_row["key2_release"])
             if kit_feature_type == 1:
-                kit_dict[key].append(second_press - initial_release)
+                kit_dict[key].append(current_row["IL"])
             elif kit_feature_type == 2:
                 kit_dict[key].append(second_release - initial_release)
             elif kit_feature_type == 3:
@@ -191,14 +237,6 @@ def get_user_by_platform(user_id, platform_id, session_id=None):
                 & (df["session_id"].between(session_id[0], session_id[1]))
             ]
         elif len(session_id) > 2:
-            test = df[
-                (df["user_id"] == user_id)
-                & (df["platform_id"] == platform_id)
-                & (df["session_id"].isin(session_id))
-            ]
-            # print(session_id)
-            # print(test["session_id"].unique())
-            # input()
             return df[
                 (df["user_id"] == user_id)
                 & (df["platform_id"] == platform_id)
@@ -221,12 +259,12 @@ def map_platform_id_to_initial(platform_id: int):
     return platform_mapping[platform_id]
 
 
-if __name__ == "__main__":
-    for i in track(all_ids()):
-        for j in range(1, 4):
-            df = get_user_by_platform(i, j)
-            if df.empty:
-                print(f"Skipping User: {i}, platform: {map_platform_id_to_initial(j)}")
-                continue
-            print(f"User: {i}, platform: {map_platform_id_to_initial(j)}")
-            create_kit_data_from_df(df, j)
+# if __name__ == "__main__":
+#     for i in track(all_ids()):
+#         for j in range(1, 4):
+#             df = get_user_by_platform(i, j)
+#             if df.empty:
+#                 print(f"Skipping User: {i}, platform: {map_platform_id_to_initial(j)}")
+#                 continue
+#             print(f"User: {i}, platform: {map_platform_id_to_initial(j)}")
+#             create_kit_data_from_df(df, j)
