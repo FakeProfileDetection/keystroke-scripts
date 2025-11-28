@@ -4,11 +4,15 @@ ml_utils.py - Common utilities for ML experiments
 
 import json
 from pathlib import Path
-from typing import Dict, Any, List, Optional, Tuple
+from typing import Dict, Any, List, Optional, Tuple, TYPE_CHECKING
 import numpy as np
+import pandas as pd
 from sklearn.model_selection import GridSearchCV, StratifiedKFold
 from sklearn.base import BaseEstimator
 import torch
+
+if TYPE_CHECKING:
+    from scenarios import SubExperiment
 
 
 def load_config(config_path: str) -> Dict[str, Any]:
@@ -171,6 +175,60 @@ def validate_dataset(df, required_columns: List[str]) -> None:
 
 def get_feature_columns(df_columns: List[str]) -> List[str]:
     """Get feature columns by excluding metadata columns."""
-    metadata_cols = {"user_id", "platform_id", "session_id", "video_id"}
+    metadata_cols = {"user_id", "platform_id", "session_id", "video_id", "sequence_id",
+                    "key1", "key2", "key1_press", "key1_release", "key2_press", "key2_release",
+                    "key1_timestamp", "valid", "error_description"}
     return [col for col in df_columns if col not in metadata_cols]
+
+
+def apply_sub_experiment_filters(df: pd.DataFrame, sub_experiment: "SubExperiment") -> Tuple[pd.DataFrame, pd.DataFrame]:
+    """
+    Apply train and test filters from a SubExperiment to a DataFrame.
+
+    Args:
+        df: The full dataset as a pandas DataFrame
+        sub_experiment: A SubExperiment object containing train and test filters
+
+    Returns:
+        Tuple of (train_df, test_df)
+    """
+    # Build train mask
+    train_mask = pd.Series([True] * len(df), index=df.index)
+    for col, values in sub_experiment.train_filter.items():
+        if col in df.columns:
+            train_mask &= df[col].isin(values)
+
+    # Build test mask
+    test_mask = pd.Series([True] * len(df), index=df.index)
+    for col, values in sub_experiment.test_filter.items():
+        if col in df.columns:
+            test_mask &= df[col].isin(values)
+
+    train_df = df[train_mask]
+    test_df = df[test_mask]
+
+    return train_df, test_df
+
+
+def get_sub_experiment_data(df: pd.DataFrame, sub_experiment: "SubExperiment") -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    """
+    Extract train/test X and y arrays for a SubExperiment.
+
+    Args:
+        df: The full dataset as a pandas DataFrame
+        sub_experiment: A SubExperiment object
+
+    Returns:
+        Tuple of (X_train, X_test, y_train, y_test)
+    """
+    train_df, test_df = apply_sub_experiment_filters(df, sub_experiment)
+
+    feature_cols = get_feature_columns(df.columns.tolist())
+
+    X_train = train_df[feature_cols].values
+    X_test = test_df[feature_cols].values
+    y_train = train_df["user_id"].values
+    y_test = test_df["user_id"].values
+
+    return X_train, X_test, y_train, y_test
 
