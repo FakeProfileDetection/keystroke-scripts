@@ -1,19 +1,16 @@
 {
-  "dataset_path": "../eda/ml-experients-without-outliers2025-05-31_143027/imputation_user/dataset_2_full_without_outliers_IL_filtered.csv",
+  "dataset_path": "/home/sungoddess/Projects/fpd_etl_pipeline/artifacts/2025-08-14_21-24-10_ubuntusungoddess/statistical_IL_top_10_features/statistical_IL_top_10_video/features.csv",
   "early_stopping": true,
   "seeds": [42, 123, 456],
-  "output_affix": "imputation_user",
+  "output_affix": "statistical_IL_top_10_video",
   "show_class_distributions": false,
   "draw_feature_importance": true,
   "debug": false,
   "use_gpu": true,
   "metadata": {
-    "raw_data": "loadable_Combined_HU_HT",
-    "processed_data": "processed_data-2025-05-31_140105-UbuntuSungoddess",
-    "extracted_features_dir": "ml-experients-without-outliers2025-05-31_143027",
+    "version": "artifacts/2025-08-11_22-06-26_loris-mbp-cable-rcn-com",
     "description": "Full dataset without outliers, filtered for IL users",
-    "version": "1.0",
-    "note": "This may need to be updated after running the experiment."
+    "date": "2025-08-11"
   },
   
   "models_to_train": [

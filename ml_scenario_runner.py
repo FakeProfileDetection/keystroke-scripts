@@ -222,6 +222,23 @@ class MLScenarioRunner:
         if len(X_train) == 0 or len(X_test) == 0:
             return None
 
+        # Filter to only users present in both train and test sets (for identification)
+        train_users = set(y_train)
+        test_users = set(y_test)
+        common_users = train_users.intersection(test_users)
+        
+        if len(common_users) < 2:
+            return None
+            
+        # Filter train and test data to only include common users
+        train_mask = np.isin(y_train, list(common_users))
+        test_mask = np.isin(y_test, list(common_users))
+        
+        X_train = X_train[train_mask]
+        y_train = y_train[train_mask]
+        X_test = X_test[test_mask]
+        y_test = y_test[test_mask]
+
         if len(np.unique(y_train)) < 2 or len(np.unique(y_test)) < 2:
             return None
 

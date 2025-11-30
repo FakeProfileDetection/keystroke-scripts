@@ -1,5 +1,5 @@
 {
-  "dataset_path": "../artifacts/2025-09-07_00-27-43_loris-mbp-cable-rcn-com/statistical_IL_top_10_features/statistical_IL_top_10_video/features.csv",
+  "dataset_path": "../fpd_etl_pipeline/artifacts/2025-09-07_00-27-43_loris-mbp-cable-rcn-com/statistical_IL_top_10_features/statistical_IL_top_10_video/features.csv",
   "early_stopping": true,
   "seeds": [42, 123, 456],
   "output_affix": "scenarios",
