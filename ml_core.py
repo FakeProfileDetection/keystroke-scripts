@@ -116,12 +116,18 @@ class ModelTrainer:
         self.label_encoder = LabelEncoder()
         
         
-        # Check GPU availability
-        # self.use_gpu = config.use_gpu and check_gpu_availability()
-        # if config.use_gpu and not self.use_gpu:
-        #     print("⚠️ GPU not available, switching to CPU mode.")
-            
-        self.use_gpu = False  # Force CPU mode for compatibility with bob.measure--seems to be running slow with GPU
+        # GPU usage: enabled by default if available, unless config explicitly disables it
+        # Config use_gpu=True (default): use GPU if available
+        # Config use_gpu=False: force CPU mode (useful when GPU needed for other tasks)
+        if config.use_gpu:
+            self.use_gpu = check_gpu_availability()
+            if self.use_gpu:
+                print("🎮 GPU acceleration enabled")
+            else:
+                print("⚠️ GPU requested but not available, using CPU mode")
+        else:
+            self.use_gpu = False
+            print("💻 CPU mode (GPU disabled in config)")
     
     def calculate_metrics(self, y_true: np.ndarray, y_pred: np.ndarray, 
                          y_pred_proba: np.ndarray, prefix: str) -> Dict[str, float]:
