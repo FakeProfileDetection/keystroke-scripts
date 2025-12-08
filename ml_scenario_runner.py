@@ -418,6 +418,170 @@ class MLScenarioRunner:
 
         print(f"\n📁 All outputs saved to: {self.output_dir}")
 
+        # Generate TSV template output
+        self.generate_template_tsv()
+
+    def generate_template_tsv(self):
+        """Generate TSV output matching the results template format.
+
+        Output format matches results_template.xlsx with columns:
+        - Scenario Group, Scenario, Train, Train samples, Test, Test samples
+        - k=1, k=2, k=3, k=4, k=5 (top-k accuracy for best model)
+        - Mean and std rows per scenario
+        """
+        if not self.sub_experiment_results:
+            print("⚠️ No results to export to TSV")
+            return
+
+        tsv_path = self.output_dir / f"ml_baseline_results_{self.timestamp}.tsv"
+
+        # Convert results to DataFrame
+        results_data = []
+        for r in self.sub_experiment_results:
+            results_data.append({
+                "scenario_id": r.scenario_id,
+                "sub_experiment_name": r.sub_experiment_name,
+                "model_name": r.model_name,
+                "random_seed": r.random_seed,
+                "train_samples": r.train_samples,
+                "test_samples": r.test_samples,
+                "test_top_1_accuracy": r.test_metrics.get("test_top_1_accuracy", 0),
+                "test_top_2_accuracy": r.test_metrics.get("test_top_2_accuracy", 0),
+                "test_top_3_accuracy": r.test_metrics.get("test_top_3_accuracy", 0),
+                "test_top_4_accuracy": r.test_metrics.get("test_top_4_accuracy", 0),
+                "test_top_5_accuracy": r.test_metrics.get("test_top_5_accuracy", 0),
+            })
+
+        results_df = pd.DataFrame(results_data)
+
+        # Find best model per scenario (by mean top-1 accuracy across all sub-experiments)
+        best_models = {}
+        for scenario_id in results_df["scenario_id"].unique():
+            scenario_data = results_df[results_df["scenario_id"] == scenario_id]
+            model_perf = scenario_data.groupby("model_name")["test_top_1_accuracy"].mean()
+            best_models[scenario_id] = model_perf.idxmax()
+
+        print(f"\n📊 Best models per scenario:")
+        for sid, model in best_models.items():
+            print(f"  {sid}: {model}")
+
+        # Get scenario metadata
+        all_scenarios = generate_all_scenarios()
+
+        # Generate TSV rows
+        tsv_rows = []
+
+        # Header
+        tsv_rows.append([
+            "Scenario Group", "Scenario", "Train", "Train samples/user",
+            "Test", "Test samples/user", "Notes",
+            "k=1", "k=2", "k=3", "k=4", "k=5", "Best Model"
+        ])
+
+        # Process each scenario
+        scenario_groups = {
+            "1.1": "Same platform, same topic",
+            "1.2": "Same platform, same topic",
+            "2.1": "Cross platform, same topic",
+            "2.2": "Cross platform, same topic",
+            "3.1": "Cross platform, same topic (1→1)",
+            "3.2": "Cross platform, same topic (2→1)",
+            "4.1": "Cross platform, cross topic (1→1)",
+            "4.2": "Cross platform, cross topic (2→1)",
+        }
+
+        for scenario_id in sorted(results_df["scenario_id"].unique()):
+            scenario = all_scenarios.get(scenario_id)
+            if not scenario:
+                continue
+
+            best_model = best_models[scenario_id]
+            scenario_group = scenario_groups.get(scenario_id, "")
+
+            # Filter to best model and average across seeds
+            scenario_best = results_df[
+                (results_df["scenario_id"] == scenario_id) &
+                (results_df["model_name"] == best_model)
+            ]
+
+            # Group by sub-experiment (average across seeds)
+            for sub_exp in scenario.sub_experiments:
+                sub_data = scenario_best[scenario_best["sub_experiment_name"] == sub_exp.name]
+
+                if sub_data.empty:
+                    continue
+
+                # Average across seeds
+                avg_k1 = sub_data["test_top_1_accuracy"].mean()
+                avg_k2 = sub_data["test_top_2_accuracy"].mean()
+                avg_k3 = sub_data["test_top_3_accuracy"].mean()
+                avg_k4 = sub_data["test_top_4_accuracy"].mean()
+                avg_k5 = sub_data["test_top_5_accuracy"].mean()
+
+                train_samples = sub_data["train_samples"].iloc[0]
+                test_samples = sub_data["test_samples"].iloc[0]
+
+                row = [
+                    scenario_group if sub_exp == scenario.sub_experiments[0] else "",
+                    f"Scenario {scenario_id}" if sub_exp == scenario.sub_experiments[0] else "",
+                    sub_exp.train_notation,
+                    scenario.train_samples_per_user,
+                    sub_exp.test_notation,
+                    scenario.test_samples_per_user,
+                    f"train={train_samples}, test={test_samples}",
+                    f"{avg_k1:.4f}",
+                    f"{avg_k2:.4f}",
+                    f"{avg_k3:.4f}",
+                    f"{avg_k4:.4f}",
+                    f"{avg_k5:.4f}",
+                    best_model if sub_exp == scenario.sub_experiments[0] else ""
+                ]
+                tsv_rows.append(row)
+
+            # Add mean row
+            scenario_all = scenario_best.groupby("sub_experiment_name").agg({
+                "test_top_1_accuracy": "mean",
+                "test_top_2_accuracy": "mean",
+                "test_top_3_accuracy": "mean",
+                "test_top_4_accuracy": "mean",
+                "test_top_5_accuracy": "mean",
+            })
+
+            mean_k1 = scenario_all["test_top_1_accuracy"].mean()
+            mean_k2 = scenario_all["test_top_2_accuracy"].mean()
+            mean_k3 = scenario_all["test_top_3_accuracy"].mean()
+            mean_k4 = scenario_all["test_top_4_accuracy"].mean()
+            mean_k5 = scenario_all["test_top_5_accuracy"].mean()
+
+            tsv_rows.append([
+                "", "", "mean", "", "", "", "",
+                f"{mean_k1:.4f}", f"{mean_k2:.4f}", f"{mean_k3:.4f}",
+                f"{mean_k4:.4f}", f"{mean_k5:.4f}", ""
+            ])
+
+            # Add std row
+            std_k1 = scenario_all["test_top_1_accuracy"].std()
+            std_k2 = scenario_all["test_top_2_accuracy"].std()
+            std_k3 = scenario_all["test_top_3_accuracy"].std()
+            std_k4 = scenario_all["test_top_4_accuracy"].std()
+            std_k5 = scenario_all["test_top_5_accuracy"].std()
+
+            tsv_rows.append([
+                "", "", "std", "", "", "", "",
+                f"{std_k1:.4f}", f"{std_k2:.4f}", f"{std_k3:.4f}",
+                f"{std_k4:.4f}", f"{std_k5:.4f}", ""
+            ])
+
+            # Add blank separator row
+            tsv_rows.append([""] * 13)
+
+        # Write TSV
+        with open(tsv_path, "w") as f:
+            for row in tsv_rows:
+                f.write("\t".join(str(x) for x in row) + "\n")
+
+        print(f"📋 Template TSV saved to: {tsv_path}")
+
     def _plot_scenario_comparison(self, scenario_df: pd.DataFrame):
         """Plot comparison of scenarios (average across models)."""
 
