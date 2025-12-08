@@ -93,7 +93,7 @@ class MLScenarioRunner:
         self.visualizer = Visualizer(config, self.output_dir, self.timestamp)
 
         # Get scenarios to run from config
-        self.scenarios_to_run = config.config_dict.get("scenarios_to_run", ["1", "2", "3.1", "3.2", "4.1", "4.2"])
+        self.scenarios_to_run = config.config_dict.get("scenarios_to_run", ["1.1", "1.2", "2.1", "2.2", "3.1", "3.2", "4.1", "4.2"])
         self.models_to_train = config.models_to_train
 
         # Model training functions mapping
@@ -712,7 +712,7 @@ def main():
             "draw_feature_importance": True,
             "debug": False,
             "use_gpu": True,
-            "scenarios_to_run": ["1", "2", "3.1", "3.2", "4.1", "4.2"],
+            "scenarios_to_run": ["1.1", "1.2", "2.1", "2.2", "3.1", "3.2", "4.1", "4.2"],
             "models_to_train": ["RandomForest", "XGBoost", "CatBoost"],
             "param_grids": {
                 "randomforest": {"n_estimators": [100, 300], "max_depth": [10, 20]},
@@ -747,7 +747,7 @@ def main():
     if args.debug:
         overrides['debug'] = True
         overrides['seeds'] = [42]
-        overrides['scenarios_to_run'] = ["1"]
+        overrides['scenarios_to_run'] = ["1.1"]
         overrides['models_to_train'] = ["RandomForest"]
 
     # Merge configurations
