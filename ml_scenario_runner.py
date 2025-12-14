@@ -93,7 +93,7 @@ class MLScenarioRunner:
         self.visualizer = Visualizer(config, self.output_dir, self.timestamp)
 
         # Get scenarios to run from config
-        self.scenarios_to_run = config.config_dict.get("scenarios_to_run", ["1.1", "1.2", "2.1", "2.2", "3.1", "3.2", "4.1", "4.2"])
+        self.scenarios_to_run = config.config_dict.get("scenarios_to_run", ["1.1", "1.2", "2.1", "2.2", "3.1", "3.2", "4.1", "4.2", "5.1", "5.2"])
         self.models_to_train = config.models_to_train
 
         # Model training functions mapping
@@ -484,10 +484,12 @@ class MLScenarioRunner:
             "1.2": "Same platform, same topic",
             "2.1": "Cross platform, same topic",
             "2.2": "Cross platform, same topic",
-            "3.1": "Cross platform, same topic (1→1)",
+            "3.1": "Cross platform, same topic (1→2)",
             "3.2": "Cross platform, same topic (2→1)",
-            "4.1": "Cross platform, cross topic (1→1)",
+            "4.1": "Cross platform, cross topic (1→2)",
             "4.2": "Cross platform, cross topic (2→1)",
+            "5.1": "Same platform, cross topic (S1→S2)",
+            "5.2": "Same platform, cross topic (S2→S1)",
         }
 
         for scenario_id in sorted(results_df["scenario_id"].unique()):
@@ -712,7 +714,7 @@ def main():
             "draw_feature_importance": True,
             "debug": False,
             "use_gpu": True,
-            "scenarios_to_run": ["1.1", "1.2", "2.1", "2.2", "3.1", "3.2", "4.1", "4.2"],
+            "scenarios_to_run": ["1.1", "1.2", "2.1", "2.2", "3.1", "3.2", "4.1", "4.2", "5.1", "5.2"],
             "models_to_train": ["RandomForest", "XGBoost", "CatBoost"],
             "param_grids": {
                 "randomforest": {"n_estimators": [100, 300], "max_depth": [10, 20]},

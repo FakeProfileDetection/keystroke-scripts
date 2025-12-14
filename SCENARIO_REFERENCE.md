@@ -131,13 +131,13 @@ Each user has exactly 1 sample per (Platform, Video, Session) combination = 18 s
 
 ---
 
-## Scenario 3.1: Cross Platform, Same Topic (1→1, Both Sessions)
+## Scenario 3.1: Cross Platform, Same Topic (1→2, Both Sessions)
 
-**Purpose**: Cross-platform generalization with moderate dataset
+**Purpose**: Cross-platform generalization - all 6 directional pairs
 
-**Description**: Train on 1 platform, test on 1 different platform. Same video, both sessions.
+**Description**: Train on 1 platform, test on 1 different platform. Same video, both sessions. All 6 platform direction pairs (F→I, F→T, I→F, I→T, T→F, T→I).
 
-### Sub-experiments (9 total)
+### Sub-experiments (18 total)
 
 | # | Train | Test |
 |---|-------|------|
@@ -147,9 +147,18 @@ Each user has exactly 1 sample per (Platform, Video, Session) combination = 18 s
 | 4 | [PF, V1, S1+S2] | [PT, V1, S1+S2] |
 | 5 | [PF, V2, S1+S2] | [PT, V2, S1+S2] |
 | 6 | [PF, V3, S1+S2] | [PT, V3, S1+S2] |
-| 7 | [PI, V1, S1+S2] | [PT, V1, S1+S2] |
-| 8 | [PI, V2, S1+S2] | [PT, V2, S1+S2] |
-| 9 | [PI, V3, S1+S2] | [PT, V3, S1+S2] |
+| 7 | [PI, V1, S1+S2] | [PF, V1, S1+S2] |
+| 8 | [PI, V2, S1+S2] | [PF, V2, S1+S2] |
+| 9 | [PI, V3, S1+S2] | [PF, V3, S1+S2] |
+| 10 | [PI, V1, S1+S2] | [PT, V1, S1+S2] |
+| 11 | [PI, V2, S1+S2] | [PT, V2, S1+S2] |
+| 12 | [PI, V3, S1+S2] | [PT, V3, S1+S2] |
+| 13 | [PT, V1, S1+S2] | [PF, V1, S1+S2] |
+| 14 | [PT, V2, S1+S2] | [PF, V2, S1+S2] |
+| 15 | [PT, V3, S1+S2] | [PF, V3, S1+S2] |
+| 16 | [PT, V1, S1+S2] | [PI, V1, S1+S2] |
+| 17 | [PT, V2, S1+S2] | [PI, V2, S1+S2] |
+| 18 | [PT, V3, S1+S2] | [PI, V3, S1+S2] |
 
 **Samples per user**: Train=2, Test=2
 
@@ -179,25 +188,25 @@ Each user has exactly 1 sample per (Platform, Video, Session) combination = 18 s
 
 ---
 
-## Scenario 4.1: Cross Platform, Cross Topic (1→1, Both Sessions)
+## Scenario 4.1: Cross Platform, Cross Topic (1→2, Both Sessions)
 
-**Purpose**: Hardest generalization case (topic effect in cross-platform context)
+**Purpose**: Hardest generalization case - exhaustive cross-platform cross-topic
 
-**Description**: Train on 1 platform with 1 video, test on different platform with different video.
+**Description**: Train on 1 platform with 1 video, test on different platform with different video. All 36 combinations (6 platform pairs x 6 video pairs).
 
-### Sub-experiments (9 total)
+### Sub-experiments (36 total)
+
+Platform pairs: F→I, F→T, I→F, I→T, T→F, T→I (6 pairs)
+Video pairs where train ≠ test: V1→V2, V1→V3, V2→V1, V2→V3, V3→V1, V3→V2 (6 pairs)
 
 | # | Train | Test |
 |---|-------|------|
-| 1 | [PF, V1, S1+S2] | [PI, V2, S1+S2] |
-| 2 | [PF, V1, S1+S2] | [PI, V3, S1+S2] |
-| 3 | [PF, V2, S1+S2] | [PI, V3, S1+S2] |
-| 4 | [PF, V1, S1+S2] | [PT, V2, S1+S2] |
-| 5 | [PF, V1, S1+S2] | [PT, V3, S1+S2] |
-| 6 | [PF, V2, S1+S2] | [PT, V3, S1+S2] |
-| 7 | [PI, V1, S1+S2] | [PT, V2, S1+S2] |
-| 8 | [PI, V1, S1+S2] | [PT, V3, S1+S2] |
-| 9 | [PI, V2, S1+S2] | [PT, V3, S1+S2] |
+| 1-6 | [PF, V*, S1+S2] | [PI, V*, S1+S2] | (all 6 video pairs)
+| 7-12 | [PF, V*, S1+S2] | [PT, V*, S1+S2] | (all 6 video pairs)
+| 13-18 | [PI, V*, S1+S2] | [PF, V*, S1+S2] | (all 6 video pairs)
+| 19-24 | [PI, V*, S1+S2] | [PT, V*, S1+S2] | (all 6 video pairs)
+| 25-30 | [PT, V*, S1+S2] | [PF, V*, S1+S2] | (all 6 video pairs)
+| 31-36 | [PT, V*, S1+S2] | [PI, V*, S1+S2] | (all 6 video pairs)
 
 **Samples per user**: Train=2, Test=2
 
@@ -205,25 +214,89 @@ Each user has exactly 1 sample per (Platform, Video, Session) combination = 18 s
 
 ## Scenario 4.2: Cross Platform, Cross Topic (2→1, Both Sessions)
 
-**Purpose**: Dataset size effect in hardest generalization case
+**Purpose**: Dataset size effect in cross-platform cross-topic case
 
 **Description**: Train on 2 platforms with 1 video, test on remaining platform with different video.
 
-### Sub-experiments (9 total)
+### Sub-experiments (18 total)
 
 | # | Train | Test |
 |---|-------|------|
-| 1 | [PF+PI, V1, S1+S2] | [PT, V2, S1+S2] |
-| 2 | [PF+PI, V2, S1+S2] | [PT, V3, S1+S2] |
-| 3 | [PF+PI, V3, S1+S2] | [PT, V1, S1+S2] |
-| 4 | [PF+PT, V1, S1+S2] | [PI, V2, S1+S2] |
-| 5 | [PF+PI, V2, S1+S2] | [PI, V3, S1+S2] |
-| 6 | [PF+PI, V3, S1+S2] | [PI, V1, S1+S2] |
-| 7 | [PI+PT, V1, S1+S2] | [PF, V2, S1+S2] |
-| 8 | [PI+PT, V2, S1+S2] | [PF, V3, S1+S2] |
-| 9 | [PI+PT, V3, S1+S2] | [PF, V1, S1+S2] |
+| 1-6 | [PF+PI, V*, S1+S2] | [PT, V*, S1+S2] | (6 video pairs where train_v ≠ test_v)
+| 7-12 | [PI+PT, V*, S1+S2] | [PF, V*, S1+S2] | (6 video pairs where train_v ≠ test_v)
+| 13-18 | [PT+PF, V*, S1+S2] | [PI, V*, S1+S2] | (6 video pairs where train_v ≠ test_v)
 
 **Samples per user**: Train=4, Test=2
+
+---
+
+## Scenario 5.1: Same Platform, Cross Topic (S1 → S2)
+
+**Purpose**: Topic effect on same platform - train session 1, test session 2
+
+**Description**: Train on 1 video, test on different video. Same platform, session 1 → session 2.
+
+### Sub-experiments (18 total)
+
+3 platforms x 6 video pairs = 18 sub-experiments
+
+| # | Train | Test |
+|---|-------|------|
+| 1 | [PF, V1, S1] | [PF, V2, S2] |
+| 2 | [PF, V1, S1] | [PF, V3, S2] |
+| 3 | [PF, V2, S1] | [PF, V1, S2] |
+| 4 | [PF, V2, S1] | [PF, V3, S2] |
+| 5 | [PF, V3, S1] | [PF, V1, S2] |
+| 6 | [PF, V3, S1] | [PF, V2, S2] |
+| 7 | [PI, V1, S1] | [PI, V2, S2] |
+| 8 | [PI, V1, S1] | [PI, V3, S2] |
+| 9 | [PI, V2, S1] | [PI, V1, S2] |
+| 10 | [PI, V2, S1] | [PI, V3, S2] |
+| 11 | [PI, V3, S1] | [PI, V1, S2] |
+| 12 | [PI, V3, S1] | [PI, V2, S2] |
+| 13 | [PT, V1, S1] | [PT, V2, S2] |
+| 14 | [PT, V1, S1] | [PT, V3, S2] |
+| 15 | [PT, V2, S1] | [PT, V1, S2] |
+| 16 | [PT, V2, S1] | [PT, V3, S2] |
+| 17 | [PT, V3, S1] | [PT, V1, S2] |
+| 18 | [PT, V3, S1] | [PT, V2, S2] |
+
+**Samples per user**: Train=1, Test=1
+
+---
+
+## Scenario 5.2: Same Platform, Cross Topic (S2 → S1)
+
+**Purpose**: Topic effect on same platform - train session 2, test session 1
+
+**Description**: Train on 1 video, test on different video. Same platform, session 2 → session 1.
+
+### Sub-experiments (18 total)
+
+3 platforms x 6 video pairs = 18 sub-experiments
+
+| # | Train | Test |
+|---|-------|------|
+| 1 | [PF, V1, S2] | [PF, V2, S1] |
+| 2 | [PF, V1, S2] | [PF, V3, S1] |
+| 3 | [PF, V2, S2] | [PF, V1, S1] |
+| 4 | [PF, V2, S2] | [PF, V3, S1] |
+| 5 | [PF, V3, S2] | [PF, V1, S1] |
+| 6 | [PF, V3, S2] | [PF, V2, S1] |
+| 7 | [PI, V1, S2] | [PI, V2, S1] |
+| 8 | [PI, V1, S2] | [PI, V3, S1] |
+| 9 | [PI, V2, S2] | [PI, V1, S1] |
+| 10 | [PI, V2, S2] | [PI, V3, S1] |
+| 11 | [PI, V3, S2] | [PI, V1, S1] |
+| 12 | [PI, V3, S2] | [PI, V2, S1] |
+| 13 | [PT, V1, S2] | [PT, V2, S1] |
+| 14 | [PT, V1, S2] | [PT, V3, S1] |
+| 15 | [PT, V2, S2] | [PT, V1, S1] |
+| 16 | [PT, V2, S2] | [PT, V3, S1] |
+| 17 | [PT, V3, S2] | [PT, V1, S1] |
+| 18 | [PT, V3, S2] | [PT, V2, S1] |
+
+**Samples per user**: Train=1, Test=1
 
 ---
 
@@ -235,12 +308,14 @@ Each user has exactly 1 sample per (Platform, Video, Session) combination = 18 s
 | 1.2 | Same | Same | S2 → S1 | 1 | 1 | 9 |
 | 2.1 | Cross (all 6) | Same | S1 → S2 | 1 | 1 | 18 |
 | 2.2 | Cross (all 6) | Same | S2 → S1 | 1 | 1 | 18 |
-| 3.1 | Cross (1→1) | Same | Both | 2 | 2 | 9 |
+| 3.1 | Cross (1→2, all 6) | Same | Both | 2 | 2 | 18 |
 | 3.2 | Cross (2→1) | Same | Both | 4 | 2 | 9 |
-| 4.1 | Cross (1→1) | Cross | Both | 2 | 2 | 9 |
-| 4.2 | Cross (2→1) | Cross | Both | 4 | 2 | 9 |
+| 4.1 | Cross (1→2, all 6) | Cross (all 6) | Both | 2 | 2 | 36 |
+| 4.2 | Cross (2→1) | Cross (all 6) | Both | 4 | 2 | 18 |
+| 5.1 | Same | Cross (all 6) | S1 → S2 | 1 | 1 | 18 |
+| 5.2 | Same | Cross (all 6) | S2 → S1 | 1 | 1 | 18 |
 
-**Total sub-experiments**: 90
+**Total sub-experiments**: 171
 
 ---
 
@@ -249,12 +324,14 @@ Each user has exactly 1 sample per (Platform, Video, Session) combination = 18 s
 | Effect | Comparison | Confounds |
 |--------|------------|-----------|
 | **Session** | Scenario 1.1 vs 1.2 | None (internal analysis) |
-| **Platform (S1→S2)** | 1.1 vs 2.1 | None ✓ |
-| **Platform (S2→S1)** | 1.2 vs 2.2 | None ✓ |
-| **Topic (cross-plat, 122)** | 3.1 vs 4.1 | None ✓ |
-| **Topic (cross-plat, 244)** | 3.2 vs 4.2 | None ✓ |
-| **Size (same-topic)** | 3.1 vs 3.2 | None ✓ |
-| **Size (cross-topic)** | 4.1 vs 4.2 | None ✓ |
+| **Platform (S1→S2)** | 1.1 vs 2.1 | None |
+| **Platform (S2→S1)** | 1.2 vs 2.2 | None |
+| **Topic (same platform, S1→S2)** | 1.1 vs 5.1 | None |
+| **Topic (same platform, S2→S1)** | 1.2 vs 5.2 | None |
+| **Topic (cross-plat, 1→2)** | 3.1 vs 4.1 | None |
+| **Topic (cross-plat, 2→1)** | 3.2 vs 4.2 | None |
+| **Size (same-topic)** | 3.1 vs 3.2 | None |
+| **Size (cross-topic)** | 4.1 vs 4.2 | None |
 
 ---
 
@@ -270,6 +347,8 @@ from scenarios import (
     generate_scenario_3_2,
     generate_scenario_4_1,
     generate_scenario_4_2,
+    generate_scenario_5_1,
+    generate_scenario_5_2,
     generate_all_scenarios,
     get_scenario_by_id,
 )
@@ -301,11 +380,11 @@ for sub_exp in scenario.sub_experiments:
 make quickstart
 source .venv/bin/activate
 
-# Run all scenarios
+# Run all scenarios (171 sub-experiments)
 python ml_scenario_runner.py -c config_scenarios.json
 
 # Run specific scenarios
-python ml_scenario_runner.py --scenarios 1.1 1.2 2.1
+python ml_scenario_runner.py --scenarios 1.1 1.2 2.1 5.1 5.2
 
 # Run with specific models
 python ml_scenario_runner.py --models CatBoost RandomForest
@@ -328,7 +407,7 @@ After running experiments, the following files are generated in the output direc
 
 ### TSV Output Format
 
-The `ml_baseline_results_*.tsv` file is formatted to match `results_template.xlsx`:
+The `ml_baseline_results_*.tsv` file is formatted to match `scenario-template-14Dec2025.tsv`:
 
 ```
 Scenario Group    Scenario       Train                              Train samples/user    Test                               Test samples/user    Notes    k=1      k=2      k=3      k=4      k=5      Best Model
@@ -414,5 +493,5 @@ def generate_template_tsv(results_df, output_path, experiment_name="My Experimen
 - Scenario implementation: `scenarios.py`
 - ML experiment runner: `ml_scenario_runner.py`
 - Configuration: `config_scenarios.json`
-- Results template: `results_template.xlsx`
+- Results template: `scenario-template-14Dec2025.tsv`
 - This reference: `SCENARIO_REFERENCE.md`
