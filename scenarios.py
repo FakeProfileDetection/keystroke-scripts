@@ -258,33 +258,40 @@ def generate_scenario_4_1() -> Scenario:
 # Scenario 4.2: Cross Platform, Cross Topic (2-1) (Both Sessions)
 # =============================================================================
 def generate_scenario_4_2() -> Scenario:
-    """18 sub-experiments: 2 train platforms, 1 test platform, cross topic."""
+    """18 sub-experiments: 2 train platforms, 1 test platform, cross topic.
+
+    Order matches template: forward rotation (+1) then backward rotation (-1).
+    Video pairs per platform config: V1→V2, V2→V3, V3→V1, V1→V3, V2→V1, V3→V2
+    """
     scenario = Scenario(
         id="4.2", name="Scenario 4.2",
         description="Cross platform, cross topic (2-1)",
         train_samples_per_user=4, test_samples_per_user=2
     )
-    # For each pair of train platforms, test on remaining platform with different video
-    # Based on template: F+I->T, F+T->I, I+T->F with video rotations
+    # Video pair order from template: forward rotation then backward rotation
+    # Forward: (V1,V2), (V2,V3), (V3,V1)  - test = (train % 3) + 1
+    # Backward: (V1,V3), (V2,V1), (V3,V2) - test = ((train + 1) % 3) + 1
+    video_pairs = [
+        (1, 2), (2, 3), (3, 1),  # forward rotation
+        (1, 3), (2, 1), (3, 2),  # backward rotation
+    ]
+    # Platform configs from template: F+I->T, F+T->I, I+T->F
     configs = [
         ([1,2], 3),  # F+I -> T
         ([1,3], 2),  # F+T -> I
         ([2,3], 1),  # I+T -> F
     ]
     for train_ps, test_p in configs:
-        for train_v in VIDEOS:
-            for test_v in VIDEOS:
-                if test_v == train_v:
-                    continue
-                p_names = ", ".join(PLATFORM_NAMES[p] for p in train_ps)
-                scenario.sub_experiments.append(SubExperiment(
-                    name=f"S4.2_{p_names}{train_v}to{PLATFORM_NAMES[test_p]}{test_v}",
-                    scenario_id="4.2",
-                    train_filter={"platform_id": train_ps, "video_id": [train_v], "session_id": ALL_SESSIONS},
-                    test_filter={"platform_id": [test_p], "video_id": [test_v], "session_id": ALL_SESSIONS},
-                    train_notation=_notation(train_ps, [train_v], ALL_SESSIONS),
-                    test_notation=_notation([test_p], [test_v], ALL_SESSIONS)
-                ))
+        for train_v, test_v in video_pairs:
+            p_names = ", ".join(PLATFORM_NAMES[p] for p in train_ps)
+            scenario.sub_experiments.append(SubExperiment(
+                name=f"S4.2_{p_names}{train_v}to{PLATFORM_NAMES[test_p]}{test_v}",
+                scenario_id="4.2",
+                train_filter={"platform_id": train_ps, "video_id": [train_v], "session_id": ALL_SESSIONS},
+                test_filter={"platform_id": [test_p], "video_id": [test_v], "session_id": ALL_SESSIONS},
+                train_notation=_notation(train_ps, [train_v], ALL_SESSIONS),
+                test_notation=_notation([test_p], [test_v], ALL_SESSIONS)
+            ))
     return scenario
 
 
@@ -292,25 +299,31 @@ def generate_scenario_4_2() -> Scenario:
 # Scenario 5.1: Same Platform, Cross Topic (S1 -> S2)
 # =============================================================================
 def generate_scenario_5_1() -> Scenario:
-    """18 sub-experiments: 3 platforms x 6 video pairs, train S1, test S2."""
+    """18 sub-experiments: 3 platforms x 6 video pairs, train S1, test S2.
+
+    Order matches template: forward rotation (+1) then backward rotation (-1).
+    Video pairs per platform: V1→V2, V2→V3, V3→V1, V2→V1, V3→V2, V1→V3
+    """
     scenario = Scenario(
         id="5.1", name="Scenario 5.1",
         description="Same platform, cross topic",
         train_samples_per_user=1, test_samples_per_user=1
     )
+    # Video pair order from template: forward rotation then backward rotation
+    video_pairs = [
+        (1, 2), (2, 3), (3, 1),  # forward rotation
+        (2, 1), (3, 2), (1, 3),  # backward rotation
+    ]
     for p in PLATFORMS:
-        for train_v in VIDEOS:
-            for test_v in VIDEOS:
-                if test_v == train_v:
-                    continue
-                scenario.sub_experiments.append(SubExperiment(
-                    name=f"S5.1_{PLATFORM_NAMES[p]}_{train_v}to{test_v}_S1toS2",
-                    scenario_id="5.1",
-                    train_filter={"platform_id": [p], "video_id": [train_v], "session_id": [1]},
-                    test_filter={"platform_id": [p], "video_id": [test_v], "session_id": [2]},
-                    train_notation=_notation([p], [train_v], [1]),
-                    test_notation=_notation([p], [test_v], [2])
-                ))
+        for train_v, test_v in video_pairs:
+            scenario.sub_experiments.append(SubExperiment(
+                name=f"S5.1_{PLATFORM_NAMES[p]}_{train_v}to{test_v}_S1toS2",
+                scenario_id="5.1",
+                train_filter={"platform_id": [p], "video_id": [train_v], "session_id": [1]},
+                test_filter={"platform_id": [p], "video_id": [test_v], "session_id": [2]},
+                train_notation=_notation([p], [train_v], [1]),
+                test_notation=_notation([p], [test_v], [2])
+            ))
     return scenario
 
 
@@ -318,25 +331,31 @@ def generate_scenario_5_1() -> Scenario:
 # Scenario 5.2: Same Platform, Cross Topic (S2 -> S1)
 # =============================================================================
 def generate_scenario_5_2() -> Scenario:
-    """18 sub-experiments: 3 platforms x 6 video pairs, train S2, test S1."""
+    """18 sub-experiments: 3 platforms x 6 video pairs, train S2, test S1.
+
+    Order matches template: backward rotation first, then forward rotation.
+    Video pairs per platform: V2→V1, V3→V2, V1→V3, V1→V2, V2→V3, V3→V1
+    """
     scenario = Scenario(
         id="5.2", name="Scenario 5.2",
         description="Same platform, cross topic",
         train_samples_per_user=1, test_samples_per_user=1
     )
+    # Video pair order from template: backward rotation then forward rotation
+    video_pairs = [
+        (2, 1), (3, 2), (1, 3),  # backward rotation
+        (1, 2), (2, 3), (3, 1),  # forward rotation
+    ]
     for p in PLATFORMS:
-        for train_v in VIDEOS:
-            for test_v in VIDEOS:
-                if test_v == train_v:
-                    continue
-                scenario.sub_experiments.append(SubExperiment(
-                    name=f"S5.2_{PLATFORM_NAMES[p]}_{train_v}to{test_v}_S2toS1",
-                    scenario_id="5.2",
-                    train_filter={"platform_id": [p], "video_id": [train_v], "session_id": [2]},
-                    test_filter={"platform_id": [p], "video_id": [test_v], "session_id": [1]},
-                    train_notation=_notation([p], [train_v], [2]),
-                    test_notation=_notation([p], [test_v], [1])
-                ))
+        for train_v, test_v in video_pairs:
+            scenario.sub_experiments.append(SubExperiment(
+                name=f"S5.2_{PLATFORM_NAMES[p]}_{train_v}to{test_v}_S2toS1",
+                scenario_id="5.2",
+                train_filter={"platform_id": [p], "video_id": [train_v], "session_id": [2]},
+                test_filter={"platform_id": [p], "video_id": [test_v], "session_id": [1]},
+                train_notation=_notation([p], [train_v], [2]),
+                test_notation=_notation([p], [test_v], [1])
+            ))
     return scenario
 
 
