@@ -21,10 +21,8 @@
 
   "models_to_train": [
     "RandomForest",
-    "XGBoost",
     "CatBoost",
     "NaiveBayes",
-    "LightGBM",
     "ExtraTrees"
   ],
 

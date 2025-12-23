@@ -1,0 +1,3 @@
+[console_scripts]
+ml-runner = ml_runner:main
+ml-scenario-runner = ml_scenario_runner:main

@@ -1,0 +1,199 @@
+						Experiment Description				
+4 Scenarios basically		Train	samples per user (train)	Test	samples per user (test)	k=1	k=2	k=3	k=4	k=5
+Same platform, same topic	Scenario 1.1	[Pi, Vj, Sk] i={F}, j ={1}, k={1}	1	[Pi, Vj, Sk] i={F}, j ={1}, k={2}	1					
+		[Pi, Vj, Sk] i={F}, j ={2}, k={1}	1	[Pi, Vj, Sk] i={F}, j ={2}, k={2}	1					
+		[Pi, Vj, Sk] i={F}, j ={3}, k={1}	1	[Pi, Vj, Sk] i={F}, j ={3}, k={2}	1					
+		[Pi, Vj, Sk] i={I}, j ={1}, k={1}	1	[Pi, Vj, Sk] i={I}, j ={1}, k={2}	1					
+		[Pi, Vj, Sk] i={I}, j ={2}, k={1}	1	[Pi, Vj, Sk] i={I}, j ={2}, k={2}	1					
+		[Pi, Vj, Sk] i={I}, j ={3}, k={1}	1	[Pi, Vj, Sk] i={I}, j ={3}, k={2}	1					
+		[Pi, Vj, Sk] i={T}, j ={1}, k={1}	1	[Pi, Vj, Sk] i={T}, j ={1}, k={2}	1					
+		[Pi, Vj, Sk] i={T}, j ={2}, k={1}	1	[Pi, Vj, Sk] i={T}, j ={2}, k={2}	1					
+		[Pi, Vj, Sk] i={T}, j ={3}, k={1}	1	[Pi, Vj, Sk] i={T}, j ={3}, k={2}	1					
+		mean								
+		std								
+	Scenario 1.2	[Pi, Vj, Sk] i={F}, j ={1}, k={2}	1	[Pi, Vj, Sk] i={F}, j ={1}, k={1}	1					
+		[Pi, Vj, Sk] i={F}, j ={2}, k={2}	1	[Pi, Vj, Sk] i={F}, j ={2}, k={1}	1					
+		[Pi, Vj, Sk] i={F}, j ={3}, k={2}	1	[Pi, Vj, Sk] i={F}, j ={3}, k={1}	1					
+		[Pi, Vj, Sk] i={I}, j ={1}, k={2}	1	[Pi, Vj, Sk] i={I}, j ={1}, k={1}	1					
+		[Pi, Vj, Sk] i={I}, j ={2}, k={2}	1	[Pi, Vj, Sk] i={I}, j ={2}, k={1}	1					
+		[Pi, Vj, Sk] i={I}, j ={3}, k={2}	1	[Pi, Vj, Sk] i={I}, j ={3}, k={1}	1					
+		[Pi, Vj, Sk] i={T}, j ={1}, k={2}	1	[Pi, Vj, Sk] i={T}, j ={1}, k={1}	1					
+		[Pi, Vj, Sk] i={T}, j ={2}, k={2}	1	[Pi, Vj, Sk] i={T}, j ={2}, k={1}	1					
+		[Pi, Vj, Sk] i={T}, j ={3}, k={2}	1	[Pi, Vj, Sk] i={T}, j ={3}, k={1}	1					
+		mean								
+		std								
+mean										
+STD										
+Cross platform, same topic (1-1) (controlled for dataset size)	Scenario 2.1	[Pi, Vj, Sk] i={F}, j ={1}, k={1}	1	[Pi, Vj, Sk] i={I}, j ={1}, k={2}	1					
+		[Pi, Vj, Sk] i={F}, j ={2}, k={1}	1	[Pi, Vj, Sk] i={I}, j ={2}, k={2}	1					
+		[Pi, Vj, Sk] i={F}, j ={3}, k={1}	1	[Pi, Vj, Sk] i={I}, j ={3}, k={2}	1					
+		[Pi, Vj, Sk] i={F}, j ={1}, k={1}	1	[Pi, Vj, Sk] i={T}, j ={1}, k={2}	1					
+		[Pi, Vj, Sk] i={F}, j ={2}, k={1}	1	[Pi, Vj, Sk] i={T}, j ={2}, k={2}	1					
+		[Pi, Vj, Sk] i={F}, j ={3}, k={1}	1	[Pi, Vj, Sk] i={T}, j ={3}, k={2}	1					
+		[Pi, Vj, Sk] i={I}, j ={1}, k={1}	1	[Pi, Vj, Sk] i={T}, j ={1}, k={2}	1					
+		[Pi, Vj, Sk] i={I}, j ={2}, k={1}	1	[Pi, Vj, Sk] i={T}, j ={2}, k={2}	1					
+		[Pi, Vj, Sk] i={I}, j ={3}, k={1}	1	[Pi, Vj, Sk] i={T}, j ={3}, k={2}	1					
+		[Pi, Vj, Sk] i={I}, j ={1}, k={1}	1	[Pi, Vj, Sk] i={F}, j ={1}, k={2}	1					
+		[Pi, Vj, Sk] i={I}, j ={2}, k={1}	1	[Pi, Vj, Sk] i={F}, j ={2}, k={2}	1					
+		[Pi, Vj, Sk] i={I}, j ={3}, k={1}	1	[Pi, Vj, Sk] i={F}, j ={3}, k={2}	1					
+		[Pi, Vj, Sk] i={T}, j ={1}, k={1}	1	[Pi, Vj, Sk] i={F}, j ={1}, k={2}	1					
+		[Pi, Vj, Sk] i={T}, j ={2}, k={1}	1	[Pi, Vj, Sk] i={F}, j ={2}, k={2}	1					
+		[Pi, Vj, Sk] i={T}, j ={3}, k={1}	1	[Pi, Vj, Sk] i={F}, j ={3}, k={2}	1					
+		[Pi, Vj, Sk] i={T}, j ={1}, k={1}	1	[Pi, Vj, Sk] i={I}, j ={1}, k={2}	1					
+		[Pi, Vj, Sk] i={T}, j ={2}, k={1}	1	[Pi, Vj, Sk] i={I}, j ={2}, k={2}	1					
+		[Pi, Vj, Sk] i={T}, j ={3}, k={1}	1	[Pi, Vj, Sk] i={I}, j ={3}, k={2}	1					
+		mean 								
+		std								
+	Scenario 2.2	[Pi, Vj, Sk] i={F}, j ={1}, k={2}	1	[Pi, Vj, Sk] i={I}, j ={1}, k={1}	1					
+		[Pi, Vj, Sk] i={F}, j ={2}, k={2}	1	[Pi, Vj, Sk] i={I}, j ={2}, k={1}	1					
+		[Pi, Vj, Sk] i={F}, j ={3}, k={2}	1	[Pi, Vj, Sk] i={I}, j ={3}, k={1}	1					
+		[Pi, Vj, Sk] i={F}, j ={1}, k={2}	1	[Pi, Vj, Sk] i={T}, j ={1}, k={1}	1					
+		[Pi, Vj, Sk] i={F}, j ={2}, k={2}	1	[Pi, Vj, Sk] i={T}, j ={2}, k={1}	1					
+		[Pi, Vj, Sk] i={F}, j ={3}, k={2}	1	[Pi, Vj, Sk] i={T}, j ={3}, k={1}	1					
+		[Pi, Vj, Sk] i={I}, j ={1}, k={2}	1	[Pi, Vj, Sk] i={T}, j ={1}, k={1}	1					
+		[Pi, Vj, Sk] i={I}, j ={2}, k={2}	1	[Pi, Vj, Sk] i={T}, j ={2}, k={1}	1					
+		[Pi, Vj, Sk] i={I}, j ={3}, k={2}	1	[Pi, Vj, Sk] i={T}, j ={3}, k={1}	1					
+		[Pi, Vj, Sk] i={I}, j ={1}, k={2}	1	[Pi, Vj, Sk] i={F}, j ={1}, k={1}	1					
+		[Pi, Vj, Sk] i={I}, j ={2}, k={2}	1	[Pi, Vj, Sk] i={F}, j ={2}, k={1}	1					
+		[Pi, Vj, Sk] i={I}, j ={3}, k={2}	1	[Pi, Vj, Sk] i={F}, j ={3}, k={1}	1					
+		[Pi, Vj, Sk] i={T}, j ={1}, k={2}	1	[Pi, Vj, Sk] i={F}, j ={1}, k={1}	1					
+		[Pi, Vj, Sk] i={T}, j ={2}, k={2}	1	[Pi, Vj, Sk] i={F}, j ={2}, k={1}	1					
+		[Pi, Vj, Sk] i={T}, j ={3}, k={2}	1	[Pi, Vj, Sk] i={F}, j ={3}, k={1}	1					
+		[Pi, Vj, Sk] i={T}, j ={1}, k={2}	1	[Pi, Vj, Sk] i={I}, j ={1}, k={1}	1					
+		[Pi, Vj, Sk] i={T}, j ={2}, k={2}	1	[Pi, Vj, Sk] i={I}, j ={2}, k={1}	1					
+		[Pi, Vj, Sk] i={T}, j ={3}, k={2}	1	[Pi, Vj, Sk] i={I}, j ={3}, k={1}	1					
+		mean 								
+		std								
+mean										
+STD										
+Cross platform, same topic (1-1)	Scenario 3.1	[Pi, Vj, Sk] i={F}, j ={1}, k={1 ,2}	2	[Pi, Vj, Sk] i={I}, j ={1}, k={1 ,2}	2					
+		[Pi, Vj, Sk] i={F}, j ={2}, k={1 ,2}	2	[Pi, Vj, Sk] i={I}, j ={2}, k={1 ,2}	2					
+		[Pi, Vj, Sk] i={F}, j ={3}, k={1 ,2}	2	[Pi, Vj, Sk] i={I}, j ={3}, k={1 ,2}	2					
+		[Pi, Vj, Sk] i={F}, j ={1}, k={1 ,2}	2	[Pi, Vj, Sk] i={T}, j ={1}, k={1 ,2}	2					
+		[Pi, Vj, Sk] i={F}, j ={2}, k={1 ,2}	2	[Pi, Vj, Sk] i={T}, j ={2}, k={1 ,2}	2					
+		[Pi, Vj, Sk] i={F}, j ={3}, k={1 ,2}	2	[Pi, Vj, Sk] i={T}, j ={3}, k={1 ,2}	2					
+		[Pi, Vj, Sk] i={I}, j ={1}, k={1 ,2}	2	[Pi, Vj, Sk] i={T}, j ={1}, k={1 ,2}	2					
+		[Pi, Vj, Sk] i={I}, j ={2}, k={1 ,2}	2	[Pi, Vj, Sk] i={T}, j ={2}, k={1 ,2}	2					
+		[Pi, Vj, Sk] i={I}, j ={3}, k={1 ,2}	2	[Pi, Vj, Sk] i={T}, j ={3}, k={1 ,2}	2					
+		[Pi, Vj, Sk] i={I}, j ={1}, k={1 ,2}	2	[Pi, Vj, Sk] i={F}, j ={1}, k={1 ,2}	2					
+		[Pi, Vj, Sk] i={I}, j ={2}, k={1 ,2}	2	[Pi, Vj, Sk] i={F}, j ={2}, k={1 ,2}	2					
+		[Pi, Vj, Sk] i={I}, j ={3}, k={1 ,2}	2	[Pi, Vj, Sk] i={F}, j ={3}, k={1 ,2}	2					
+		[Pi, Vj, Sk] i={T}, j ={1}, k={1 ,2}	2	[Pi, Vj, Sk] i={F}, j ={1}, k={1 ,2}	2					
+		[Pi, Vj, Sk] i={T}, j ={2}, k={1 ,2}	2	[Pi, Vj, Sk] i={F}, j ={2}, k={1 ,2}	2					
+		[Pi, Vj, Sk] i={T}, j ={3}, k={1 ,2}	2	[Pi, Vj, Sk] i={F}, j ={3}, k={1 ,2}	2					
+		[Pi, Vj, Sk] i={T}, j ={1}, k={1 ,2}	2	[Pi, Vj, Sk] i={I}, j ={1}, k={1 ,2}	2					
+		[Pi, Vj, Sk] i={T}, j ={2}, k={1 ,2}	2	[Pi, Vj, Sk] i={I}, j ={2}, k={1 ,2}	2					
+		[Pi, Vj, Sk] i={T}, j ={3}, k={1 ,2}	2	[Pi, Vj, Sk] i={I}, j ={3}, k={1 ,2}	2					
+mean										
+std										
+Cross platform, same topic (2-1)	Scenario 3.2	[Pi, Vj, Sk] i={F, I}, j ={1}, k={1 ,2}	4	[Pi, Vj, Sk] i={T}, j ={1}, k={1 ,2}	4					
+		[Pi, Vj, Sk] i={F, I}, j ={2}, k={1 ,2}	4	[Pi, Vj, Sk] i={T}, j ={2}, k={1 ,2}	4					
+		[Pi, Vj, Sk] i={F, I}, j ={3}, k={1 ,2}	4	[Pi, Vj, Sk] i={T}, j ={3}, k={1 ,2}	4					
+		[Pi, Vj, Sk] i={I, T}, j ={1}, k={1 ,2}	4	[Pi, Vj, Sk] i={F}, j ={1}, k={1 ,2}	4					
+		[Pi, Vj, Sk] i={I, T}, j ={2}, k={1 ,2}	4	[Pi, Vj, Sk] i={F}, j ={2}, k={1 ,2}	4					
+		[Pi, Vj, Sk] i={I, T}, j ={3}, k={1 ,2}	4	[Pi, Vj, Sk] i={F}, j ={3}, k={1 ,2}	4					
+		[Pi, Vj, Sk] i={T, F}, j ={1}, k={1 ,2}	4	[Pi, Vj, Sk] i={I}, j ={1}, k={1 ,2}	4					
+		[Pi, Vj, Sk] i={T, F}, j ={2}, k={1 ,2}	4	[Pi, Vj, Sk] i={I}, j ={2}, k={1 ,2}	4					
+		[Pi, Vj, Sk] i={T, F}, j ={3}, k={1 ,2}	4	[Pi, Vj, Sk] i={I}, j ={3}, k={1 ,2}	4					
+mean										
+STD										
+Cross platform, cross topic (1-1)	Scenario 4.1	[Pi, Vj, Sk] i={F}, j ={1}, k={1 ,2}	2	[Pi, Vj, Sk] i={I}, j ={2}, k={1 ,2}	2					
+		[Pi, Vj, Sk] i={F}, j ={1}, k={1 ,2}	2	[Pi, Vj, Sk] i={I}, j ={3}, k={1 ,2}	2					
+		[Pi, Vj, Sk] i={F}, j ={1}, k={1 ,2}	2	[Pi, Vj, Sk] i={T}, j ={2}, k={1 ,2}	2					
+		[Pi, Vj, Sk] i={F}, j ={1}, k={1 ,2}	2	[Pi, Vj, Sk] i={T}, j ={3}, k={1 ,2}	2					
+		[Pi, Vj, Sk] i={F}, j ={2}, k={1 ,2}	2	[Pi, Vj, Sk] i={I}, j ={1}, k={1 ,2}	2					
+		[Pi, Vj, Sk] i={F}, j ={2}, k={1 ,2}	2	[Pi, Vj, Sk] i={I}, j ={3}, k={1 ,2}	2					
+		[Pi, Vj, Sk] i={F}, j ={2}, k={1 ,2}	2	[Pi, Vj, Sk] i={T}, j ={1}, k={1 ,2}	2					
+		[Pi, Vj, Sk] i={F}, j ={2}, k={1 ,2}	2	[Pi, Vj, Sk] i={T}, j ={3}, k={1 ,2}	2					
+		[Pi, Vj, Sk] i={F}, j ={3}, k={1 ,2}	2	[Pi, Vj, Sk] i={I}, j ={1}, k={1 ,2}	2					
+		[Pi, Vj, Sk] i={F}, j ={3}, k={1 ,2}	2	[Pi, Vj, Sk] i={I}, j ={2}, k={1 ,2}	2					
+		[Pi, Vj, Sk] i={F}, j ={3}, k={1 ,2}	2	[Pi, Vj, Sk] i={T}, j ={1}, k={1 ,2}	2					
+		[Pi, Vj, Sk] i={F}, j ={3}, k={1 ,2}	2	[Pi, Vj, Sk] i={T}, j ={2}, k={1 ,2}	2					
+		[Pi, Vj, Sk] i={I}, j ={1}, k={1 ,2}	2	[Pi, Vj, Sk] i={F}, j ={2}, k={1 ,2}	2					
+		[Pi, Vj, Sk] i={I}, j ={1}, k={1 ,2}	2	[Pi, Vj, Sk] i={F}, j ={3}, k={1 ,2}	2					
+		[Pi, Vj, Sk] i={I}, j ={1}, k={1 ,2}	2	[Pi, Vj, Sk] i={T}, j ={2}, k={1 ,2}	2					
+		[Pi, Vj, Sk] i={I}, j ={1}, k={1 ,2}	2	[Pi, Vj, Sk] i={T}, j ={3}, k={1 ,2}	2					
+		[Pi, Vj, Sk] i={I}, j ={2}, k={1 ,2}	2	[Pi, Vj, Sk] i={F}, j ={1}, k={1 ,2}	2					
+		[Pi, Vj, Sk] i={I}, j ={2}, k={1 ,2}	2	[Pi, Vj, Sk] i={F}, j ={3}, k={1 ,2}	2					
+		[Pi, Vj, Sk] i={I}, j ={2}, k={1 ,2}	2	[Pi, Vj, Sk] i={T}, j ={1}, k={1 ,2}	2					
+		[Pi, Vj, Sk] i={I}, j ={2}, k={1 ,2}	2	[Pi, Vj, Sk] i={T}, j ={3}, k={1 ,2}	2					
+		[Pi, Vj, Sk] i={I}, j ={3}, k={1 ,2}	2	[Pi, Vj, Sk] i={F}, j ={1}, k={1 ,2}	2					
+		[Pi, Vj, Sk] i={I}, j ={3}, k={1 ,2}	2	[Pi, Vj, Sk] i={F}, j ={2}, k={1 ,2}	2					
+		[Pi, Vj, Sk] i={I}, j ={3}, k={1 ,2}	2	[Pi, Vj, Sk] i={T}, j ={1}, k={1 ,2}	2					
+		[Pi, Vj, Sk] i={I}, j ={3}, k={1 ,2}	2	[Pi, Vj, Sk] i={T}, j ={2}, k={1 ,2}	2					
+		[Pi, Vj, Sk] i={T}, j ={1}, k={1 ,2}	2	[Pi, Vj, Sk] i={F}, j ={2}, k={1 ,2}	2					
+		[Pi, Vj, Sk] i={T}, j ={1}, k={1 ,2}	2	[Pi, Vj, Sk] i={F}, j ={3}, k={1 ,2}	2					
+		[Pi, Vj, Sk] i={T}, j ={1}, k={1 ,2}	2	[Pi, Vj, Sk] i={I}, j ={2}, k={1 ,2}	2					
+		[Pi, Vj, Sk] i={T}, j ={1}, k={1 ,2}	2	[Pi, Vj, Sk] i={I}, j ={3}, k={1 ,2}	2					
+		[Pi, Vj, Sk] i={T}, j ={2}, k={1 ,2}	2	[Pi, Vj, Sk] i={F}, j ={1}, k={1 ,2}	2					
+		[Pi, Vj, Sk] i={T}, j ={2}, k={1 ,2}	2	[Pi, Vj, Sk] i={F}, j ={3}, k={1 ,2}	2					
+		[Pi, Vj, Sk] i={T}, j ={2}, k={1 ,2}	2	[Pi, Vj, Sk] i={I}, j ={1}, k={1 ,2}	2					
+		[Pi, Vj, Sk] i={T}, j ={2}, k={1 ,2}	2	[Pi, Vj, Sk] i={I}, j ={3}, k={1 ,2}	2					
+		[Pi, Vj, Sk] i={T}, j ={3}, k={1 ,2}	2	[Pi, Vj, Sk] i={F}, j ={1}, k={1 ,2}	2					
+		[Pi, Vj, Sk] i={T}, j ={3}, k={1 ,2}	2	[Pi, Vj, Sk] i={F}, j ={2}, k={1 ,2}	2					
+		[Pi, Vj, Sk] i={T}, j ={3}, k={1 ,2}	2	[Pi, Vj, Sk] i={I}, j ={1}, k={1 ,2}	2					
+		[Pi, Vj, Sk] i={T}, j ={3}, k={1 ,2}	2	[Pi, Vj, Sk] i={I}, j ={2}, k={1 ,2}	2					
+mean										
+STD										
+Cross platform, cross topic (2-1)	Scenario 4.2	[Pi, Vj, Sk] i={F, I}, j ={1}, k={1 ,2}	4	[Pi, Vj, Sk] i={T}, j ={2}, k={1 ,2}	4					
+		[Pi, Vj, Sk] i={F, I}, j ={2}, k={1 ,2}	4	[Pi, Vj, Sk] i={T}, j ={3}, k={1 ,2}	4					
+		[Pi, Vj, Sk] i={F, I}, j ={3}, k={1 ,2}	4	[Pi, Vj, Sk] i={T}, j ={1}, k={1 ,2}	4					
+		[Pi, Vj, Sk] i={F, I}, j ={1}, k={1 ,2}	4	[Pi, Vj, Sk] i={T}, j ={3}, k={1 ,2}	4					
+		[Pi, Vj, Sk] i={F, I}, j ={2}, k={1 ,2}	4	[Pi, Vj, Sk] i={T}, j ={1}, k={1 ,2}	4					
+		[Pi, Vj, Sk] i={F, I}, j ={3}, k={1 ,2}	4	[Pi, Vj, Sk] i={T}, j ={2}, k={1 ,2}	4					
+		[Pi, Vj, Sk] i={F, T}, j ={1}, k={1 ,2}	4	[Pi, Vj, Sk] i={I}, j ={2}, k={1 ,2}	4					
+		[Pi, Vj, Sk] i={F, T}, j ={2}, k={1 ,2}	4	[Pi, Vj, Sk] i={I}, j ={3}, k={1 ,2}	4					
+		[Pi, Vj, Sk] i={F, T}, j ={3}, k={1 ,2}	4	[Pi, Vj, Sk] i={I}, j ={1}, k={1 ,2}	4					
+		[Pi, Vj, Sk] i={F, T}, j ={1}, k={1 ,2}	4	[Pi, Vj, Sk] i={I}, j ={3}, k={1 ,2}	4					
+		[Pi, Vj, Sk] i={F, T}, j ={2}, k={1 ,2}	4	[Pi, Vj, Sk] i={I}, j ={1}, k={1 ,2}	4					
+		[Pi, Vj, Sk] i={F, T}, j ={3}, k={1 ,2}	4	[Pi, Vj, Sk] i={I}, j ={2}, k={1 ,2}	4					
+		[Pi, Vj, Sk] i={I,T}, j ={1}, k={1 ,2}	4	[Pi, Vj, Sk] i={F}, j ={2}, k={1 ,2}	4					
+		[Pi, Vj, Sk] i={I,T}, j ={2}, k={1 ,2}	4	[Pi, Vj, Sk] i={F}, j ={3}, k={1 ,2}	4					
+		[Pi, Vj, Sk] i={I,T}, j ={3}, k={1 ,2}	4	[Pi, Vj, Sk] i={F}, j ={1}, k={1 ,2}	4					
+		[Pi, Vj, Sk] i={I,T}, j ={1}, k={1 ,2}	4	[Pi, Vj, Sk] i={F}, j ={3}, k={1 ,2}	4					
+		[Pi, Vj, Sk] i={I,T}, j ={2}, k={1 ,2}	4	[Pi, Vj, Sk] i={F}, j ={1}, k={1 ,2}	4					
+		[Pi, Vj, Sk] i={I,T}, j ={3}, k={1 ,2}	4	[Pi, Vj, Sk] i={F}, j ={2}, k={1 ,2}	4					
+mean										
+STD										
+Same platform, cross topic 	Scenario 5.1	[Pi, Vj, Sk] i={F}, j ={1}, k={1}	1	[Pi, Vj, Sk] i={F}, j ={2}, k={2}	1					
+		[Pi, Vj, Sk] i={F}, j ={2}, k={1}	1	[Pi, Vj, Sk] i={F}, j ={3}, k={2}	1					
+		[Pi, Vj, Sk] i={F}, j ={3}, k={1}	1	[Pi, Vj, Sk] i={F}, j ={1}, k={2}	1					
+		[Pi, Vj, Sk] i={F}, j ={2}, k={1}	1	[Pi, Vj, Sk] i={F}, j ={1}, k={2}	1					
+		[Pi, Vj, Sk] i={F}, j ={3}, k={1}	1	[Pi, Vj, Sk] i={F}, j ={2}, k={2}	1					
+		[Pi, Vj, Sk] i={F}, j ={1}, k={1}	1	[Pi, Vj, Sk] i={F}, j ={3}, k={2}	1					
+		[Pi, Vj, Sk] i={I}, j ={1}, k={1}	1	[Pi, Vj, Sk] i={I}, j ={2}, k={2}	1					
+		[Pi, Vj, Sk] i={I}, j ={2}, k={1}	1	[Pi, Vj, Sk] i={I}, j ={3}, k={2}	1					
+		[Pi, Vj, Sk] i={I}, j ={3}, k={1}	1	[Pi, Vj, Sk] i={I}, j ={1}, k={2}	1					
+		[Pi, Vj, Sk] i={I}, j ={2}, k={1}	1	[Pi, Vj, Sk] i={I}, j ={1}, k={2}	1					
+		[Pi, Vj, Sk] i={I}, j ={3}, k={1}	1	[Pi, Vj, Sk] i={I}, j ={2}, k={2}	1					
+		[Pi, Vj, Sk] i={I}, j ={1}, k={1}	1	[Pi, Vj, Sk] i={I}, j ={3}, k={2}	1					
+		[Pi, Vj, Sk] i={T}, j ={1}, k={1}	1	[Pi, Vj, Sk] i={T}, j ={2}, k={2}	1					
+		[Pi, Vj, Sk] i={T}, j ={2}, k={1}	1	[Pi, Vj, Sk] i={T}, j ={3}, k={2}	1					
+		[Pi, Vj, Sk] i={T}, j ={3}, k={1}	1	[Pi, Vj, Sk] i={T}, j ={1}, k={2}	1					
+		[Pi, Vj, Sk] i={T}, j ={2}, k={1}	1	[Pi, Vj, Sk] i={T}, j ={1}, k={2}	1					
+		[Pi, Vj, Sk] i={T}, j ={3}, k={1}	1	[Pi, Vj, Sk] i={T}, j ={2}, k={2}	1					
+		[Pi, Vj, Sk] i={T}, j ={1}, k={1}	1	[Pi, Vj, Sk] i={T}, j ={3}, k={2}	1					
+		mean								
+		std								
+	Scenario 5.2	[Pi, Vj, Sk] i={F}, j ={2}, k={2}	1	[Pi, Vj, Sk] i={F}, j ={1}, k={1}	1					
+		[Pi, Vj, Sk] i={F}, j ={3}, k={2}	1	[Pi, Vj, Sk] i={F}, j ={2}, k={1}	1					
+		[Pi, Vj, Sk] i={F}, j ={1}, k={2}	1	[Pi, Vj, Sk] i={F}, j ={3}, k={1}	1					
+		[Pi, Vj, Sk] i={F}, j ={1}, k={2}	1	[Pi, Vj, Sk] i={F}, j ={2}, k={1}	1					
+		[Pi, Vj, Sk] i={F}, j ={2}, k={2}	1	[Pi, Vj, Sk] i={F}, j ={3}, k={1}	1					
+		[Pi, Vj, Sk] i={F}, j ={3}, k={2}	1	[Pi, Vj, Sk] i={F}, j ={1}, k={1}	1					
+		[Pi, Vj, Sk] i={I}, j ={2}, k={2}	1	[Pi, Vj, Sk] i={I}, j ={1}, k={1}	1					
+		[Pi, Vj, Sk] i={I}, j ={3}, k={2}	1	[Pi, Vj, Sk] i={I}, j ={2}, k={1}	1					
+		[Pi, Vj, Sk] i={I}, j ={1}, k={2}	1	[Pi, Vj, Sk] i={I}, j ={3}, k={1}	1					
+		[Pi, Vj, Sk] i={I}, j ={1}, k={2}	1	[Pi, Vj, Sk] i={I}, j ={2}, k={1}	1					
+		[Pi, Vj, Sk] i={I}, j ={2}, k={2}	1	[Pi, Vj, Sk] i={I}, j ={3}, k={1}	1					
+		[Pi, Vj, Sk] i={I}, j ={3}, k={2}	1	[Pi, Vj, Sk] i={I}, j ={1}, k={1}	1					
+		[Pi, Vj, Sk] i={T}, j ={2}, k={2}	1	[Pi, Vj, Sk] i={T}, j ={1}, k={1}	1					
+		[Pi, Vj, Sk] i={T}, j ={3}, k={2}	1	[Pi, Vj, Sk] i={T}, j ={2}, k={1}	1					
+		[Pi, Vj, Sk] i={T}, j ={1}, k={2}	1	[Pi, Vj, Sk] i={T}, j ={3}, k={1}	1					
+		[Pi, Vj, Sk] i={T}, j ={1}, k={2}	1	[Pi, Vj, Sk] i={T}, j ={2}, k={1}	1					
+		[Pi, Vj, Sk] i={T}, j ={2}, k={2}	1	[Pi, Vj, Sk] i={T}, j ={3}, k={1}	1					
+		[Pi, Vj, Sk] i={T}, j ={3}, k={2}	1	[Pi, Vj, Sk] i={T}, j ={1}, k={1}	1					
+		mean								
+		std								
+mean										
+std										

@@ -1,0 +1,2 @@
+scenario_id,scenario_name,scenario_description,model_name,random_seed,num_sub_experiments,mean_test_accuracy,std_test_accuracy,mean_test_top_1_accuracy,std_test_top_1_accuracy,mean_test_top_5_accuracy,std_test_top_5_accuracy,mean_test_f1_weighted,std_test_f1_weighted,mean_train_accuracy,mean_train_top_1_accuracy,mean_train_top_5_accuracy
+1.1,Scenario 1.1,"Same platform, same topic (S1 → S2)",RandomForest,42,9,0.23132969034608378,0.0647719649788508,0.2349726775956284,0.07239148251088398,0.6138433515482695,0.07737596862571747,0.17486338797814208,0.05152646175376081,1.0,1.0,1.0

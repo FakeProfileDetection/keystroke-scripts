@@ -6,6 +6,10 @@ This runner uses the scenario-based experiment definitions from scenarios.py.
 Results are aggregated at the scenario level (averaging across sub-experiments).
 """
 
+# Set matplotlib backend before any imports to avoid tkinter threading issues
+import matplotlib
+matplotlib.use('Agg')
+
 import argparse
 import sys
 from datetime import datetime

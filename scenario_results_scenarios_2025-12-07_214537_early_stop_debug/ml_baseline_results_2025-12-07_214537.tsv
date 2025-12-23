@@ -1,0 +1,13 @@
+Scenario Group	Scenario	Train	Train samples/user	Test	Test samples/user	Notes	k=1	k=2	k=3	k=4	k=5	Best Model
+Same platform, same topic	Scenario 1.1	[Pi, Vj, Sk] i={F}, j={1}, k={1}	1	[Pi, Vj, Sk] i={F}, j={1}, k={2}	1	train=61, test=61	0.2131	0.3770	0.4098	0.5082	0.5902	RandomForest
+		[Pi, Vj, Sk] i={F}, j={2}, k={1}	1	[Pi, Vj, Sk] i={F}, j={2}, k={2}	1	train=61, test=61	0.2459	0.4590	0.5410	0.5738	0.6230	
+		[Pi, Vj, Sk] i={F}, j={3}, k={1}	1	[Pi, Vj, Sk] i={F}, j={3}, k={2}	1	train=61, test=61	0.2787	0.4262	0.5082	0.6557	0.6885	
+		[Pi, Vj, Sk] i={I}, j={1}, k={1}	1	[Pi, Vj, Sk] i={I}, j={1}, k={2}	1	train=61, test=61	0.1148	0.2951	0.3770	0.4262	0.4918	
+		[Pi, Vj, Sk] i={I}, j={2}, k={1}	1	[Pi, Vj, Sk] i={I}, j={2}, k={2}	1	train=61, test=61	0.1967	0.3443	0.5246	0.6066	0.6557	
+		[Pi, Vj, Sk] i={I}, j={3}, k={1}	1	[Pi, Vj, Sk] i={I}, j={3}, k={2}	1	train=61, test=61	0.3607	0.4426	0.5410	0.5902	0.6557	
+		[Pi, Vj, Sk] i={T}, j={1}, k={1}	1	[Pi, Vj, Sk] i={T}, j={1}, k={2}	1	train=61, test=61	0.2623	0.4754	0.5410	0.6721	0.7049	
+		[Pi, Vj, Sk] i={T}, j={2}, k={1}	1	[Pi, Vj, Sk] i={T}, j={2}, k={2}	1	train=61, test=61	0.1639	0.2787	0.3279	0.4262	0.4918	
+		[Pi, Vj, Sk] i={T}, j={3}, k={1}	1	[Pi, Vj, Sk] i={T}, j={3}, k={2}	1	train=61, test=61	0.2787	0.3934	0.4590	0.5246	0.6230	
+		mean					0.2350	0.3880	0.4699	0.5537	0.6138	
+		std					0.0724	0.0705	0.0807	0.0897	0.0774	
+												
