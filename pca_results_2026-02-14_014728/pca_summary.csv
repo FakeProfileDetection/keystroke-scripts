@@ -1,0 +1,11 @@
+scenario_id,description,n_sub_experiments,avg_train_samples,max_components_available,elbow_components,elbow_variance,threshold_95_components,threshold_95_variance,median_variance_at_max
+1.1,"Same platform, same topic",9,61.0,60,14,0.9318,17,0.9532,1.0
+1.2,"Same platform, same topic",9,61.0,60,13,0.9168,17,0.9502,1.0
+2.1,"Cross platform, same topic (1-1) (controlled for dataset size)",18,61.0,60,14,0.9318,17,0.9532,1.0
+2.2,"Cross platform, same topic (1-1) (controlled for dataset size)",18,61.0,60,13,0.9168,17,0.9502,1.0
+3.1,"Cross platform, same topic (1-1)",18,122.0,121,20,0.9491,21,0.9537,1.0
+3.2,"Cross platform, same topic (2-1)",9,244.0,243,26,0.9632,23,0.9532,1.0
+4.1,"Cross platform, cross topic (1-1)",36,122.0,121,20,0.9491,21,0.9537,1.0
+4.2,"Cross platform, cross topic (2-1)",18,244.0,243,26,0.9632,23,0.9532,1.0
+5.1,"Same platform, cross topic",18,61.0,60,14,0.9318,17,0.9532,1.0
+5.2,"Same platform, cross topic",18,61.0,60,13,0.9168,17,0.9502,1.0
