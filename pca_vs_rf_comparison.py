@@ -126,15 +126,18 @@ def get_common_pca_features(df, scenarios_to_run, variance_threshold=0.95):
 # Phase 2 – RF-important features from existing pickles
 # ---------------------------------------------------------------------------
 
-def get_rf_top_features(pickle_dir, top_n=10):
-    """Average feature importances across all RF pickles and return top-N indices."""
-    pkl_files = sorted(glob(str(Path(pickle_dir) / "*.pkl")))
-    if not pkl_files:
-        raise FileNotFoundError(f"No pickle files in {pickle_dir}")
+def get_rf_features_for_scenario(pkl_files, top_n=10):
+    """Average feature importances across one scenario's pickles, return top-N indices.
 
+    Args:
+        pkl_files: List of pickle file paths belonging to one scenario.
+        top_n: Number of top features to select.
+
+    Returns:
+        Set of top-N feature indices for this scenario.
+    """
     importances_sum = None
     count = 0
-
     for pf in pkl_files:
         with open(pf, 'rb') as f:
             data = pickle.load(f)
@@ -144,9 +147,76 @@ def get_rf_top_features(pickle_dir, top_n=10):
         importances_sum += fi
         count += 1
 
-    avg_importances = importances_sum / count
-    top_indices = np.argsort(avg_importances)[::-1][:top_n]
-    return sorted(top_indices.tolist()), avg_importances
+    avg = importances_sum / count
+    top_indices = np.argsort(avg)[::-1][:top_n]
+    return set(top_indices.tolist())
+
+
+def get_rf_top_features(pickle_dir, top_n=10):
+    """Select RF top-N features via per-scenario majority vote.
+
+    1. Load all pickles and group by scenario_id (parsed from filename).
+    2. For each scenario: average importances → select top-N indices.
+    3. Keep features that appear in the top-N of >50% of scenarios
+       (mirrors PCA pipeline's majority-vote aggregation).
+    4. Also compute a grand-average importance vector (for display).
+
+    Returns:
+        (sorted_indices, avg_importances, per_scenario_counts)
+        per_scenario_counts is a dict {scenario_id: n_top_features}.
+    """
+    from collections import Counter, defaultdict
+
+    pkl_files = sorted(glob(str(Path(pickle_dir) / "*.pkl")))
+    if not pkl_files:
+        raise FileNotFoundError(f"No pickle files in {pickle_dir}")
+
+    # Group pickle files by scenario_id
+    scenario_pkls = defaultdict(list)
+    for pf in pkl_files:
+        name = Path(pf).stem  # e.g. randomforest_S1.1_F_1_S1toS2_...
+        scenario_id = name.split('_')[1][1:]  # "S1.1" → "1.1"
+        scenario_pkls[scenario_id].append(pf)
+
+    # Per-scenario top-N, grand average, and frequency count
+    grand_sum = None
+    grand_count = 0
+    index_counts = Counter()
+    per_scenario_counts = {}
+
+    for scenario_id in sorted(scenario_pkls.keys()):
+        pkls = scenario_pkls[scenario_id]
+        scenario_top = get_rf_features_for_scenario(pkls, top_n)
+        per_scenario_counts[scenario_id] = len(scenario_top)
+        index_counts.update(scenario_top)
+
+        # Accumulate for grand average
+        for pf in pkls:
+            with open(pf, 'rb') as f:
+                data = pickle.load(f)
+            fi = data['model'].feature_importances_
+            if grand_sum is None:
+                grand_sum = np.zeros_like(fi)
+            grand_sum += fi
+            grand_count += 1
+
+    avg_importances = grand_sum / grand_count
+
+    # Majority vote: keep features in top-N of >50% of scenarios
+    n_scenarios = len(scenario_pkls)
+    majority = n_scenarios / 2.0
+    majority_indices = {idx for idx, cnt in index_counts.items()
+                        if cnt > majority}
+
+    if not majority_indices:
+        import logging
+        logging.warning(
+            "RF per-scenario top-%d majority vote produced EMPTY set across "
+            "%d scenarios.", top_n, n_scenarios
+        )
+        return [], avg_importances, per_scenario_counts
+
+    return sorted(majority_indices), avg_importances, per_scenario_counts
 
 
 # ---------------------------------------------------------------------------
@@ -304,7 +374,8 @@ def plot_comparison(summary_df, output_path):
                    color='coral',
                    yerr=summary_df['pca_top1_std'], capsize=3)
     bars3 = ax.bar(x + width, summary_df['rf_top1_mean'], width,
-                   label=f'RF top-10 features', color='seagreen',
+                   label=f'RF features ({summary_df["n_rf_features"].iloc[0]})',
+                   color='seagreen',
                    yerr=summary_df['rf_top1_std'], capsize=3)
 
     ax.set_xlabel('Scenario')
@@ -434,12 +505,19 @@ def main():
     # ------------------------------------------------------------------
     # Phase 2 – RF features
     # ------------------------------------------------------------------
-    print(f"\n--- Phase 2: RF top-{args.rf_top_n} feature extraction ---")
-    rf_indices, avg_importances = get_rf_top_features(
+    print(f"\n--- Phase 2: RF top-{args.rf_top_n} feature extraction "
+          f"(per-scenario → majority vote) ---")
+    rf_indices, avg_importances, rf_per_scenario = get_rf_top_features(
         args.pickle_dir, args.rf_top_n
     )
     rf_names = [feature_cols[i] for i in rf_indices]
-    print(f"RF top-{args.rf_top_n} features: {rf_names}")
+    for sid in sorted(rf_per_scenario.keys()):
+        print(f"  RF top-{args.rf_top_n} for scenario {sid}: "
+              f"{rf_per_scenario[sid]} features")
+    print(f"\nRF features after majority vote (>{len(rf_per_scenario)//2} "
+          f"of {len(rf_per_scenario)} scenarios): {len(rf_indices)} features")
+    if rf_names:
+        print(f"RF feature names: {rf_names}")
 
     # Overlap analysis
     overlap_indices = sorted(set(pca_indices).intersection(set(rf_indices)))
@@ -485,6 +563,7 @@ def main():
         'pca_feature_names': pca_names,
         'rf_feature_indices': [int(i) for i in rf_indices],
         'rf_feature_names': rf_names,
+        'rf_per_scenario_counts': rf_per_scenario,
         'overlap_feature_names': overlap_names,
         'n_pca_features': len(pca_indices),
         'n_rf_features': len(rf_indices),
