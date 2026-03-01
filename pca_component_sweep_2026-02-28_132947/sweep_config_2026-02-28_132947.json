@@ -1,0 +1,53 @@
+{
+  "timestamp": "2026-02-28_132947",
+  "dataset_path": "../fpd_etl_pipeline/artifacts/2025-09-07_00-27-43_loris-mbp-cable-rcn-com/extended_features/extended_video/features.csv",
+  "seeds": [
+    42,
+    123,
+    456
+  ],
+  "subsample_seeds": [
+    0,
+    7,
+    13
+  ],
+  "scenarios_to_run": [
+    "1.1",
+    "1.2",
+    "2.1",
+    "2.2",
+    "3.1",
+    "3.2",
+    "4.1",
+    "4.2",
+    "5.1",
+    "5.2"
+  ],
+  "skip_subsampling": false,
+  "rf_hyperparameters": {
+    "n_estimators": 300,
+    "max_depth": 20,
+    "min_samples_split": 2,
+    "min_samples_leaf": 1,
+    "max_features": "sqrt",
+    "bootstrap": true
+  },
+  "k_sweep": "dense 1-30, then every 5 to max_k",
+  "feature_selection": "above-mean |loading| per component, union across K",
+  "n_features_total": 620,
+  "scenario_spu": {
+    "1.1": 1,
+    "1.2": 1,
+    "2.1": 1,
+    "2.2": 1,
+    "3.1": 2,
+    "3.2": 4,
+    "4.1": 2,
+    "4.2": 4,
+    "5.1": 1,
+    "5.2": 1
+  },
+  "estimated_trainings": 45954,
+  "actual_trainings": 63720,
+  "runtime_seconds": 24474.19085097313
+}
